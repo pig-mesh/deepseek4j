@@ -1,4 +1,4 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.common.toolkit;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,5 +1,11 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.executor;
 
+import io.github.pigmesh.ai.deepseek.core.handler.ResponseHandle;
+import io.github.pigmesh.ai.deepseek.core.config.ResponseLoggingInterceptor;
+import io.github.pigmesh.ai.deepseek.core.handler.StreamingCompletionHandling;
+import io.github.pigmesh.ai.deepseek.core.handler.StreamingResponseHandling;
+import io.github.pigmesh.ai.deepseek.core.common.toolkit.Json;
+import io.github.pigmesh.ai.deepseek.core.handler.ErrorHandling;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -14,9 +20,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static io.github.pigmesh.ai.deepseek.core.Utils.toException;
+import static io.github.pigmesh.ai.deepseek.core.common.toolkit.Utils.toException;
 
-class StreamingRequestExecutor<Request, Response, ResponseContent> {
+public class StreamingRequestExecutor<Request, Response, ResponseContent> {
 
     private static final Logger log = LoggerFactory.getLogger(StreamingRequestExecutor.class);
 
@@ -28,7 +34,7 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
     private final boolean logStreamingResponses;
     private final ResponseLoggingInterceptor responseLogger = new ResponseLoggingInterceptor();
 
-    StreamingRequestExecutor(
+    public StreamingRequestExecutor(
             OkHttpClient okHttpClient,
             String endpointUrl,
             Supplier<Request> requestWithStreamSupplier,
@@ -44,7 +50,7 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
         this.logStreamingResponses = logStreamingResponses;
     }
 
-    StreamingResponseHandling onPartialResponse(Consumer<ResponseContent> partialResponseHandler) {
+    public StreamingResponseHandling onPartialResponse(Consumer<ResponseContent> partialResponseHandler) {
 
         return new StreamingResponseHandling() {
 

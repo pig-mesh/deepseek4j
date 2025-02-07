@@ -1,12 +1,12 @@
 package io.github.pigmesh.ai.deepseek.config;
 
-import io.github.pigmesh.ai.deepseek.core.LogLevel;
+import io.github.pigmesh.ai.deepseek.core.common.enums.LogLevel;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.Proxy;
 
-import static io.github.pigmesh.ai.deepseek.core.LogLevel.DEBUG;
+import static io.github.pigmesh.ai.deepseek.core.common.enums.LogLevel.DEBUG;
 
 
 /**

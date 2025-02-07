@@ -1,6 +1,6 @@
 package io.github.pigmesh.ai.deepseek.core.chat;
 
-import io.github.pigmesh.ai.deepseek.core.Json;
+import io.github.pigmesh.ai.deepseek.core.common.toolkit.Json;
 
 import java.util.Map;
 

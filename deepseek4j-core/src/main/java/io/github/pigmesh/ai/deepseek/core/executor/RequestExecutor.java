@@ -1,5 +1,7 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.executor;
 
+import io.github.pigmesh.ai.deepseek.core.handler.AsyncResponseHandling;
+import io.github.pigmesh.ai.deepseek.core.handler.StreamingResponseHandling;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 
@@ -7,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-class RequestExecutor<Request, Response, ResponseContent>
+public class RequestExecutor<Request, Response, ResponseContent>
         implements SyncOrAsyncOrStreaming<ResponseContent> {
 
     private final Call<Response> call;
@@ -20,15 +22,14 @@ class RequestExecutor<Request, Response, ResponseContent>
     private final Function<Response, ResponseContent> streamEventContentExtractor;
     private final boolean logStreamingResponses;
 
-    RequestExecutor(Call<Response> call,
-                    Function<Response, ResponseContent> responseContentExtractor,
-
-                    OkHttpClient okHttpClient,
-                    String endpointUrl,
-                    Supplier<Request> requestWithStreamSupplier,
-                    Class<Response> responseClass,
-                    Function<Response, ResponseContent> streamEventContentExtractor,
-                    boolean logStreamingResponses
+    public RequestExecutor(Call<Response> call,
+                           Function<Response, ResponseContent> responseContentExtractor,
+                           OkHttpClient okHttpClient,
+                           String endpointUrl,
+                           Supplier<Request> requestWithStreamSupplier,
+                           Class<Response> responseClass,
+                           Function<Response, ResponseContent> streamEventContentExtractor,
+                           boolean logStreamingResponses
     ) {
         this.call = call;
         this.responseContentExtractor = responseContentExtractor;
@@ -41,7 +42,7 @@ class RequestExecutor<Request, Response, ResponseContent>
         this.logStreamingResponses = logStreamingResponses;
     }
 
-    RequestExecutor(Call<Response> call, Function<Response, ResponseContent> responseContentExtractor) {
+    public RequestExecutor(Call<Response> call, Function<Response, ResponseContent> responseContentExtractor) {
         this.call = call;
         this.responseContentExtractor = responseContentExtractor;
 

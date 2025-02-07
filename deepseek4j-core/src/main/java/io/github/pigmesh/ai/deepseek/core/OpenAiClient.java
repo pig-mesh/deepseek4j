@@ -2,8 +2,11 @@ package io.github.pigmesh.ai.deepseek.core;
 
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
+import io.github.pigmesh.ai.deepseek.core.common.enums.LogLevel;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionResponse;
+import io.github.pigmesh.ai.deepseek.core.executor.SyncOrAsync;
+import io.github.pigmesh.ai.deepseek.core.executor.SyncOrAsyncOrStreaming;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResult;
@@ -19,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.github.pigmesh.ai.deepseek.core.LogLevel.DEBUG;
+import static io.github.pigmesh.ai.deepseek.core.common.enums.LogLevel.DEBUG;
 
 public abstract class OpenAiClient {
 

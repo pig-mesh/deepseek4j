@@ -1,6 +1,7 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.common;
 
 import okhttp3.ResponseBody;
+import org.jetbrains.annotations.NotNull;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 
@@ -9,20 +10,20 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 
-class PersistorConverterFactory extends Converter.Factory {
+public class PersistorConverterFactory extends Converter.Factory {
 
     private final Path persistTo;
 
-    PersistorConverterFactory(Path persistTo) {
+    public PersistorConverterFactory(Path persistTo) {
         this.persistTo = persistTo;
     }
 
     @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
+    public Converter<ResponseBody, ?> responseBodyConverter(@NotNull Type type, @NotNull Annotation[] annotations, Retrofit retrofit) {
         return new PersistorConverter<>(retrofit.nextResponseBodyConverter(this, type, annotations));
     }
 
-    private class PersistorConverter<T> implements Converter<ResponseBody, T> {
+    private static class PersistorConverter<T> implements Converter<ResponseBody, T> {
 
         private final Converter<ResponseBody, T> delegate;
 
@@ -31,11 +32,8 @@ class PersistorConverterFactory extends Converter.Factory {
         }
 
         @Override
-        public T convert(ResponseBody value) throws IOException {
-            T response = delegate.convert(value);
-
-
-            return response;
+        public T convert(@NotNull ResponseBody value) throws IOException {
+            return delegate.convert(value);
         }
     }
 }

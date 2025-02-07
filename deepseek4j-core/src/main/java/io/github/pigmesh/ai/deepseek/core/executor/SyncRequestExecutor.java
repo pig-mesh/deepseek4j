@@ -1,11 +1,11 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.executor;
 
 import retrofit2.Call;
 
 import java.io.IOException;
 import java.util.function.Function;
 
-import static io.github.pigmesh.ai.deepseek.core.Utils.toException;
+import static io.github.pigmesh.ai.deepseek.core.common.toolkit.Utils.toException;
 
 class SyncRequestExecutor<Response, ResponseContent> {
 

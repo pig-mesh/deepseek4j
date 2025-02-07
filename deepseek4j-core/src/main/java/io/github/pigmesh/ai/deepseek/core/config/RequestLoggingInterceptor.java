@@ -1,5 +1,6 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.config;
 
+import io.github.pigmesh.ai.deepseek.core.common.enums.LogLevel;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -16,7 +17,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
 
-class RequestLoggingInterceptor implements Interceptor {
+public class RequestLoggingInterceptor implements Interceptor {
 
     private static final Logger log = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
 
@@ -103,7 +104,7 @@ class RequestLoggingInterceptor implements Interceptor {
         );
     }
 
-    static String inOneLine(Headers headers) {
+    public static String inOneLine(Headers headers) {
 
         return stream(headers.spliterator(), false)
                 .map(header -> format(header.component1(), header.component2()))

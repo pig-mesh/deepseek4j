@@ -1,4 +1,4 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.common.enums;
 
 public enum LogLevel {
 

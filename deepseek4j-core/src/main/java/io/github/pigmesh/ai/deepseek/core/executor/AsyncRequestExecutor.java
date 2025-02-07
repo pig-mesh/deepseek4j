@@ -1,25 +1,28 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.executor;
 
+import io.github.pigmesh.ai.deepseek.core.handler.ResponseHandle;
+import io.github.pigmesh.ai.deepseek.core.handler.AsyncResponseHandling;
+import io.github.pigmesh.ai.deepseek.core.handler.ErrorHandling;
 import retrofit2.Call;
 
 import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.github.pigmesh.ai.deepseek.core.Utils.toException;
+import static io.github.pigmesh.ai.deepseek.core.common.toolkit.Utils.toException;
 
-class AsyncRequestExecutor<Response, ResponseContent> {
+public class AsyncRequestExecutor<Response, ResponseContent> {
 
     private final Call<Response> call;
     private final Function<Response, ResponseContent> responseContentExtractor;
 
-    AsyncRequestExecutor(Call<Response> call,
-                         Function<Response, ResponseContent> responseContentExtractor) {
+    public AsyncRequestExecutor(Call<Response> call,
+                                Function<Response, ResponseContent> responseContentExtractor) {
         this.call = call;
         this.responseContentExtractor = responseContentExtractor;
     }
 
-    AsyncResponseHandling onResponse(Consumer<ResponseContent> responseHandler) {
+    public AsyncResponseHandling onResponse(Consumer<ResponseContent> responseHandler) {
         return new AsyncResponseHandling() {
 
             @Override

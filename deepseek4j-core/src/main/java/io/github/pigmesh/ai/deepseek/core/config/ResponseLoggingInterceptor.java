@@ -1,5 +1,6 @@
-package io.github.pigmesh.ai.deepseek.core;
+package io.github.pigmesh.ai.deepseek.core.config;
 
+import io.github.pigmesh.ai.deepseek.core.common.enums.LogLevel;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -8,9 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import static io.github.pigmesh.ai.deepseek.core.RequestLoggingInterceptor.inOneLine;
+import static io.github.pigmesh.ai.deepseek.core.config.RequestLoggingInterceptor.inOneLine;
 
-class ResponseLoggingInterceptor implements Interceptor {
+public class ResponseLoggingInterceptor implements Interceptor {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseLoggingInterceptor.class);
 
@@ -33,7 +34,7 @@ class ResponseLoggingInterceptor implements Interceptor {
         return response;
     }
 
-    void log(Response response) {
+    public void log(Response response) {
         String message = "Response:\n- status code: {}\n- headers: {}\n- body: {}";
 
         try {
