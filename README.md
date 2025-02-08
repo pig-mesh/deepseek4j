@@ -23,7 +23,7 @@ DeepSeek4j Spring Boot Starter 是一个用于快速集成 DeepSeek AI 能力的
 <dependency>
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek-spring-boot-starter</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
