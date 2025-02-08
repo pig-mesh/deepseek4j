@@ -4,16 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>deepseek 调试</title>
-    <script src="https://cdn.staticfile.net/vue/3.3.4/vue.global.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.5.13/vue.global.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/marked/15.0.6/marked.min.js"></script>
     <!-- Tailwind CSS -->
-    <link href="https://minio.pigx.vip/oss/202502/1738861588.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.bootcdn.net/ajax/libs/daisyui/4.12.23/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             daisyui: {
                 themes: [{
                     light: {
-                        ...require("daisyui/src/theming/themes")["light"],
+                        "primary": "#570DF8",
+                        "primary-focus": "#4506CB",
+                        "secondary": "#F000B8",
+                        "accent": "#37CDBE",
+                        "neutral": "#3D4451",
+                        "base-100": "#FFFFFF",
+                        "base-200": "#F2F2F2",
+                        "base-300": "#E5E6E6",
+                        "base-content": "#1F2937",
+                        "info": "#3ABFF8",
+                        "success": "#36D399",
+                        "warning": "#FBBD23",
+                        "error": "#F87272"
                     },
                     dark: {
                         "primary": "#BB86FC",
@@ -160,8 +173,7 @@
                         <h2 class="text-xl font-bold mb-1">最终答案</h2>
                         <div ref="answerRef" class="flex-1 overflow-y-auto min-h-0">
                             <div class="mockup-window bg-base-300 h-full flex flex-col">
-                                <div class="flex-1 px-6 py-4 bg-base-200 overflow-y-auto">
-                                    {{ finalAnswer }}
+                                <div class="flex-1 px-6 py-4 bg-base-200 overflow-y-auto prose dark:prose-invert max-w-none" v-html="finalAnswer">
                                 </div>
                             </div>
                         </div>
@@ -190,6 +202,7 @@
                 const messages = ref([])
                 const isConnected = ref(false)
                 const currentTheme = ref('light')
+                const isInThinkTag = ref(false)
                 let eventSource = null
                 const reasoningRef = ref(null)
                 const answerRef = ref(null)
@@ -204,10 +217,11 @@
 
                 // 计算最终答案
                 const finalAnswer = computed(() => {
-                    return messages.value
+                    const rawContent = messages.value
                         .filter(m => m.parsed?.content)
                         .map(m => m.parsed.content)
                         .join('')
+                    return marked.parse(rawContent)
                 })
 
                 // 初始化主题
@@ -255,12 +269,53 @@
                 const parseSSEData = (data) => {
                     try {
                         const parsed = JSON.parse(data)
+                        
+                        // 检查是否直接返回了 reasoning_content
+                        const directReasoning = parsed.choices?.[0]?.delta?.reasoning_content
+                        if (directReasoning) {
+                            return {
+                                id: parsed.id,
+                                created: parsed.created,
+                                model: parsed.model,
+                                reasoning_content: directReasoning,
+                                content: parsed.choices?.[0]?.delta?.content || ''
+                            }
+                        }
+                        
+                        const content = parsed.choices?.[0]?.delta?.content || ''
+                        
+                        // 处理 think 标签包裹的情况
+                        if (content.includes('<think>')) {
+                            isInThinkTag.value = true
+                            const startIndex = content.indexOf('<think>') + '<think>'.length
+                            return {
+                                id: parsed.id,
+                                created: parsed.created,
+                                model: parsed.model,
+                                reasoning_content: content.substring(startIndex),
+                                content: content.substring(0, content.indexOf('<think>'))
+                            }
+                        }
+                        
+                        if (content.includes('</think>')) {
+                            isInThinkTag.value = false
+                            const endIndex = content.indexOf('</think>')
+                            return {
+                                id: parsed.id,
+                                created: parsed.created,
+                                model: parsed.model,
+                                reasoning_content: content.substring(0, endIndex),
+                                content: content.substring(endIndex + '</think>'.length)
+                            }
+                        }
+                        
+                        // 根据状态决定内容归属
                         return {
                             id: parsed.id,
                             created: parsed.created,
                             model: parsed.model,
-                            reasoning_content: parsed.choices?.[0]?.delta?.reasoning_content || '',
-                            content: parsed.choices?.[0]?.delta?.content || ''
+                            reasoning_content: isInThinkTag.value ? content : '',
+                            content: isInThinkTag.value ? '' : content
                         }
                     } catch (e) {
                         console.error('解析JSON失败:', e)
