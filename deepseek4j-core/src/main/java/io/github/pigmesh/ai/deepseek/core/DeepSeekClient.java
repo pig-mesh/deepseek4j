@@ -223,17 +223,17 @@ public class DeepSeekClient extends OpenAiClient {
 
     @Override
     public Flux<ChatCompletionResponse> chatFluxCompletion(String userMessage) {
-        ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder()
-                .addUserMessage(userMessage);
-        if (Objects.nonNull(this.model)) {
-            builder.model(this.model);
-        }
+        ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder();
 
         if (Objects.nonNull(this.systemMessage)) {
             builder.addSystemMessage(this.systemMessage);
         }
 
+        if (Objects.nonNull(this.model)) {
+            builder.model(this.model);
+        }
 
+        builder.addUserMessage(userMessage);
         return Flux.create(emitter -> {
             this.chatCompletion(new OpenAiClientContext(), builder.build()).onPartialResponse(emitter::next)
                     .onComplete(emitter::complete)
