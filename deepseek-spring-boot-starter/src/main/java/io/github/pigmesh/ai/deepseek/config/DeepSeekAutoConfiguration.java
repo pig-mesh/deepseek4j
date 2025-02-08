@@ -2,12 +2,17 @@ package io.github.pigmesh.ai.deepseek.config;
 
 import io.github.pigmesh.ai.deepseek.core.DeepSeekClient;
 import io.github.pigmesh.ai.deepseek.core.OpenAiClient;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -22,18 +27,23 @@ import java.util.Objects;
 @EnableConfigurationProperties(DeepSeekProperties.class)
 public class DeepSeekAutoConfiguration {
 
+    @Value("classpath:/prompts/system.pt")
+    private Resource systemResource;
+
     /**
      * Deep Seek 客户端
      *
      * @param deepSeekProperties Deep Seek 属性
      * @return {@link OpenAiClient }
      */
+    @SneakyThrows
     @Bean
     @ConditionalOnMissingBean
     public DeepSeekClient deepSeekClient(DeepSeekProperties deepSeekProperties) {
 
         DeepSeekClient.Builder builder = DeepSeekClient.builder()
                 .baseUrl(deepSeekProperties.getBaseUrl())
+                .model(deepSeekProperties.getModel())
                 .openAiApiKey(deepSeekProperties.getApiKey())
                 .logRequests(deepSeekProperties.isLogRequests())
                 .logResponses(deepSeekProperties.isLogResponses());
@@ -55,6 +65,12 @@ public class DeepSeekAutoConfiguration {
         }
 
         builder.logLevel(deepSeekProperties.getLogLevel());
+
+        // 注入R1 提示词
+        if (deepSeekProperties.isDefaultSystemPrompt()) {
+            String systemMessage = StreamUtils.copyToString(systemResource.getInputStream(), StandardCharsets.UTF_8);
+            builder.systemMessage(systemMessage);
+        }
         return builder.build();
     }
 }

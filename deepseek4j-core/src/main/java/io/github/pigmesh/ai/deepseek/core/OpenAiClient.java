@@ -135,6 +135,7 @@ public abstract class OpenAiClient {
 
         public String baseUrl = "https://api.deepseek.com/v1/";
         public String organizationId;
+        public String model;
         public String apiVersion;
         public String openAiApiKey;
         public String azureApiKey;
@@ -151,6 +152,7 @@ public abstract class OpenAiClient {
         public boolean logStreamingResponses;
         public Path persistTo;
         public Map<String, String> customHeaders;
+        public String systemMessage;
 
         public abstract T build();
 
@@ -194,10 +196,20 @@ public abstract class OpenAiClient {
         public B openAiApiKey(String openAiApiKey) {
             if (openAiApiKey == null || openAiApiKey.trim().isEmpty()) {
                 throw new IllegalArgumentException(
-                        "openAiApiKey cannot be null or empty. API keys can be generated here: https://platform.openai.com/account/api-keys"
+                        "ApiKey 不能为空，请访问 DeepSeek 开放平台获取: https://platform.deepseek.com/api_keys"
                 );
             }
             this.openAiApiKey = openAiApiKey;
+            return (B) this;
+        }
+
+        public B model(String model) {
+            this.model = model;
+            return (B) this;
+        }
+
+        public B systemMessage(String systemMessage) {
+            this.systemMessage = systemMessage;
             return (B) this;
         }
 

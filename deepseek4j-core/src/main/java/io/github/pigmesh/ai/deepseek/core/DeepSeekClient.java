@@ -18,6 +18,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Deep Seek 客户端
@@ -31,9 +32,11 @@ public class DeepSeekClient extends OpenAiClient {
 
     private final String baseUrl;
     private final String apiVersion;
+    private final String model;
     private final OkHttpClient okHttpClient;
     private final OpenAiApi openAiApi;
     private final boolean logStreamingResponses;
+    private final String systemMessage;
 
     public DeepSeekClient(String apiKey) {
         this(new Builder().openAiApiKey(apiKey));
@@ -42,6 +45,8 @@ public class DeepSeekClient extends OpenAiClient {
     public DeepSeekClient(Builder serviceBuilder) {
         this.baseUrl = serviceBuilder.baseUrl;
         this.apiVersion = serviceBuilder.apiVersion;
+        this.model = serviceBuilder.model;
+        this.systemMessage = serviceBuilder.systemMessage;
 
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
                 .callTimeout(serviceBuilder.callTimeout)
@@ -203,8 +208,13 @@ public class DeepSeekClient extends OpenAiClient {
 
     @Override
     public Flux<ChatCompletionResponse> chatFluxCompletion(ChatCompletionRequest request) {
+        if (Objects.nonNull(this.model)) {
+            request = ChatCompletionRequest.builder().from(request).model(this.model).build();
+        }
+
+        ChatCompletionRequest finalRequest = request;
         return Flux.create(emitter -> {
-            this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(chatCompletionResponse -> emitter.next(chatCompletionResponse))
+            this.chatCompletion(new OpenAiClientContext(), finalRequest).onPartialResponse(emitter::next)
                     .onComplete(emitter::complete)
                     .onError(emitter::error)
                     .execute();
@@ -213,9 +223,19 @@ public class DeepSeekClient extends OpenAiClient {
 
     @Override
     public Flux<ChatCompletionResponse> chatFluxCompletion(String userMessage) {
-        ChatCompletionRequest request = ChatCompletionRequest.builder().addUserMessage(userMessage).build();
+        ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder()
+                .addUserMessage(userMessage);
+        if (Objects.nonNull(this.model)) {
+            builder.model(this.model);
+        }
+
+        if (Objects.nonNull(this.systemMessage)) {
+            builder.addSystemMessage(this.systemMessage);
+        }
+
+
         return Flux.create(emitter -> {
-            this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(chatCompletionResponse -> emitter.next(chatCompletionResponse))
+            this.chatCompletion(new OpenAiClientContext(), builder.build()).onPartialResponse(emitter::next)
                     .onComplete(emitter::complete)
                     .onError(emitter::error)
                     .execute();

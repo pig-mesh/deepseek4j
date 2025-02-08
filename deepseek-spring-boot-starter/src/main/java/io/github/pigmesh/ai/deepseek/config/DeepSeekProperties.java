@@ -25,6 +25,17 @@ public class DeepSeekProperties {
      * API 密钥
      */
     private String apiKey;
+
+    /**
+     * 模型名称
+     */
+    private String model;
+
+    /**
+     * 默认系统提示词
+     */
+    private boolean defaultSystemPrompt = true;
+
     /**
      * 日志请求
      */
