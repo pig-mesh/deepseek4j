@@ -30,6 +30,8 @@ public class DeepSeekAutoConfiguration {
     @Value("classpath:/prompts/system.pt")
     private Resource systemResource;
 
+
+
     /**
      * Deep Seek 客户端
      *
@@ -71,6 +73,8 @@ public class DeepSeekAutoConfiguration {
             String systemMessage = StreamUtils.copyToString(systemResource.getInputStream(), StandardCharsets.UTF_8);
             builder.systemMessage(systemMessage);
         }
+
+        builder.searchApiKey(deepSeekProperties.getSearchApiKey());
         return builder.build();
     }
 }

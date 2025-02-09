@@ -23,7 +23,7 @@ import static java.util.Collections.unmodifiableMap;
 @JsonDeserialize(builder = ChatCompletionRequest.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public final class ChatCompletionRequest {
+public class ChatCompletionRequest {
 
     @JsonProperty
     private final String model;
@@ -52,7 +52,7 @@ public final class ChatCompletionRequest {
     @JsonProperty
     private final Map<String, Integer> logitBias;
     @JsonProperty
-    private final String user;
+    private String user;
     @JsonProperty
     private final ResponseFormat responseFormat;
     @JsonProperty
@@ -78,7 +78,7 @@ public final class ChatCompletionRequest {
     @Deprecated
     private final FunctionCall functionCall;
 
-    private ChatCompletionRequest(Builder builder) {
+    public ChatCompletionRequest(Builder builder) {
         this.model = builder.model;
         this.messages = builder.messages;
         this.temperature = builder.temperature;

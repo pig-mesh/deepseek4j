@@ -1,12 +1,14 @@
 package io.github.pigmesh.ai.deepseek.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class Json {
 
-    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .enable(SerializationFeature.INDENT_OUTPUT);
 
     public static String toJson(Object o) {

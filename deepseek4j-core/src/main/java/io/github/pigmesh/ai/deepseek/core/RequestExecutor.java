@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-class RequestExecutor<Request, Response, ResponseContent>
+public class RequestExecutor<Request, Response, ResponseContent>
         implements SyncOrAsyncOrStreaming<ResponseContent> {
 
     private final Call<Response> call;
@@ -41,7 +41,7 @@ class RequestExecutor<Request, Response, ResponseContent>
         this.logStreamingResponses = logStreamingResponses;
     }
 
-    RequestExecutor(Call<Response> call, Function<Response, ResponseContent> responseContentExtractor) {
+    public RequestExecutor(Call<Response> call, Function<Response, ResponseContent> responseContentExtractor) {
         this.call = call;
         this.responseContentExtractor = responseContentExtractor;
 

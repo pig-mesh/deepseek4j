@@ -10,6 +10,7 @@ DeepSeek4j Spring Boot Starter 是一个用于快速集成 DeepSeek AI 能力的
 ## 特性
 
 - 完整的 DeepSeek API 支持，支持返回思维链和会话账单
+- 支持 WebSearch 联网搜索
 - 支持自定义连接参数、代理配置、超时设置、请求响应日志
 - Reactor 响应式支持，简化流式返回开发
   
@@ -23,7 +24,7 @@ DeepSeek4j Spring Boot Starter 是一个用于快速集成 DeepSeek AI 能力的
 <dependency>
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek-spring-boot-starter</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0-SNAPSHOT</version>
 </dependency>
 ```
 

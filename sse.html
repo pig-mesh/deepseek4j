@@ -328,6 +328,9 @@
                         eventSource.close()
                     }
 
+                    // 清空消息
+                    clearMessages()
+
                     try {
                         eventSource = new EventSource(sseUrl.value)
                         isConnected.value = true

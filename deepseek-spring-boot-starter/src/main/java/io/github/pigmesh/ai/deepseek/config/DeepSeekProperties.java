@@ -27,6 +27,11 @@ public class DeepSeekProperties {
     private String apiKey;
 
     /**
+     * 搜索 API 密钥
+     */
+    private String searchApiKey;
+
+    /**
      * 模型名称
      */
     private String model;

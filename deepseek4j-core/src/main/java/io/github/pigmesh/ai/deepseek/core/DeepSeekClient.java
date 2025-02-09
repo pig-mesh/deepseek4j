@@ -1,12 +1,14 @@
 package io.github.pigmesh.ai.deepseek.core;
 
-import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
-import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
+import io.github.pigmesh.ai.deepseek.core.chat.*;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResult;
+import io.github.pigmesh.ai.deepseek.core.search.SearchApi;
+import io.github.pigmesh.ai.deepseek.core.search.SearchRequest;
+import io.github.pigmesh.ai.deepseek.core.search.SearchResponse;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ public class DeepSeekClient extends OpenAiClient {
     private final String model;
     private final OkHttpClient okHttpClient;
     private final OpenAiApi openAiApi;
+    private final SearchApi searchApi;
     private final boolean logStreamingResponses;
     private final String systemMessage;
 
@@ -108,6 +111,19 @@ public class DeepSeekClient extends OpenAiClient {
         retrofitBuilder.addConverterFactory(JacksonConverterFactory.create(Json.OBJECT_MAPPER));
 
         this.openAiApi = retrofitBuilder.build().create(OpenAiApi.class);
+
+        // Search API
+        OkHttpClient searchOkHttpClient = new OkHttpClient.Builder()
+                .callTimeout(serviceBuilder.callTimeout)
+                .connectTimeout(serviceBuilder.connectTimeout)
+                .readTimeout(serviceBuilder.readTimeout)
+                .writeTimeout(serviceBuilder.writeTimeout)
+                .addInterceptor(new RequestLoggingInterceptor(serviceBuilder.logLevel))
+                .addInterceptor(new ResponseLoggingInterceptor(serviceBuilder.logLevel))
+                .addInterceptor(new AuthorizationHeaderInjector(serviceBuilder.searchApiKey)).build();
+        Retrofit.Builder searchRetrofitBuilder = new Retrofit.Builder().baseUrl(serviceBuilder.searchEndpoint).client(searchOkHttpClient);
+        searchRetrofitBuilder.addConverterFactory(JacksonConverterFactory.create(Json.OBJECT_MAPPER));
+        this.searchApi = searchRetrofitBuilder.build().create(SearchApi.class);
     }
 
     public void shutdown() {
@@ -131,13 +147,34 @@ public class DeepSeekClient extends OpenAiClient {
 
     public static class Builder extends OpenAiClient.Builder<DeepSeekClient, Builder> {
 
+        private String searchEndpoint = "https://api.bochaai.com/v1/";
+
+        private String searchApiKey;
+
+        private SearchApi searchApi;
+
+        public Builder searchApi(SearchApi searchApi) {
+            this.searchApi = searchApi;
+            return this;
+        }
+
+        public Builder searchApiKey(String searchApiKey) {
+            this.searchApiKey = searchApiKey;
+            return this;
+        }
+
+        public Builder searchEndpoint(String searchEndpoint) {
+            this.searchEndpoint = searchEndpoint;
+            return this;
+        }
+
         public DeepSeekClient build() {
             return new DeepSeekClient(this);
         }
     }
 
     @Override
-    public SyncOrAsyncOrStreaming<CompletionResponse> completion(OpenAiClient.OpenAiClientContext context,
+    public SyncOrAsyncOrStreaming<CompletionResponse> completion(OpenAiClientContext context,
                                                                  CompletionRequest request) {
         CompletionRequest syncRequest = CompletionRequest.builder().from(request).stream(false).build();
 
@@ -154,7 +191,7 @@ public class DeepSeekClient extends OpenAiClient {
     }
 
     @Override
-    public SyncOrAsyncOrStreaming<String> completion(OpenAiClient.OpenAiClientContext context, String prompt) {
+    public SyncOrAsyncOrStreaming<String> completion(OpenAiClientContext context, String prompt) {
         CompletionRequest request = CompletionRequest.builder().prompt(prompt).build();
 
         CompletionRequest syncRequest = CompletionRequest.builder().from(request).stream(false).build();
@@ -172,7 +209,7 @@ public class DeepSeekClient extends OpenAiClient {
     }
 
     @Override
-    public SyncOrAsyncOrStreaming<ChatCompletionResponse> chatCompletion(OpenAiClient.OpenAiClientContext context,
+    public SyncOrAsyncOrStreaming<ChatCompletionResponse> chatCompletion(OpenAiClientContext context,
                                                                          ChatCompletionRequest request) {
         ChatCompletionRequest syncRequest = ChatCompletionRequest.builder().from(request).stream(false).build();
 
@@ -189,7 +226,7 @@ public class DeepSeekClient extends OpenAiClient {
     }
 
     @Override
-    public SyncOrAsyncOrStreaming<String> chatCompletion(OpenAiClient.OpenAiClientContext context, String userMessage) {
+    public SyncOrAsyncOrStreaming<String> chatCompletion(OpenAiClientContext context, String userMessage) {
         ChatCompletionRequest request = ChatCompletionRequest.builder().addUserMessage(userMessage).build();
 
         ChatCompletionRequest syncRequest = ChatCompletionRequest.builder().from(request).stream(false).build();
@@ -221,6 +258,51 @@ public class DeepSeekClient extends OpenAiClient {
         });
     }
 
+    /**
+     * 聊天搜索
+     *
+     * @param userMessage 用户消息
+     * @return {@link Flux }<{@link ChatCompletionResponse }>
+     */
+    public Flux<ChatCompletionResponse> chatSearchCompletion(String userMessage) {
+        SearchResponse searchResponse = new SyncRequestExecutor<>(searchApi.webSearch(SearchRequest.builder().enable(true).query(userMessage).build()), searchResponse1 -> searchResponse1).execute();
+        if (200 == searchResponse.getCode()) {
+            String formatted = Utils.format(userMessage, searchResponse.getData().getWebPages().getValue());
+            if (Objects.nonNull(formatted)) {
+                return this.chatFluxCompletion(formatted);
+            }
+            return this.chatFluxCompletion(userMessage);
+        }
+
+        return this.chatFluxCompletion(userMessage);
+    }
+
+    /**
+     * 聊天搜索完成
+     *
+     * @param userMessage   用户消息
+     * @param searchRequest 搜索请求
+     * @return {@link Flux }<{@link ChatCompletionResponse }>
+     */
+    public Flux<ChatCompletionResponse> chatSearchCompletion(String userMessage, SearchRequest searchRequest) {
+
+        if (Objects.isNull(searchRequest.getQuery())){
+            searchRequest.setQuery(userMessage);
+        }
+
+        SearchResponse searchResponse = new SyncRequestExecutor<>(searchApi.webSearch(searchRequest), searchResponse1 -> searchResponse1).execute();
+        if (200 == searchResponse.getCode()) {
+            String formatted = Utils.format(userMessage, searchResponse.getData().getWebPages().getValue());
+            if (Objects.nonNull(formatted)) {
+                return this.chatFluxCompletion(formatted);
+            }
+            return this.chatFluxCompletion(userMessage);
+        }
+
+        return this.chatFluxCompletion(userMessage);
+    }
+
+
     @Override
     public Flux<ChatCompletionResponse> chatFluxCompletion(String userMessage) {
         ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder();
@@ -244,14 +326,14 @@ public class DeepSeekClient extends OpenAiClient {
 
 
     @Override
-    public SyncOrAsync<ModerationResponse> moderation(OpenAiClient.OpenAiClientContext context,
+    public SyncOrAsync<ModerationResponse> moderation(OpenAiClientContext context,
                                                       ModerationRequest request) {
         return new RequestExecutor<>(openAiApi.moderations(context.headers(), request, apiVersion),
                 r -> r);
     }
 
     @Override
-    public SyncOrAsync<ModerationResult> moderation(OpenAiClient.OpenAiClientContext context, String input) {
+    public SyncOrAsync<ModerationResult> moderation(OpenAiClientContext context, String input) {
         ModerationRequest request = ModerationRequest.builder().input(input).build();
 
         return new RequestExecutor<>(openAiApi.moderations(context.headers(), request, apiVersion),
