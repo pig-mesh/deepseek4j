@@ -19,12 +19,16 @@ public class SearchRequest {
     @Setter
     private String query;
 
+    @Builder.Default
     private final FreshnessEnums freshness = FreshnessEnums.NO_LIMIT;
 
-    private final Boolean summary = Boolean.TRUE;
+    @Builder.Default
+    private final boolean summary = true;
 
-    private final Integer count = 10;
+    @Builder.Default
+    private final int count = 10;
 
-    private final Integer page = 1;
+    @Builder.Default
+    private final int page = 1;
 
 }
