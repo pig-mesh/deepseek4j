@@ -278,6 +278,23 @@ public class DeepSeekClient extends OpenAiClient {
     }
 
     /**
+     * 聊天搜索
+     *
+     * @param userMessage 用户消息
+     * @return {@link Flux }<{@link ChatCompletionResponse }>
+     */
+    public SyncOrAsyncOrStreaming<ChatCompletionResponse> chatSearchStreamingCompletion(String userMessage) {
+        SearchResponse searchResponse = new SyncRequestExecutor<>(searchApi.webSearch(SearchRequest.builder().enable(true).query(userMessage).build()), searchResponse1 -> searchResponse1).execute();
+        if (200 == searchResponse.getCode()) {
+            String formatted = Utils.format(userMessage, searchResponse.getData().getWebPages().getValue());
+            if (Objects.nonNull(formatted)) {
+                return this.chatCompletion(new OpenAiClientContext(), ChatCompletionRequest.builder().stream(true).model(this.model).addUserMessage(formatted).build());
+            }
+        }
+        return this.chatCompletion(new OpenAiClientContext(), ChatCompletionRequest.builder().stream(true).model(this.model).addUserMessage(userMessage).build());
+    }
+
+    /**
      * 聊天搜索完成
      *
      * @param userMessage   用户消息
@@ -286,7 +303,7 @@ public class DeepSeekClient extends OpenAiClient {
      */
     public Flux<ChatCompletionResponse> chatSearchCompletion(String userMessage, SearchRequest searchRequest) {
 
-        if (Objects.isNull(searchRequest.getQuery())){
+        if (Objects.isNull(searchRequest.getQuery())) {
             searchRequest.setQuery(userMessage);
         }
 
