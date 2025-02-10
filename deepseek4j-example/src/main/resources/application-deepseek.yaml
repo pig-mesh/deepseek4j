@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: deepseek-example
+deepseek:
+  base-url: https://api.deepseek.com/v1
+  api-key: sk-xx
+  model: deepseek-chat
+  default-system-prompt: true
+  log-requests: true
+  log-responses: true
+  log-level: DEBUG
+  connect-timeout: 30
+  read-timeout: 30
+  call-timeout: 60

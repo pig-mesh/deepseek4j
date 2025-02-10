@@ -1,4 +1,4 @@
-package io.github.pigmesh.ai.deepseek.example.ollama;
+package io.github.pigmesh.ai.deepseek.example.deepseek;
 
 import io.github.pigmesh.ai.deepseek.core.DeepSeekClient;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
@@ -12,8 +12,8 @@ import reactor.core.publisher.Flux;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("/ollama")
-public class OllamaLocalController {
+@RequestMapping("/deepseek")
+public class DeepSeekLocalController {
 
     @Resource
     private DeepSeekClient deepSeekClient;
@@ -27,4 +27,5 @@ public class OllamaLocalController {
     public ModelsResponse models() {
         return deepSeekClient.models();
     }
+
 }
