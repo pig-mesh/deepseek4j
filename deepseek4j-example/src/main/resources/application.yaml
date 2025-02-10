@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    active: ollama
+  application:
+    name: deepseek-example
