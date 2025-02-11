@@ -4,6 +4,7 @@ import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionResponse;
+import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResult;
@@ -71,7 +72,6 @@ public abstract class OpenAiClient {
     }
 
 
-
     public SyncOrAsync<List<Float>> embedding(String input) {
         return embedding(new OpenAiClientContext(), input);
     }
@@ -99,6 +99,9 @@ public abstract class OpenAiClient {
         throw new UnsupportedOperationException();
     }
 
+    public ModelsResponse models() {
+        throw new UnsupportedOperationException();
+    }
 
     public abstract void shutdown();
 

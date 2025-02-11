@@ -144,7 +144,9 @@ class RequestLoggingInterceptor implements Interceptor {
     private static String getBody(Request request) {
         try {
             Buffer buffer = new Buffer();
-            request.body().writeTo(buffer);
+            if (request.body() != null) {
+                request.body().writeTo(buffer);
+            }
             return buffer.readUtf8();
         } catch (Exception e) {
             log.warn("Exception happened while reading request body", e);

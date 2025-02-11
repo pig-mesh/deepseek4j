@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: deepseek-example
+deepseek:
+  base-url: http://127.0.0.1:11434/v1
+  model: deepseek-r1:14b
+  api-key: ollama-local
+  log-level: info

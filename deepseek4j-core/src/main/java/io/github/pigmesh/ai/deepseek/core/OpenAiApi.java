@@ -4,6 +4,7 @@ import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionResponse;
+import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
 import retrofit2.Call;
@@ -51,5 +52,11 @@ interface OpenAiApi {
     Call<ModerationResponse> moderations(
             @HeaderMap Map<String, String> headers,
             @Body ModerationRequest request,
+            @Query("api-version") String apiVersion);
+
+    @GET("models")
+    @Headers("Content-Type: application/json")
+    Call<ModelsResponse> models(
+            @HeaderMap Map<String, String> headers,
             @Query("api-version") String apiVersion);
 }

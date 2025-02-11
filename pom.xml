@@ -40,6 +40,7 @@
     <modules>
         <module>deepseek4j-core</module>
         <module>deepseek-spring-boot-starter</module>
+        <module>deepseek4j-example</module>
     </modules>
 
     <profiles>
