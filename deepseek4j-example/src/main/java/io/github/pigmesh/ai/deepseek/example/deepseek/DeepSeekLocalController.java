@@ -16,18 +16,18 @@ import javax.annotation.Resource;
 @RequestMapping("/deepseek")
 public class DeepSeekLocalController {
 
-    @Resource
-    private DeepSeekClient deepSeekClient;
+	@Resource
+	private DeepSeekClient deepSeekClient;
 
-    @CrossOrigin("*")
-    @GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE + "; charset=UTF-8")
-    public Flux<ChatCompletionResponse> chat(String prompt) {
-        return deepSeekClient.chatFluxCompletion(prompt);
-    }
+	@CrossOrigin("*")
+	@GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE + "; charset=UTF-8")
+	public Flux<ChatCompletionResponse> chat(String prompt) {
+		return deepSeekClient.chatFluxCompletion(prompt);
+	}
 
-    @GetMapping(value = "/models", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ModelsResponse models() {
-        return deepSeekClient.models();
-    }
+	@GetMapping(value = "/models", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ModelsResponse models() {
+		return deepSeekClient.models();
+	}
 
 }
