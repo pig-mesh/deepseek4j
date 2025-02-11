@@ -19,7 +19,6 @@ public class DeepSeekLocalController {
 	@Resource
 	private DeepSeekClient deepSeekClient;
 
-	@CrossOrigin("*")
 	@GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE + "; charset=UTF-8")
 	public Flux<ChatCompletionResponse> chat(String prompt) {
 		return deepSeekClient.chatFluxCompletion(prompt);
