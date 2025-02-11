@@ -19,136 +19,139 @@ import static java.util.Collections.unmodifiableList;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class CompletionResponse {
 
-    @JsonProperty
-    private final String id;
-    @JsonProperty
-    private final Integer created;
-    @JsonProperty
-    private final String model;
-    @JsonProperty
-    private final List<CompletionChoice> choices;
-    @JsonProperty
-    private final Usage usage;
+	@JsonProperty
+	private final String id;
 
-    private CompletionResponse(Builder builder) {
-        this.id = builder.id;
-        this.created = builder.created;
-        this.model = builder.model;
-        this.choices = builder.choices;
-        this.usage = builder.usage;
-    }
+	@JsonProperty
+	private final Integer created;
 
-    public String id() {
-        return id;
-    }
+	@JsonProperty
+	private final String model;
 
-    public Integer created() {
-        return created;
-    }
+	@JsonProperty
+	private final List<CompletionChoice> choices;
 
-    public String model() {
-        return model;
-    }
+	@JsonProperty
+	private final Usage usage;
 
-    public List<CompletionChoice> choices() {
-        return choices;
-    }
+	private CompletionResponse(Builder builder) {
+		this.id = builder.id;
+		this.created = builder.created;
+		this.model = builder.model;
+		this.choices = builder.choices;
+		this.usage = builder.usage;
+	}
 
-    public Usage usage() {
-        return usage;
-    }
+	public String id() {
+		return id;
+	}
 
-    /**
-     * Convenience method to get the text from the first choice.
-     */
-    public String text() {
-        return choices().get(0).text();
-    }
+	public Integer created() {
+		return created;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof CompletionResponse
-                && equalTo((CompletionResponse) another);
-    }
+	public String model() {
+		return model;
+	}
 
-    private boolean equalTo(CompletionResponse another) {
-        return Objects.equals(id, another.id)
-                && Objects.equals(created, another.created)
-                && Objects.equals(model, another.model)
-                && Objects.equals(choices, another.choices)
-                && Objects.equals(usage, another.usage);
-    }
+	public List<CompletionChoice> choices() {
+		return choices;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(id);
-        h += (h << 5) + Objects.hashCode(created);
-        h += (h << 5) + Objects.hashCode(model);
-        h += (h << 5) + Objects.hashCode(choices);
-        h += (h << 5) + Objects.hashCode(usage);
-        return h;
-    }
+	public Usage usage() {
+		return usage;
+	}
 
-    @Override
-    public String toString() {
-        return "CompletionResponse{"
-                + "id=" + id
-                + ", created=" + created
-                + ", model=" + model
-                + ", choices=" + choices
-                + ", usage=" + usage
-                + "}";
-    }
+	/**
+	 * Convenience method to get the text from the first choice.
+	 */
+	public String text() {
+		return choices().get(0).text();
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof CompletionResponse && equalTo((CompletionResponse) another);
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	private boolean equalTo(CompletionResponse another) {
+		return Objects.equals(id, another.id) && Objects.equals(created, another.created)
+				&& Objects.equals(model, another.model) && Objects.equals(choices, another.choices)
+				&& Objects.equals(usage, another.usage);
+	}
 
-        private String id;
-        private Integer created;
-        private String model;
-        private List<CompletionChoice> choices;
-        private Usage usage;
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(id);
+		h += (h << 5) + Objects.hashCode(created);
+		h += (h << 5) + Objects.hashCode(model);
+		h += (h << 5) + Objects.hashCode(choices);
+		h += (h << 5) + Objects.hashCode(usage);
+		return h;
+	}
 
-        private Builder() {
-        }
+	@Override
+	public String toString() {
+		return "CompletionResponse{" + "id=" + id + ", created=" + created + ", model=" + model + ", choices=" + choices
+				+ ", usage=" + usage + "}";
+	}
 
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder created(Integer created) {
-            this.created = created;
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder model(String model) {
-            this.model = model;
-            return this;
-        }
+		private String id;
 
-        public Builder choices(List<CompletionChoice> choices) {
-            if (choices != null) {
-                this.choices = unmodifiableList(choices);
-            }
-            return this;
-        }
+		private Integer created;
 
-        public Builder usage(Usage usage) {
-            this.usage = usage;
-            return this;
-        }
+		private String model;
 
-        public CompletionResponse build() {
-            return new CompletionResponse(this);
-        }
-    }
+		private List<CompletionChoice> choices;
+
+		private Usage usage;
+
+		private Builder() {
+		}
+
+		public Builder id(String id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder created(Integer created) {
+			this.created = created;
+			return this;
+		}
+
+		public Builder model(String model) {
+			this.model = model;
+			return this;
+		}
+
+		public Builder choices(List<CompletionChoice> choices) {
+			if (choices != null) {
+				this.choices = unmodifiableList(choices);
+			}
+			return this;
+		}
+
+		public Builder usage(Usage usage) {
+			this.usage = usage;
+			return this;
+		}
+
+		public CompletionResponse build() {
+			return new CompletionResponse(this);
+		}
+
+	}
+
 }

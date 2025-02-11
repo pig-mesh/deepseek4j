@@ -21,166 +21,168 @@ import static java.util.Collections.unmodifiableList;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class AssistantMessage implements Message {
 
-    @JsonProperty
-    private final Role role = ASSISTANT;
-    @JsonProperty
-    private final String content;
-    @JsonProperty
-    private final String reasoningContent;
-    @JsonProperty
-    private final String name;
-    @JsonProperty
-    private final List<ToolCall> toolCalls;
-    @JsonProperty
-    private final Boolean refusal;
-    @JsonProperty
-    @Deprecated
-    private final FunctionCall functionCall;
+	@JsonProperty
+	private final Role role = ASSISTANT;
 
-    private AssistantMessage(Builder builder) {
-        this.content = builder.content;
-        this.reasoningContent = builder.reasoningContent;
-        this.name = builder.name;
-        this.toolCalls = builder.toolCalls;
-        this.refusal = builder.refusal;
-        this.functionCall = builder.functionCall;
-    }
+	@JsonProperty
+	private final String content;
 
-    public Role role() {
-        return role;
-    }
+	@JsonProperty
+	private final String reasoningContent;
 
-    public String content() {
-        return content;
-    }
+	@JsonProperty
+	private final String name;
 
-    public String name() {
-        return name;
-    }
+	@JsonProperty
+	private final List<ToolCall> toolCalls;
 
-    public String reasoningContent() {
-        return reasoningContent;
-    }
+	@JsonProperty
+	private final Boolean refusal;
 
-    public List<ToolCall> toolCalls() {
-        return toolCalls;
-    }
+	@JsonProperty
+	@Deprecated
+	private final FunctionCall functionCall;
 
-    public Boolean refusal() {
-        return refusal;
-    }
+	private AssistantMessage(Builder builder) {
+		this.content = builder.content;
+		this.reasoningContent = builder.reasoningContent;
+		this.name = builder.name;
+		this.toolCalls = builder.toolCalls;
+		this.refusal = builder.refusal;
+		this.functionCall = builder.functionCall;
+	}
 
-    @Deprecated
-    public FunctionCall functionCall() {
-        return functionCall;
-    }
+	public Role role() {
+		return role;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof AssistantMessage
-                && equalTo((AssistantMessage) another);
-    }
+	public String content() {
+		return content;
+	}
 
-    private boolean equalTo(AssistantMessage another) {
-        return Objects.equals(role, another.role)
-                && Objects.equals(content, another.content)
-                && Objects.equals(name, another.name)
-                && Objects.equals(toolCalls, another.toolCalls)
-                && Objects.equals(refusal, another.refusal)
-                && Objects.equals(functionCall, another.functionCall);
-    }
+	public String name() {
+		return name;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(role);
-        h += (h << 5) + Objects.hashCode(content);
-        h += (h << 5) + Objects.hashCode(name);
-        h += (h << 5) + Objects.hashCode(toolCalls);
-        h += (h << 5) + Objects.hashCode(refusal);
-        h += (h << 5) + Objects.hashCode(functionCall);
-        return h;
-    }
+	public String reasoningContent() {
+		return reasoningContent;
+	}
 
-    @Override
-    public String toString() {
-        return "AssistantMessage{"
-                + "role=" + role
-                + ", content=" + content
-                + ", name=" + name
-                + ", toolCalls=" + toolCalls
-                + ", refusal=" + refusal
-                + ", functionCall=" + functionCall
-                + "}";
-    }
+	public List<ToolCall> toolCalls() {
+		return toolCalls;
+	}
 
-    public static AssistantMessage from(String content) {
-        return AssistantMessage.builder()
-                .content(content)
-                .build();
-    }
+	public Boolean refusal() {
+		return refusal;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Deprecated
+	public FunctionCall functionCall() {
+		return functionCall;
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof AssistantMessage && equalTo((AssistantMessage) another);
+	}
 
-        private String content;
-        private String reasoningContent;
-        private String name;
-        private List<ToolCall> toolCalls;
-        private Boolean refusal;
-        @Deprecated
-        private FunctionCall functionCall;
+	private boolean equalTo(AssistantMessage another) {
+		return Objects.equals(role, another.role) && Objects.equals(content, another.content)
+				&& Objects.equals(name, another.name) && Objects.equals(toolCalls, another.toolCalls)
+				&& Objects.equals(refusal, another.refusal) && Objects.equals(functionCall, another.functionCall);
+	}
 
-        private Builder() {
-        }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(role);
+		h += (h << 5) + Objects.hashCode(content);
+		h += (h << 5) + Objects.hashCode(name);
+		h += (h << 5) + Objects.hashCode(toolCalls);
+		h += (h << 5) + Objects.hashCode(refusal);
+		h += (h << 5) + Objects.hashCode(functionCall);
+		return h;
+	}
 
-        public Builder content(String content) {
-            this.content = content;
-            return this;
-        }
+	@Override
+	public String toString() {
+		return "AssistantMessage{" + "role=" + role + ", content=" + content + ", name=" + name + ", toolCalls="
+				+ toolCalls + ", refusal=" + refusal + ", functionCall=" + functionCall + "}";
+	}
 
-        public Builder reasoningContent(String reasoningContent) {
-            this.reasoningContent = reasoningContent;
-            return this;
-        }
+	public static AssistantMessage from(String content) {
+		return AssistantMessage.builder().content(content).build();
+	}
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder toolCalls(ToolCall... toolCalls) {
-            return toolCalls(asList(toolCalls));
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        @JsonSetter
-        public Builder toolCalls(List<ToolCall> toolCalls) {
-            if (toolCalls != null) {
-                this.toolCalls = unmodifiableList(toolCalls);
-            }
-            return this;
-        }
+		private String content;
 
-        public Builder refusal(Boolean refusal) {
-            this.refusal = refusal;
-            return this;
-        }
+		private String reasoningContent;
 
-        @Deprecated
-        public Builder functionCall(FunctionCall functionCall) {
-            this.functionCall = functionCall;
-            return this;
-        }
+		private String name;
 
-        public AssistantMessage build() {
-            return new AssistantMessage(this);
-        }
-    }
+		private List<ToolCall> toolCalls;
+
+		private Boolean refusal;
+
+		@Deprecated
+		private FunctionCall functionCall;
+
+		private Builder() {
+		}
+
+		public Builder content(String content) {
+			this.content = content;
+			return this;
+		}
+
+		public Builder reasoningContent(String reasoningContent) {
+			this.reasoningContent = reasoningContent;
+			return this;
+		}
+
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder toolCalls(ToolCall... toolCalls) {
+			return toolCalls(asList(toolCalls));
+		}
+
+		@JsonSetter
+		public Builder toolCalls(List<ToolCall> toolCalls) {
+			if (toolCalls != null) {
+				this.toolCalls = unmodifiableList(toolCalls);
+			}
+			return this;
+		}
+
+		public Builder refusal(Boolean refusal) {
+			this.refusal = refusal;
+			return this;
+		}
+
+		@Deprecated
+		public Builder functionCall(FunctionCall functionCall) {
+			this.functionCall = functionCall;
+			return this;
+		}
+
+		public AssistantMessage build() {
+			return new AssistantMessage(this);
+		}
+
+	}
+
 }

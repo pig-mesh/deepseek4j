@@ -15,111 +15,113 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Function {
 
-    @JsonProperty
-    private final String name;
-    @JsonProperty
-    private final String description;
-    @JsonProperty
-    private final Boolean strict;
-    @JsonProperty
-    private final JsonObjectSchema parameters;
+	@JsonProperty
+	private final String name;
 
-    private Function(Builder builder) {
-        this.name = builder.name;
-        this.description = builder.description;
-        this.strict = builder.strict;
-        this.parameters = builder.parameters;
-    }
+	@JsonProperty
+	private final String description;
 
-    public String name() {
-        return name;
-    }
+	@JsonProperty
+	private final Boolean strict;
 
-    public String description() {
-        return description;
-    }
+	@JsonProperty
+	private final JsonObjectSchema parameters;
 
-    public Boolean strict() {
-        return strict;
-    }
+	private Function(Builder builder) {
+		this.name = builder.name;
+		this.description = builder.description;
+		this.strict = builder.strict;
+		this.parameters = builder.parameters;
+	}
 
-    public JsonObjectSchema parameters() {
-        return parameters;
-    }
+	public String name() {
+		return name;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof Function
-                && equalTo((Function) another);
-    }
+	public String description() {
+		return description;
+	}
 
-    private boolean equalTo(Function another) {
-        return Objects.equals(name, another.name)
-                && Objects.equals(description, another.description)
-                && Objects.equals(strict, another.strict)
-                && Objects.equals(parameters, another.parameters);
-    }
+	public Boolean strict() {
+		return strict;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(name);
-        h += (h << 5) + Objects.hashCode(description);
-        h += (h << 5) + Objects.hashCode(strict);
-        h += (h << 5) + Objects.hashCode(parameters);
-        return h;
-    }
+	public JsonObjectSchema parameters() {
+		return parameters;
+	}
 
-    @Override
-    public String toString() {
-        return "Function{"
-                + "name=" + name
-                + ", description=" + description
-                + ", strict=" + strict
-                + ", parameters=" + parameters
-                + "}";
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof Function && equalTo((Function) another);
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	private boolean equalTo(Function another) {
+		return Objects.equals(name, another.name) && Objects.equals(description, another.description)
+				&& Objects.equals(strict, another.strict) && Objects.equals(parameters, another.parameters);
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(name);
+		h += (h << 5) + Objects.hashCode(description);
+		h += (h << 5) + Objects.hashCode(strict);
+		h += (h << 5) + Objects.hashCode(parameters);
+		return h;
+	}
 
-        private String name;
-        private String description;
-        private Boolean strict;
-        private JsonObjectSchema parameters = JsonObjectSchema.builder().build();
+	@Override
+	public String toString() {
+		return "Function{" + "name=" + name + ", description=" + description + ", strict=" + strict + ", parameters="
+				+ parameters + "}";
+	}
 
-        private Builder() {
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
+		private String name;
 
-        public Builder strict(Boolean strict) {
-            this.strict = strict;
-            return this;
-        }
+		private String description;
 
-        public Builder parameters(JsonObjectSchema parameters) {
-            this.parameters = parameters;
-            return this;
-        }
+		private Boolean strict;
 
-        public Function build() {
-            return new Function(this);
-        }
-    }
+		private JsonObjectSchema parameters = JsonObjectSchema.builder().build();
+
+		private Builder() {
+		}
+
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Builder strict(Boolean strict) {
+			this.strict = strict;
+			return this;
+		}
+
+		public Builder parameters(JsonObjectSchema parameters) {
+			this.parameters = parameters;
+			return this;
+		}
+
+		public Function build() {
+			return new Function(this);
+		}
+
+	}
+
 }

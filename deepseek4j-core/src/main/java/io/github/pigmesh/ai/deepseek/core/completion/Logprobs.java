@@ -1,6 +1,5 @@
 package io.github.pigmesh.ai.deepseek.core.completion;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,124 +21,126 @@ import static java.util.Collections.unmodifiableMap;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class Logprobs {
 
-    @JsonProperty
-    private final List<String> tokens;
-    @JsonProperty
-    private final List<Double> tokenLogprobs;
-    @JsonProperty
-    private final List<Map<String, Double>> topLogprobs;
-    @JsonProperty
-    private final List<Integer> textOffset;
+	@JsonProperty
+	private final List<String> tokens;
 
-    private Logprobs(Builder builder) {
-        this.tokens = builder.tokens;
-        this.tokenLogprobs = builder.tokenLogprobs;
-        this.topLogprobs = builder.topLogprobs;
-        this.textOffset = builder.textOffset;
-    }
+	@JsonProperty
+	private final List<Double> tokenLogprobs;
 
-    public List<String> tokens() {
-        return tokens;
-    }
+	@JsonProperty
+	private final List<Map<String, Double>> topLogprobs;
 
-    public List<Double> tokenLogprobs() {
-        return tokenLogprobs;
-    }
+	@JsonProperty
+	private final List<Integer> textOffset;
 
-    public List<Map<String, Double>> topLogprobs() {
-        return topLogprobs;
-    }
+	private Logprobs(Builder builder) {
+		this.tokens = builder.tokens;
+		this.tokenLogprobs = builder.tokenLogprobs;
+		this.topLogprobs = builder.topLogprobs;
+		this.textOffset = builder.textOffset;
+	}
 
-    public List<Integer> textOffset() {
-        return textOffset;
-    }
+	public List<String> tokens() {
+		return tokens;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof Logprobs
-                && equalTo((Logprobs) another);
-    }
+	public List<Double> tokenLogprobs() {
+		return tokenLogprobs;
+	}
 
-    private boolean equalTo(Logprobs another) {
-        return Objects.equals(tokens, another.tokens)
-                && Objects.equals(tokenLogprobs, another.tokenLogprobs)
-                && Objects.equals(topLogprobs, another.topLogprobs)
-                && Objects.equals(textOffset, another.textOffset);
-    }
+	public List<Map<String, Double>> topLogprobs() {
+		return topLogprobs;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(tokens);
-        h += (h << 5) + Objects.hashCode(tokenLogprobs);
-        h += (h << 5) + Objects.hashCode(topLogprobs);
-        h += (h << 5) + Objects.hashCode(textOffset);
-        return h;
-    }
+	public List<Integer> textOffset() {
+		return textOffset;
+	}
 
-    @Override
-    public String toString() {
-        return "Logprobs{"
-                + "tokens=" + tokens
-                + ", tokenLogprobs=" + tokenLogprobs
-                + ", topLogprobs=" + topLogprobs
-                + ", textOffset=" + textOffset
-                + "}";
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof Logprobs && equalTo((Logprobs) another);
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	private boolean equalTo(Logprobs another) {
+		return Objects.equals(tokens, another.tokens) && Objects.equals(tokenLogprobs, another.tokenLogprobs)
+				&& Objects.equals(topLogprobs, another.topLogprobs) && Objects.equals(textOffset, another.textOffset);
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(tokens);
+		h += (h << 5) + Objects.hashCode(tokenLogprobs);
+		h += (h << 5) + Objects.hashCode(topLogprobs);
+		h += (h << 5) + Objects.hashCode(textOffset);
+		return h;
+	}
 
-        private List<String> tokens;
-        private List<Double> tokenLogprobs;
-        private List<Map<String, Double>> topLogprobs;
-        private List<Integer> textOffset;
+	@Override
+	public String toString() {
+		return "Logprobs{" + "tokens=" + tokens + ", tokenLogprobs=" + tokenLogprobs + ", topLogprobs=" + topLogprobs
+				+ ", textOffset=" + textOffset + "}";
+	}
 
-        private Builder() {
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder tokens(List<String> tokens) {
-            if (tokens != null) {
-                this.tokens = unmodifiableList(tokens);
-            }
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder tokenLogprobs(List<Double> tokenLogprobs) {
-            if (tokenLogprobs != null) {
-                this.tokenLogprobs = unmodifiableList(tokenLogprobs);
-            }
-            return this;
-        }
+		private List<String> tokens;
 
-        public Builder topLogprobs(List<Map<String, Double>> topLogprobs) {
-            if (topLogprobs != null) {
-                List<Map<String, Double>> topLogprobsCopy = new ArrayList<>();
-                for (Map<String, Double> map : topLogprobs) {
-                    topLogprobsCopy.add(unmodifiableMap(map));
-                }
-                this.topLogprobs = unmodifiableList(topLogprobsCopy);
-            }
+		private List<Double> tokenLogprobs;
 
-            return this;
-        }
+		private List<Map<String, Double>> topLogprobs;
 
-        public Builder textOffset(List<Integer> textOffset) {
-            if (textOffset != null) {
-                this.textOffset = unmodifiableList(textOffset);
-            }
-            return this;
-        }
+		private List<Integer> textOffset;
 
-        public Logprobs build() {
-            return new Logprobs(this);
-        }
-    }
+		private Builder() {
+		}
+
+		public Builder tokens(List<String> tokens) {
+			if (tokens != null) {
+				this.tokens = unmodifiableList(tokens);
+			}
+			return this;
+		}
+
+		public Builder tokenLogprobs(List<Double> tokenLogprobs) {
+			if (tokenLogprobs != null) {
+				this.tokenLogprobs = unmodifiableList(tokenLogprobs);
+			}
+			return this;
+		}
+
+		public Builder topLogprobs(List<Map<String, Double>> topLogprobs) {
+			if (topLogprobs != null) {
+				List<Map<String, Double>> topLogprobsCopy = new ArrayList<>();
+				for (Map<String, Double> map : topLogprobs) {
+					topLogprobsCopy.add(unmodifiableMap(map));
+				}
+				this.topLogprobs = unmodifiableList(topLogprobsCopy);
+			}
+
+			return this;
+		}
+
+		public Builder textOffset(List<Integer> textOffset) {
+			if (textOffset != null) {
+				this.textOffset = unmodifiableList(textOffset);
+			}
+			return this;
+		}
+
+		public Logprobs build() {
+			return new Logprobs(this);
+		}
+
+	}
+
 }

@@ -15,16 +15,17 @@ import javax.annotation.Resource;
 @RequestMapping("/ollama")
 public class OllamaLocalController {
 
-    @Resource
-    private DeepSeekClient deepSeekClient;
+	@Resource
+	private DeepSeekClient deepSeekClient;
 
-    @GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatCompletionResponse> chat(String prompt) {
-        return deepSeekClient.chatFluxCompletion(prompt);
-    }
+	@GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public Flux<ChatCompletionResponse> chat(String prompt) {
+		return deepSeekClient.chatFluxCompletion(prompt);
+	}
 
-    @GetMapping(value = "/models", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ModelsResponse models() {
-        return deepSeekClient.models();
-    }
+	@GetMapping(value = "/models", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ModelsResponse models() {
+		return deepSeekClient.models();
+	}
+
 }

@@ -18,97 +18,98 @@ import static java.util.Collections.unmodifiableList;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class ModerationResponse {
 
-    @JsonProperty
-    private final String id;
-    @JsonProperty
-    private final String model;
-    @JsonProperty
-    private final List<ModerationResult> results;
+	@JsonProperty
+	private final String id;
 
-    private ModerationResponse(Builder builder) {
-        this.id = builder.id;
-        this.model = builder.model;
-        this.results = builder.results;
-    }
+	@JsonProperty
+	private final String model;
 
-    public String id() {
-        return id;
-    }
+	@JsonProperty
+	private final List<ModerationResult> results;
 
-    public String model() {
-        return model;
-    }
+	private ModerationResponse(Builder builder) {
+		this.id = builder.id;
+		this.model = builder.model;
+		this.results = builder.results;
+	}
 
-    public List<ModerationResult> results() {
-        return results;
-    }
+	public String id() {
+		return id;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof ModerationResponse
-                && equalTo((ModerationResponse) another);
-    }
+	public String model() {
+		return model;
+	}
 
-    private boolean equalTo(ModerationResponse another) {
-        return Objects.equals(id, another.id)
-                && Objects.equals(model, another.model)
-                && Objects.equals(results, another.results);
-    }
+	public List<ModerationResult> results() {
+		return results;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(id);
-        h += (h << 5) + Objects.hashCode(model);
-        h += (h << 5) + Objects.hashCode(results);
-        return h;
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof ModerationResponse && equalTo((ModerationResponse) another);
+	}
 
-    @Override
-    public String toString() {
-        return "ModerationResponse{"
-                + "id=" + id
-                + ", model=" + model
-                + ", results=" + results
-                + "}";
-    }
+	private boolean equalTo(ModerationResponse another) {
+		return Objects.equals(id, another.id) && Objects.equals(model, another.model)
+				&& Objects.equals(results, another.results);
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(id);
+		h += (h << 5) + Objects.hashCode(model);
+		h += (h << 5) + Objects.hashCode(results);
+		return h;
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@Override
+	public String toString() {
+		return "ModerationResponse{" + "id=" + id + ", model=" + model + ", results=" + results + "}";
+	}
 
-        public String id;
-        public String model;
-        public List<ModerationResult> results;
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private Builder() {
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
+		public String id;
 
-        public Builder model(String model) {
-            this.model = model;
-            return this;
-        }
+		public String model;
 
-        public Builder results(List<ModerationResult> results) {
-            if (results != null) {
-                this.results = unmodifiableList(results);
-            }
-            return this;
-        }
+		public List<ModerationResult> results;
 
-        public ModerationResponse build() {
-            return new ModerationResponse(this);
-        }
-    }
+		private Builder() {
+		}
+
+		public Builder id(String id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder model(String model) {
+			this.model = model;
+			return this;
+		}
+
+		public Builder results(List<ModerationResult> results) {
+			if (results != null) {
+				this.results = unmodifiableList(results);
+			}
+			return this;
+		}
+
+		public ModerationResponse build() {
+			return new ModerationResponse(this);
+		}
+
+	}
+
 }

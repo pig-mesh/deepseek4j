@@ -27,54 +27,49 @@ import java.util.Objects;
 @EnableConfigurationProperties(DeepSeekProperties.class)
 public class DeepSeekAutoConfiguration {
 
-    @Value("classpath:/prompts/system.pt")
-    private Resource systemResource;
+	@Value("classpath:/prompts/system.pt")
+	private Resource systemResource;
 
+	/**
+	 * Deep Seek 客户端
+	 * @param deepSeekProperties Deep Seek 属性
+	 * @return {@link OpenAiClient }
+	 */
+	@SneakyThrows
+	@Bean
+	@ConditionalOnMissingBean
+	public DeepSeekClient deepSeekClient(DeepSeekProperties deepSeekProperties) {
 
+		DeepSeekClient.Builder builder = DeepSeekClient.builder().baseUrl(deepSeekProperties.getBaseUrl())
+				.model(deepSeekProperties.getModel()).openAiApiKey(deepSeekProperties.getApiKey())
+				.logRequests(deepSeekProperties.isLogRequests()).logResponses(deepSeekProperties.isLogResponses());
 
-    /**
-     * Deep Seek 客户端
-     *
-     * @param deepSeekProperties Deep Seek 属性
-     * @return {@link OpenAiClient }
-     */
-    @SneakyThrows
-    @Bean
-    @ConditionalOnMissingBean
-    public DeepSeekClient deepSeekClient(DeepSeekProperties deepSeekProperties) {
+		if (Objects.nonNull(deepSeekProperties.getProxy())) {
+			builder.proxy(deepSeekProperties.getProxy());
+		}
 
-        DeepSeekClient.Builder builder = DeepSeekClient.builder()
-                .baseUrl(deepSeekProperties.getBaseUrl())
-                .model(deepSeekProperties.getModel())
-                .openAiApiKey(deepSeekProperties.getApiKey())
-                .logRequests(deepSeekProperties.isLogRequests())
-                .logResponses(deepSeekProperties.isLogResponses());
+		if (Objects.nonNull(deepSeekProperties.getConnectTimeout())) {
+			builder.connectTimeout(Duration.ofSeconds(deepSeekProperties.getConnectTimeout()));
+		}
 
-        if (Objects.nonNull(deepSeekProperties.getProxy())) {
-            builder.proxy(deepSeekProperties.getProxy());
-        }
+		if (Objects.nonNull(deepSeekProperties.getReadTimeout())) {
+			builder.readTimeout(Duration.ofSeconds(deepSeekProperties.getReadTimeout()));
+		}
 
-        if (Objects.nonNull(deepSeekProperties.getConnectTimeout())) {
-            builder.connectTimeout(Duration.ofSeconds(deepSeekProperties.getConnectTimeout()));
-        }
+		if (Objects.nonNull(deepSeekProperties.getCallTimeout())) {
+			builder.callTimeout(Duration.ofSeconds(deepSeekProperties.getCallTimeout()));
+		}
 
-        if (Objects.nonNull(deepSeekProperties.getReadTimeout())) {
-            builder.readTimeout(Duration.ofSeconds(deepSeekProperties.getReadTimeout()));
-        }
+		builder.logLevel(deepSeekProperties.getLogLevel());
 
-        if (Objects.nonNull(deepSeekProperties.getCallTimeout())) {
-            builder.callTimeout(Duration.ofSeconds(deepSeekProperties.getCallTimeout()));
-        }
+		// 注入R1 提示词
+		if (deepSeekProperties.isDefaultSystemPrompt()) {
+			String systemMessage = StreamUtils.copyToString(systemResource.getInputStream(), StandardCharsets.UTF_8);
+			builder.systemMessage(systemMessage);
+		}
 
-        builder.logLevel(deepSeekProperties.getLogLevel());
+		builder.searchApiKey(deepSeekProperties.getSearchApiKey());
+		return builder.build();
+	}
 
-        // 注入R1 提示词
-        if (deepSeekProperties.isDefaultSystemPrompt()) {
-            String systemMessage = StreamUtils.copyToString(systemResource.getInputStream(), StandardCharsets.UTF_8);
-            builder.systemMessage(systemMessage);
-        }
-
-        builder.searchApiKey(deepSeekProperties.getSearchApiKey());
-        return builder.build();
-    }
 }

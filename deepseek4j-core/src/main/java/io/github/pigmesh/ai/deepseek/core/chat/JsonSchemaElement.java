@@ -9,14 +9,15 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public abstract class JsonSchemaElement {
 
-    @JsonProperty
-    private final String type;
+	@JsonProperty
+	private final String type;
 
-    protected JsonSchemaElement(String type) {
-        this.type = type;
-    }
+	protected JsonSchemaElement(String type) {
+		this.type = type;
+	}
 
-    public String type() {
-        return type;
-    }
+	public String type() {
+		return type;
+	}
+
 }

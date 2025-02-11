@@ -22,348 +22,360 @@ import static java.util.Collections.unmodifiableMap;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class CompletionRequest {
 
-    @JsonProperty
-    private final String model;
-    @JsonProperty
-    private final String prompt;
-    @JsonProperty
-    private final String suffix;
-    @JsonProperty
-    private final Integer maxTokens;
-    @JsonProperty
-    private final Double temperature;
-    @JsonProperty
-    private final Double topP;
-    @JsonProperty
-    private final Integer n;
-    @JsonProperty
-    private final Boolean stream;
-    @JsonProperty
-    private final StreamOptions streamOptions;
-    @JsonProperty
-    private final Integer logprobs;
-    @JsonProperty
-    private final Boolean echo;
-    @JsonProperty
-    private final List<String> stop;
-    @JsonProperty
-    private final Double presencePenalty;
-    @JsonProperty
-    private final Double frequencyPenalty;
-    @JsonProperty
-    private final Integer bestOf;
-    @JsonProperty
-    private final Map<String, Integer> logitBias;
-    @JsonProperty
-    private final String user;
+	@JsonProperty
+	private final String model;
 
-    private CompletionRequest(Builder builder) {
-        this.model = builder.model;
-        this.prompt = builder.prompt;
-        this.suffix = builder.suffix;
-        this.maxTokens = builder.maxTokens;
-        this.temperature = builder.temperature;
-        this.topP = builder.topP;
-        this.n = builder.n;
-        this.stream = builder.stream;
-        this.streamOptions = builder.streamOptions;
-        this.logprobs = builder.logprobs;
-        this.echo = builder.echo;
-        this.stop = builder.stop;
-        this.presencePenalty = builder.presencePenalty;
-        this.frequencyPenalty = builder.frequencyPenalty;
-        this.bestOf = builder.bestOf;
-        this.logitBias = builder.logitBias;
-        this.user = builder.user;
-    }
+	@JsonProperty
+	private final String prompt;
 
-    public String model() {
-        return model;
-    }
+	@JsonProperty
+	private final String suffix;
 
-    public String prompt() {
-        return prompt;
-    }
+	@JsonProperty
+	private final Integer maxTokens;
 
-    public String suffix() {
-        return suffix;
-    }
+	@JsonProperty
+	private final Double temperature;
 
-    public Integer maxTokens() {
-        return maxTokens;
-    }
+	@JsonProperty
+	private final Double topP;
 
-    public Double temperature() {
-        return temperature;
-    }
+	@JsonProperty
+	private final Integer n;
 
-    public Double topP() {
-        return topP;
-    }
+	@JsonProperty
+	private final Boolean stream;
 
-    public Integer n() {
-        return n;
-    }
+	@JsonProperty
+	private final StreamOptions streamOptions;
 
-    public Boolean stream() {
-        return stream;
-    }
+	@JsonProperty
+	private final Integer logprobs;
 
-    public StreamOptions streamOptions() {
-        return streamOptions;
-    }
+	@JsonProperty
+	private final Boolean echo;
 
-    public Integer logprobs() {
-        return logprobs;
-    }
+	@JsonProperty
+	private final List<String> stop;
 
-    public Boolean echo() {
-        return echo;
-    }
+	@JsonProperty
+	private final Double presencePenalty;
 
-    public List<String> stop() {
-        return stop;
-    }
+	@JsonProperty
+	private final Double frequencyPenalty;
 
-    public Double presencePenalty() {
-        return presencePenalty;
-    }
+	@JsonProperty
+	private final Integer bestOf;
 
-    public Double frequencyPenalty() {
-        return frequencyPenalty;
-    }
+	@JsonProperty
+	private final Map<String, Integer> logitBias;
 
-    public Integer bestOf() {
-        return bestOf;
-    }
+	@JsonProperty
+	private final String user;
 
-    public Map<String, Integer> logitBias() {
-        return logitBias;
-    }
+	private CompletionRequest(Builder builder) {
+		this.model = builder.model;
+		this.prompt = builder.prompt;
+		this.suffix = builder.suffix;
+		this.maxTokens = builder.maxTokens;
+		this.temperature = builder.temperature;
+		this.topP = builder.topP;
+		this.n = builder.n;
+		this.stream = builder.stream;
+		this.streamOptions = builder.streamOptions;
+		this.logprobs = builder.logprobs;
+		this.echo = builder.echo;
+		this.stop = builder.stop;
+		this.presencePenalty = builder.presencePenalty;
+		this.frequencyPenalty = builder.frequencyPenalty;
+		this.bestOf = builder.bestOf;
+		this.logitBias = builder.logitBias;
+		this.user = builder.user;
+	}
 
-    public String user() {
-        return user;
-    }
+	public String model() {
+		return model;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof CompletionRequest
-                && equalTo((CompletionRequest) another);
-    }
+	public String prompt() {
+		return prompt;
+	}
 
-    private boolean equalTo(CompletionRequest another) {
-        return Objects.equals(model, another.model)
-                && Objects.equals(prompt, another.prompt)
-                && Objects.equals(suffix, another.suffix)
-                && Objects.equals(maxTokens, another.maxTokens)
-                && Objects.equals(temperature, another.temperature)
-                && Objects.equals(topP, another.topP)
-                && Objects.equals(n, another.n)
-                && Objects.equals(stream, another.stream)
-                && Objects.equals(streamOptions, another.streamOptions)
-                && Objects.equals(logprobs, another.logprobs)
-                && Objects.equals(echo, another.echo)
-                && Objects.equals(stop, another.stop)
-                && Objects.equals(presencePenalty, another.presencePenalty)
-                && Objects.equals(frequencyPenalty, another.frequencyPenalty)
-                && Objects.equals(bestOf, another.bestOf)
-                && Objects.equals(logitBias, another.logitBias)
-                && Objects.equals(user, another.user);
-    }
+	public String suffix() {
+		return suffix;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(model);
-        h += (h << 5) + Objects.hashCode(prompt);
-        h += (h << 5) + Objects.hashCode(suffix);
-        h += (h << 5) + Objects.hashCode(maxTokens);
-        h += (h << 5) + Objects.hashCode(temperature);
-        h += (h << 5) + Objects.hashCode(topP);
-        h += (h << 5) + Objects.hashCode(n);
-        h += (h << 5) + Objects.hashCode(stream);
-        h += (h << 5) + Objects.hashCode(streamOptions);
-        h += (h << 5) + Objects.hashCode(logprobs);
-        h += (h << 5) + Objects.hashCode(echo);
-        h += (h << 5) + Objects.hashCode(stop);
-        h += (h << 5) + Objects.hashCode(presencePenalty);
-        h += (h << 5) + Objects.hashCode(frequencyPenalty);
-        h += (h << 5) + Objects.hashCode(bestOf);
-        h += (h << 5) + Objects.hashCode(logitBias);
-        h += (h << 5) + Objects.hashCode(user);
-        return h;
-    }
+	public Integer maxTokens() {
+		return maxTokens;
+	}
 
-    @Override
-    public String toString() {
-        return "CompletionRequest{"
-                + "model=" + model
-                + ", prompt=" + prompt
-                + ", suffix=" + suffix
-                + ", maxTokens=" + maxTokens
-                + ", temperature=" + temperature
-                + ", topP=" + topP
-                + ", n=" + n
-                + ", stream=" + stream
-                + ", streamOptions=" + streamOptions
-                + ", logprobs=" + logprobs
-                + ", echo=" + echo
-                + ", stop=" + stop
-                + ", presencePenalty=" + presencePenalty
-                + ", frequencyPenalty=" + frequencyPenalty
-                + ", bestOf=" + bestOf
-                + ", logitBias=" + logitBias
-                + ", user=" + user
-                + "}";
-    }
+	public Double temperature() {
+		return temperature;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	public Double topP() {
+		return topP;
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	public Integer n() {
+		return n;
+	}
 
-        private String model = GPT_3_5_TURBO_INSTRUCT.toString();
-        private String prompt;
-        private String suffix;
-        private Integer maxTokens;
-        private Double temperature;
-        private Double topP;
-        private Integer n;
-        private Boolean stream;
-        private StreamOptions streamOptions;
-        private Integer logprobs;
-        private Boolean echo;
-        private List<String> stop;
-        private Double presencePenalty;
-        private Double frequencyPenalty;
-        private Integer bestOf;
-        private Map<String, Integer> logitBias;
-        private String user;
+	public Boolean stream() {
+		return stream;
+	}
 
-        private Builder() {
-        }
+	public StreamOptions streamOptions() {
+		return streamOptions;
+	}
 
-        public Builder from(CompletionRequest request) {
-            model(request.model);
-            prompt(request.prompt);
-            suffix(request.suffix);
-            maxTokens(request.maxTokens);
-            temperature(request.temperature);
-            topP(request.topP);
-            n(request.n);
-            stream(request.stream);
-            streamOptions(request.streamOptions);
-            logprobs(request.logprobs);
-            echo(request.echo);
-            stop(request.stop);
-            presencePenalty(request.presencePenalty);
-            frequencyPenalty(request.frequencyPenalty);
-            bestOf(request.bestOf);
-            logitBias(request.logitBias);
-            user(request.user);
-            return this;
-        }
+	public Integer logprobs() {
+		return logprobs;
+	}
 
-        public Builder model(CompletionModel model) {
-            return model(model.toString());
-        }
+	public Boolean echo() {
+		return echo;
+	}
 
-        public Builder model(String model) {
-            this.model = model;
-            return this;
-        }
+	public List<String> stop() {
+		return stop;
+	}
 
-        public Builder prompt(String prompt) {
-            this.prompt = prompt;
-            return this;
-        }
+	public Double presencePenalty() {
+		return presencePenalty;
+	}
 
-        public Builder suffix(String suffix) {
-            this.suffix = suffix;
-            return this;
-        }
+	public Double frequencyPenalty() {
+		return frequencyPenalty;
+	}
 
-        public Builder maxTokens(Integer maxTokens) {
-            this.maxTokens = maxTokens;
-            return this;
-        }
+	public Integer bestOf() {
+		return bestOf;
+	}
 
-        public Builder temperature(Double temperature) {
-            this.temperature = temperature;
-            return this;
-        }
+	public Map<String, Integer> logitBias() {
+		return logitBias;
+	}
 
-        public Builder topP(Double topP) {
-            this.topP = topP;
-            return this;
-        }
+	public String user() {
+		return user;
+	}
 
-        public Builder n(Integer n) {
-            this.n = n;
-            return this;
-        }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof CompletionRequest && equalTo((CompletionRequest) another);
+	}
 
-        public Builder stream(Boolean stream) {
-            this.stream = stream;
-            return this;
-        }
+	private boolean equalTo(CompletionRequest another) {
+		return Objects.equals(model, another.model) && Objects.equals(prompt, another.prompt)
+				&& Objects.equals(suffix, another.suffix) && Objects.equals(maxTokens, another.maxTokens)
+				&& Objects.equals(temperature, another.temperature) && Objects.equals(topP, another.topP)
+				&& Objects.equals(n, another.n) && Objects.equals(stream, another.stream)
+				&& Objects.equals(streamOptions, another.streamOptions) && Objects.equals(logprobs, another.logprobs)
+				&& Objects.equals(echo, another.echo) && Objects.equals(stop, another.stop)
+				&& Objects.equals(presencePenalty, another.presencePenalty)
+				&& Objects.equals(frequencyPenalty, another.frequencyPenalty) && Objects.equals(bestOf, another.bestOf)
+				&& Objects.equals(logitBias, another.logitBias) && Objects.equals(user, another.user);
+	}
 
-        public Builder streamOptions(StreamOptions streamOptions) {
-            this.streamOptions = streamOptions;
-            return this;
-        }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(model);
+		h += (h << 5) + Objects.hashCode(prompt);
+		h += (h << 5) + Objects.hashCode(suffix);
+		h += (h << 5) + Objects.hashCode(maxTokens);
+		h += (h << 5) + Objects.hashCode(temperature);
+		h += (h << 5) + Objects.hashCode(topP);
+		h += (h << 5) + Objects.hashCode(n);
+		h += (h << 5) + Objects.hashCode(stream);
+		h += (h << 5) + Objects.hashCode(streamOptions);
+		h += (h << 5) + Objects.hashCode(logprobs);
+		h += (h << 5) + Objects.hashCode(echo);
+		h += (h << 5) + Objects.hashCode(stop);
+		h += (h << 5) + Objects.hashCode(presencePenalty);
+		h += (h << 5) + Objects.hashCode(frequencyPenalty);
+		h += (h << 5) + Objects.hashCode(bestOf);
+		h += (h << 5) + Objects.hashCode(logitBias);
+		h += (h << 5) + Objects.hashCode(user);
+		return h;
+	}
 
-        public Builder logprobs(Integer logprobs) {
-            this.logprobs = logprobs;
-            return this;
-        }
+	@Override
+	public String toString() {
+		return "CompletionRequest{" + "model=" + model + ", prompt=" + prompt + ", suffix=" + suffix + ", maxTokens="
+				+ maxTokens + ", temperature=" + temperature + ", topP=" + topP + ", n=" + n + ", stream=" + stream
+				+ ", streamOptions=" + streamOptions + ", logprobs=" + logprobs + ", echo=" + echo + ", stop=" + stop
+				+ ", presencePenalty=" + presencePenalty + ", frequencyPenalty=" + frequencyPenalty + ", bestOf="
+				+ bestOf + ", logitBias=" + logitBias + ", user=" + user + "}";
+	}
 
-        public Builder echo(Boolean echo) {
-            this.echo = echo;
-            return this;
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder stop(List<String> stop) {
-            if (stop != null) {
-                this.stop = unmodifiableList(stop);
-            }
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder presencePenalty(Double presencePenalty) {
-            this.presencePenalty = presencePenalty;
-            return this;
-        }
+		private String model = GPT_3_5_TURBO_INSTRUCT.toString();
 
-        public Builder frequencyPenalty(Double frequencyPenalty) {
-            this.frequencyPenalty = frequencyPenalty;
-            return this;
-        }
+		private String prompt;
 
-        public Builder bestOf(Integer bestOf) {
-            this.bestOf = bestOf;
-            return this;
-        }
+		private String suffix;
 
-        public Builder logitBias(Map<String, Integer> logitBias) {
-            if (logitBias != null) {
-                this.logitBias = unmodifiableMap(logitBias);
-            }
-            return this;
-        }
+		private Integer maxTokens;
 
-        public Builder user(String user) {
-            this.user = user;
-            return this;
-        }
+		private Double temperature;
 
-        public CompletionRequest build() {
-            return new CompletionRequest(this);
-        }
-    }
+		private Double topP;
+
+		private Integer n;
+
+		private Boolean stream;
+
+		private StreamOptions streamOptions;
+
+		private Integer logprobs;
+
+		private Boolean echo;
+
+		private List<String> stop;
+
+		private Double presencePenalty;
+
+		private Double frequencyPenalty;
+
+		private Integer bestOf;
+
+		private Map<String, Integer> logitBias;
+
+		private String user;
+
+		private Builder() {
+		}
+
+		public Builder from(CompletionRequest request) {
+			model(request.model);
+			prompt(request.prompt);
+			suffix(request.suffix);
+			maxTokens(request.maxTokens);
+			temperature(request.temperature);
+			topP(request.topP);
+			n(request.n);
+			stream(request.stream);
+			streamOptions(request.streamOptions);
+			logprobs(request.logprobs);
+			echo(request.echo);
+			stop(request.stop);
+			presencePenalty(request.presencePenalty);
+			frequencyPenalty(request.frequencyPenalty);
+			bestOf(request.bestOf);
+			logitBias(request.logitBias);
+			user(request.user);
+			return this;
+		}
+
+		public Builder model(CompletionModel model) {
+			return model(model.toString());
+		}
+
+		public Builder model(String model) {
+			this.model = model;
+			return this;
+		}
+
+		public Builder prompt(String prompt) {
+			this.prompt = prompt;
+			return this;
+		}
+
+		public Builder suffix(String suffix) {
+			this.suffix = suffix;
+			return this;
+		}
+
+		public Builder maxTokens(Integer maxTokens) {
+			this.maxTokens = maxTokens;
+			return this;
+		}
+
+		public Builder temperature(Double temperature) {
+			this.temperature = temperature;
+			return this;
+		}
+
+		public Builder topP(Double topP) {
+			this.topP = topP;
+			return this;
+		}
+
+		public Builder n(Integer n) {
+			this.n = n;
+			return this;
+		}
+
+		public Builder stream(Boolean stream) {
+			this.stream = stream;
+			return this;
+		}
+
+		public Builder streamOptions(StreamOptions streamOptions) {
+			this.streamOptions = streamOptions;
+			return this;
+		}
+
+		public Builder logprobs(Integer logprobs) {
+			this.logprobs = logprobs;
+			return this;
+		}
+
+		public Builder echo(Boolean echo) {
+			this.echo = echo;
+			return this;
+		}
+
+		public Builder stop(List<String> stop) {
+			if (stop != null) {
+				this.stop = unmodifiableList(stop);
+			}
+			return this;
+		}
+
+		public Builder presencePenalty(Double presencePenalty) {
+			this.presencePenalty = presencePenalty;
+			return this;
+		}
+
+		public Builder frequencyPenalty(Double frequencyPenalty) {
+			this.frequencyPenalty = frequencyPenalty;
+			return this;
+		}
+
+		public Builder bestOf(Integer bestOf) {
+			this.bestOf = bestOf;
+			return this;
+		}
+
+		public Builder logitBias(Map<String, Integer> logitBias) {
+			if (logitBias != null) {
+				this.logitBias = unmodifiableMap(logitBias);
+			}
+			return this;
+		}
+
+		public Builder user(String user) {
+			this.user = user;
+			return this;
+		}
+
+		public CompletionRequest build() {
+			return new CompletionRequest(this);
+		}
+
+	}
+
 }

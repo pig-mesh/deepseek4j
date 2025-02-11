@@ -17,77 +17,75 @@ import static io.github.pigmesh.ai.deepseek.core.chat.ToolType.FUNCTION;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Tool {
 
-    @JsonProperty
-    private final ToolType type = FUNCTION;
-    @JsonProperty
-    private final Function function;
+	@JsonProperty
+	private final ToolType type = FUNCTION;
 
-    private Tool(Builder builder) {
-        this.function = builder.function;
-    }
+	@JsonProperty
+	private final Function function;
 
-    public ToolType type() {
-        return this.type;
-    }
+	private Tool(Builder builder) {
+		this.function = builder.function;
+	}
 
-    public Function function() {
-        return this.function;
-    }
+	public ToolType type() {
+		return this.type;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof Tool
-                && equalTo((Tool) another);
-    }
+	public Function function() {
+		return this.function;
+	}
 
-    private boolean equalTo(Tool another) {
-        return Objects.equals(type, another.type)
-                && Objects.equals(function, another.function);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof Tool && equalTo((Tool) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(type);
-        h += (h << 5) + Objects.hashCode(function);
-        return h;
-    }
+	private boolean equalTo(Tool another) {
+		return Objects.equals(type, another.type) && Objects.equals(function, another.function);
+	}
 
-    @Override
-    public String toString() {
-        return "Tool{"
-                + "type=" + type
-                + ", function=" + function
-                + "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(type);
+		h += (h << 5) + Objects.hashCode(function);
+		return h;
+	}
 
-    public static Tool from(Function function) {
-        return new Builder()
-                .function(function)
-                .build();
-    }
+	@Override
+	public String toString() {
+		return "Tool{" + "type=" + type + ", function=" + function + "}";
+	}
 
-    public static Tool.Builder builder() {
-        return new Tool.Builder();
-    }
+	public static Tool from(Function function) {
+		return new Builder().function(function).build();
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
-        private Function function;
+	public static Tool.Builder builder() {
+		return new Tool.Builder();
+	}
 
-        private Builder() {
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Tool.Builder function(Function function) {
-            this.function = function;
-            return this;
-        }
+		private Function function;
 
-        public Tool build() {
-            return new Tool(this);
-        }
-    }
+		private Builder() {
+		}
+
+		public Tool.Builder function(Function function) {
+			this.function = function;
+			return this;
+		}
+
+		public Tool build() {
+			return new Tool(this);
+		}
+
+	}
+
 }

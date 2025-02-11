@@ -18,46 +18,47 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ModelsResponse {
 
-    @JsonProperty("object")
-    private String object;
+	@JsonProperty("object")
+	private String object;
 
-    @JsonProperty("data")
-    private List<Model> data;
+	@JsonProperty("data")
+	private List<Model> data;
 
-    public ModelsResponse(Builder builder) {
-        this.object = builder.object;
-        this.data = builder.data;
-    }
+	public ModelsResponse(Builder builder) {
+		this.object = builder.object;
+		this.data = builder.data;
+	}
 
-    public static ModelsResponse.Builder builder() {
-        return new ModelsResponse.Builder();
-    }
+	public static ModelsResponse.Builder builder() {
+		return new ModelsResponse.Builder();
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        private String object; // 这里可能会与 Java 的 Object 冲突，可能需要重命名
+		private String object; // 这里可能会与 Java 的 Object 冲突，可能需要重命名
 
-        private List<Model> data;
+		private List<Model> data;
 
-        private Builder() {
-        }
+		private Builder() {
+		}
 
-        public ModelsResponse.Builder object(String object) {
-            this.object = object;
-            return this;
-        }
+		public ModelsResponse.Builder object(String object) {
+			this.object = object;
+			return this;
+		}
 
+		public ModelsResponse.Builder data(List<Model> data) {
+			this.data = data;
+			return this;
+		}
 
-        public ModelsResponse.Builder data(List<Model> data) {
-            this.data = data;
-            return this;
-        }
+		public ModelsResponse build() {
+			return new ModelsResponse(this);
+		}
 
-        public ModelsResponse build() {
-            return new ModelsResponse(this);
-        }
-    }
+	}
+
 }

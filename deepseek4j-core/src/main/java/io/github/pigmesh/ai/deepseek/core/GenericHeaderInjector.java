@@ -10,20 +10,21 @@ import okhttp3.Request.Builder;
 import okhttp3.Response;
 
 class GenericHeaderInjector implements Interceptor {
-    private final Map<String, String> headers = new HashMap<>();
 
-    GenericHeaderInjector(Map<String, String> headers) {
-        Optional.ofNullable(headers)
-            .ifPresent(this.headers::putAll);
-    }
+	private final Map<String, String> headers = new HashMap<>();
 
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        Builder builder = chain.request().newBuilder();
+	GenericHeaderInjector(Map<String, String> headers) {
+		Optional.ofNullable(headers).ifPresent(this.headers::putAll);
+	}
 
-        // Add headers
-        this.headers.forEach(builder::addHeader);
+	@Override
+	public Response intercept(Chain chain) throws IOException {
+		Builder builder = chain.request().newBuilder();
 
-        return chain.proceed(builder.build());
-    }
+		// Add headers
+		this.headers.forEach(builder::addHeader);
+
+		return chain.proceed(builder.build());
+	}
+
 }

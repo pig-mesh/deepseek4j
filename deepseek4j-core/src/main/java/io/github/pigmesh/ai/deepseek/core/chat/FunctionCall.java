@@ -15,79 +15,79 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class FunctionCall {
 
-    @JsonProperty
-    private final String name;
-    @JsonProperty
-    private final String arguments;
+	@JsonProperty
+	private final String name;
 
-    private FunctionCall(Builder builder) {
-        this.name = builder.name;
-        this.arguments = builder.arguments;
-    }
+	@JsonProperty
+	private final String arguments;
 
-    public String name() {
-        return name;
-    }
+	private FunctionCall(Builder builder) {
+		this.name = builder.name;
+		this.arguments = builder.arguments;
+	}
 
-    public String arguments() {
-        return arguments;
-    }
+	public String name() {
+		return name;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof FunctionCall
-                && equalTo((FunctionCall) another);
-    }
+	public String arguments() {
+		return arguments;
+	}
 
-    private boolean equalTo(FunctionCall another) {
-        return Objects.equals(name, another.name)
-                && Objects.equals(arguments, another.arguments);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof FunctionCall && equalTo((FunctionCall) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(name);
-        h += (h << 5) + Objects.hashCode(arguments);
-        return h;
-    }
+	private boolean equalTo(FunctionCall another) {
+		return Objects.equals(name, another.name) && Objects.equals(arguments, another.arguments);
+	}
 
-    @Override
-    public String toString() {
-        return "FunctionCall{"
-                + "name=" + name
-                + ", arguments=" + arguments
-                + "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(name);
+		h += (h << 5) + Objects.hashCode(arguments);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "FunctionCall{" + "name=" + name + ", arguments=" + arguments + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private String name;
-        private String arguments;
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        private Builder() {
-        }
+		private String name;
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
+		private String arguments;
 
-        public Builder arguments(String arguments) {
-            this.arguments = arguments;
-            return this;
-        }
+		private Builder() {
+		}
 
-        public FunctionCall build() {
-            return new FunctionCall(this);
-        }
-    }
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder arguments(String arguments) {
+			this.arguments = arguments;
+			return this;
+		}
+
+		public FunctionCall build() {
+			return new FunctionCall(this);
+		}
+
+	}
+
 }

@@ -7,74 +7,69 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class RequestExecutor<Request, Response, ResponseContent>
-        implements SyncOrAsyncOrStreaming<ResponseContent> {
+public class RequestExecutor<Request, Response, ResponseContent> implements SyncOrAsyncOrStreaming<ResponseContent> {
 
-    private final Call<Response> call;
-    private final Function<Response, ResponseContent> responseContentExtractor;
+	private final Call<Response> call;
 
-    private final OkHttpClient okHttpClient;
-    private final String endpointUrl;
-    private final Supplier<Request> requestWithStreamSupplier;
-    private final Class<Response> responseClass;
-    private final Function<Response, ResponseContent> streamEventContentExtractor;
-    private final boolean logStreamingResponses;
+	private final Function<Response, ResponseContent> responseContentExtractor;
 
-    RequestExecutor(Call<Response> call,
-                    Function<Response, ResponseContent> responseContentExtractor,
+	private final OkHttpClient okHttpClient;
 
-                    OkHttpClient okHttpClient,
-                    String endpointUrl,
-                    Supplier<Request> requestWithStreamSupplier,
-                    Class<Response> responseClass,
-                    Function<Response, ResponseContent> streamEventContentExtractor,
-                    boolean logStreamingResponses
-    ) {
-        this.call = call;
-        this.responseContentExtractor = responseContentExtractor;
+	private final String endpointUrl;
 
-        this.okHttpClient = okHttpClient;
-        this.endpointUrl = endpointUrl;
-        this.requestWithStreamSupplier = requestWithStreamSupplier;
-        this.responseClass = responseClass;
-        this.streamEventContentExtractor = streamEventContentExtractor;
-        this.logStreamingResponses = logStreamingResponses;
-    }
+	private final Supplier<Request> requestWithStreamSupplier;
 
-    public RequestExecutor(Call<Response> call, Function<Response, ResponseContent> responseContentExtractor) {
-        this.call = call;
-        this.responseContentExtractor = responseContentExtractor;
+	private final Class<Response> responseClass;
 
-        this.okHttpClient = null;
-        this.endpointUrl = null;
-        this.requestWithStreamSupplier = null;
-        this.responseClass = null;
-        this.streamEventContentExtractor = null;
-        this.logStreamingResponses = false;
-    }
+	private final Function<Response, ResponseContent> streamEventContentExtractor;
 
-    @Override
-    public ResponseContent execute() {
+	private final boolean logStreamingResponses;
 
-        return new SyncRequestExecutor<>(call, responseContentExtractor).execute();
-    }
+	RequestExecutor(Call<Response> call, Function<Response, ResponseContent> responseContentExtractor,
 
-    @Override
-    public AsyncResponseHandling onResponse(Consumer<ResponseContent> responseHandler) {
+			OkHttpClient okHttpClient, String endpointUrl, Supplier<Request> requestWithStreamSupplier,
+			Class<Response> responseClass, Function<Response, ResponseContent> streamEventContentExtractor,
+			boolean logStreamingResponses) {
+		this.call = call;
+		this.responseContentExtractor = responseContentExtractor;
 
-        return new AsyncRequestExecutor<>(call, responseContentExtractor).onResponse(responseHandler);
-    }
+		this.okHttpClient = okHttpClient;
+		this.endpointUrl = endpointUrl;
+		this.requestWithStreamSupplier = requestWithStreamSupplier;
+		this.responseClass = responseClass;
+		this.streamEventContentExtractor = streamEventContentExtractor;
+		this.logStreamingResponses = logStreamingResponses;
+	}
 
-    @Override
-    public StreamingResponseHandling onPartialResponse(Consumer<ResponseContent> partialResponseHandler) {
+	public RequestExecutor(Call<Response> call, Function<Response, ResponseContent> responseContentExtractor) {
+		this.call = call;
+		this.responseContentExtractor = responseContentExtractor;
 
-        return new StreamingRequestExecutor<>(
-                okHttpClient,
-                endpointUrl,
-                requestWithStreamSupplier,
-                responseClass,
-                streamEventContentExtractor,
-                logStreamingResponses
-        ).onPartialResponse(partialResponseHandler);
-    }
+		this.okHttpClient = null;
+		this.endpointUrl = null;
+		this.requestWithStreamSupplier = null;
+		this.responseClass = null;
+		this.streamEventContentExtractor = null;
+		this.logStreamingResponses = false;
+	}
+
+	@Override
+	public ResponseContent execute() {
+
+		return new SyncRequestExecutor<>(call, responseContentExtractor).execute();
+	}
+
+	@Override
+	public AsyncResponseHandling onResponse(Consumer<ResponseContent> responseHandler) {
+
+		return new AsyncRequestExecutor<>(call, responseContentExtractor).onResponse(responseHandler);
+	}
+
+	@Override
+	public StreamingResponseHandling onPartialResponse(Consumer<ResponseContent> partialResponseHandler) {
+
+		return new StreamingRequestExecutor<>(okHttpClient, endpointUrl, requestWithStreamSupplier, responseClass,
+				streamEventContentExtractor, logStreamingResponses).onPartialResponse(partialResponseHandler);
+	}
+
 }

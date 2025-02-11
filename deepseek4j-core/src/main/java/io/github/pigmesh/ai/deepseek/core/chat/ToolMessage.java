@@ -17,95 +17,92 @@ import static io.github.pigmesh.ai.deepseek.core.chat.Role.TOOL;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class ToolMessage implements Message {
 
-    @JsonProperty
-    private final Role role = TOOL;
-    @JsonProperty
-    private final String toolCallId;
-    @JsonProperty
-    private final String content;
+	@JsonProperty
+	private final Role role = TOOL;
 
-    private ToolMessage(Builder builder) {
-        this.toolCallId = builder.toolCallId;
-        this.content = builder.content;
-    }
+	@JsonProperty
+	private final String toolCallId;
 
-    public Role role() {
-        return role;
-    }
+	@JsonProperty
+	private final String content;
 
-    public String toolCallId() {
-        return toolCallId;
-    }
+	private ToolMessage(Builder builder) {
+		this.toolCallId = builder.toolCallId;
+		this.content = builder.content;
+	}
 
-    public String content() {
-        return content;
-    }
+	public Role role() {
+		return role;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof ToolMessage
-                && equalTo((ToolMessage) another);
-    }
+	public String toolCallId() {
+		return toolCallId;
+	}
 
-    private boolean equalTo(ToolMessage another) {
-        return Objects.equals(role, another.role)
-                && Objects.equals(toolCallId, another.toolCallId)
-                && Objects.equals(content, another.content);
-    }
+	public String content() {
+		return content;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(role);
-        h += (h << 5) + Objects.hashCode(toolCallId);
-        h += (h << 5) + Objects.hashCode(content);
-        return h;
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof ToolMessage && equalTo((ToolMessage) another);
+	}
 
-    @Override
-    public String toString() {
-        return "ToolMessage{"
-                + "role=" + role
-                + ", toolCallId=" + toolCallId
-                + ", content=" + content
-                + "}";
-    }
+	private boolean equalTo(ToolMessage another) {
+		return Objects.equals(role, another.role) && Objects.equals(toolCallId, another.toolCallId)
+				&& Objects.equals(content, another.content);
+	}
 
-    public static ToolMessage from(String toolCallId, String content) {
-        return ToolMessage.builder()
-                .toolCallId(toolCallId)
-                .content(content)
-                .build();
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(role);
+		h += (h << 5) + Objects.hashCode(toolCallId);
+		h += (h << 5) + Objects.hashCode(content);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "ToolMessage{" + "role=" + role + ", toolCallId=" + toolCallId + ", content=" + content + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	public static ToolMessage from(String toolCallId, String content) {
+		return ToolMessage.builder().toolCallId(toolCallId).content(content).build();
+	}
 
-        private String toolCallId;
-        private String content;
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private Builder() {
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder toolCallId(String toolCallId) {
-            this.toolCallId = toolCallId;
-            return this;
-        }
+		private String toolCallId;
 
-        public Builder content(String content) {
-            this.content = content;
-            return this;
-        }
+		private String content;
 
-        public ToolMessage build() {
-            return new ToolMessage(this);
-        }
-    }
+		private Builder() {
+		}
+
+		public Builder toolCallId(String toolCallId) {
+			this.toolCallId = toolCallId;
+			return this;
+		}
+
+		public Builder content(String content) {
+			this.content = content;
+			return this;
+		}
+
+		public ToolMessage build() {
+			return new ToolMessage(this);
+		}
+
+	}
+
 }

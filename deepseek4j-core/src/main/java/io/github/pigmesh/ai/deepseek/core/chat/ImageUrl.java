@@ -15,71 +15,71 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ImageUrl {
 
-    @JsonProperty
-    private final String url;
-    @JsonProperty
-    private final ImageDetail detail;
+	@JsonProperty
+	private final String url;
 
-    private ImageUrl(Builder builder) {
-        this.url = builder.url;
-        this.detail = builder.detail;
-    }
+	@JsonProperty
+	private final ImageDetail detail;
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof ImageUrl
-                && equalTo((ImageUrl) another);
-    }
+	private ImageUrl(Builder builder) {
+		this.url = builder.url;
+		this.detail = builder.detail;
+	}
 
-    private boolean equalTo(ImageUrl another) {
-        return Objects.equals(url, another.url)
-                && Objects.equals(detail, another.detail);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof ImageUrl && equalTo((ImageUrl) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(url);
-        h += (h << 5) + Objects.hashCode(detail);
-        return h;
-    }
+	private boolean equalTo(ImageUrl another) {
+		return Objects.equals(url, another.url) && Objects.equals(detail, another.detail);
+	}
 
-    @Override
-    public String toString() {
-        return "ImageUrl{" +
-                "url=" + url +
-                ", detail=" + detail +
-                "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(url);
+		h += (h << 5) + Objects.hashCode(detail);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "ImageUrl{" + "url=" + url + ", detail=" + detail + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private String url;
-        private ImageDetail detail;
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        private Builder() {
-        }
+		private String url;
 
-        public Builder url(String url) {
-            this.url = url;
-            return this;
-        }
+		private ImageDetail detail;
 
-        public Builder detail(ImageDetail detail) {
-            this.detail = detail;
-            return this;
-        }
+		private Builder() {
+		}
 
-        public ImageUrl build() {
-            return new ImageUrl(this);
-        }
-    }
+		public Builder url(String url) {
+			this.url = url;
+			return this;
+		}
+
+		public Builder detail(ImageDetail detail) {
+			this.detail = detail;
+			return this;
+		}
+
+		public ImageUrl build() {
+			return new ImageUrl(this);
+		}
+
+	}
+
 }

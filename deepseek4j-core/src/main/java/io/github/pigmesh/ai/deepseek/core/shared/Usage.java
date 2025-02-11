@@ -15,127 +15,132 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class Usage {
 
-    @JsonProperty
-    private final Integer totalTokens;
-    @JsonProperty
-    private final Integer promptTokens;
-    @JsonProperty
-    private final PromptTokensDetails promptTokensDetails;
-    @JsonProperty
-    private final Integer completionTokens;
-    @JsonProperty
-    private final CompletionTokensDetails completionTokensDetails;
+	@JsonProperty
+	private final Integer totalTokens;
 
-    private Usage(Builder builder) {
-        this.totalTokens = builder.totalTokens;
-        this.promptTokens = builder.promptTokens;
-        this.promptTokensDetails = builder.promptTokensDetails;
-        this.completionTokens = builder.completionTokens;
-        this.completionTokensDetails = builder.completionTokensDetails;
-    }
+	@JsonProperty
+	private final Integer promptTokens;
 
-    public Integer totalTokens() {
-        return totalTokens;
-    }
+	@JsonProperty
+	private final PromptTokensDetails promptTokensDetails;
 
-    public Integer promptTokens() {
-        return promptTokens;
-    }
+	@JsonProperty
+	private final Integer completionTokens;
 
-    public PromptTokensDetails promptTokensDetails() {
-        return promptTokensDetails;
-    }
+	@JsonProperty
+	private final CompletionTokensDetails completionTokensDetails;
 
-    public Integer completionTokens() {
-        return completionTokens;
-    }
+	private Usage(Builder builder) {
+		this.totalTokens = builder.totalTokens;
+		this.promptTokens = builder.promptTokens;
+		this.promptTokensDetails = builder.promptTokensDetails;
+		this.completionTokens = builder.completionTokens;
+		this.completionTokensDetails = builder.completionTokensDetails;
+	}
 
-    public CompletionTokensDetails completionTokensDetails() {
-        return completionTokensDetails;
-    }
+	public Integer totalTokens() {
+		return totalTokens;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof Usage
-                && equalTo((Usage) another);
-    }
+	public Integer promptTokens() {
+		return promptTokens;
+	}
 
-    private boolean equalTo(Usage another) {
-        return Objects.equals(totalTokens, another.totalTokens)
-                && Objects.equals(promptTokens, another.promptTokens)
-                && Objects.equals(promptTokensDetails, another.promptTokensDetails)
-                && Objects.equals(completionTokens, another.completionTokens)
-                && Objects.equals(completionTokensDetails, another.completionTokensDetails);
-    }
+	public PromptTokensDetails promptTokensDetails() {
+		return promptTokensDetails;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(totalTokens);
-        h += (h << 5) + Objects.hashCode(promptTokens);
-        h += (h << 5) + Objects.hashCode(promptTokensDetails);
-        h += (h << 5) + Objects.hashCode(completionTokens);
-        h += (h << 5) + Objects.hashCode(completionTokensDetails);
-        return h;
-    }
+	public Integer completionTokens() {
+		return completionTokens;
+	}
 
-    @Override
-    public String toString() {
-        return "Usage{"
-                + "totalTokens=" + totalTokens
-                + ", promptTokens=" + promptTokens
-                + ", promptTokensDetails=" + promptTokensDetails
-                + ", completionTokens=" + completionTokens
-                + ", completionTokensDetails=" + completionTokensDetails
-                + "}";
-    }
+	public CompletionTokensDetails completionTokensDetails() {
+		return completionTokensDetails;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof Usage && equalTo((Usage) another);
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	private boolean equalTo(Usage another) {
+		return Objects.equals(totalTokens, another.totalTokens) && Objects.equals(promptTokens, another.promptTokens)
+				&& Objects.equals(promptTokensDetails, another.promptTokensDetails)
+				&& Objects.equals(completionTokens, another.completionTokens)
+				&& Objects.equals(completionTokensDetails, another.completionTokensDetails);
+	}
 
-        private Integer totalTokens;
-        private Integer promptTokens;
-        private PromptTokensDetails promptTokensDetails;
-        private Integer completionTokens;
-        private CompletionTokensDetails completionTokensDetails;
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(totalTokens);
+		h += (h << 5) + Objects.hashCode(promptTokens);
+		h += (h << 5) + Objects.hashCode(promptTokensDetails);
+		h += (h << 5) + Objects.hashCode(completionTokens);
+		h += (h << 5) + Objects.hashCode(completionTokensDetails);
+		return h;
+	}
 
-        private Builder() {
-        }
+	@Override
+	public String toString() {
+		return "Usage{" + "totalTokens=" + totalTokens + ", promptTokens=" + promptTokens + ", promptTokensDetails="
+				+ promptTokensDetails + ", completionTokens=" + completionTokens + ", completionTokensDetails="
+				+ completionTokensDetails + "}";
+	}
 
-        public Builder totalTokens(Integer totalTokens) {
-            this.totalTokens = totalTokens;
-            return this;
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder promptTokens(Integer promptTokens) {
-            this.promptTokens = promptTokens;
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder promptTokensDetails(PromptTokensDetails promptTokensDetails) {
-            this.promptTokensDetails = promptTokensDetails;
-            return this;
-        }
+		private Integer totalTokens;
 
-        public Builder completionTokens(Integer completionTokens) {
-            this.completionTokens = completionTokens;
-            return this;
-        }
+		private Integer promptTokens;
 
-        public Builder completionTokensDetails(CompletionTokensDetails completionTokensDetails) {
-            this.completionTokensDetails = completionTokensDetails;
-            return this;
-        }
+		private PromptTokensDetails promptTokensDetails;
 
-        public Usage build() {
-            return new Usage(this);
-        }
-    }
+		private Integer completionTokens;
+
+		private CompletionTokensDetails completionTokensDetails;
+
+		private Builder() {
+		}
+
+		public Builder totalTokens(Integer totalTokens) {
+			this.totalTokens = totalTokens;
+			return this;
+		}
+
+		public Builder promptTokens(Integer promptTokens) {
+			this.promptTokens = promptTokens;
+			return this;
+		}
+
+		public Builder promptTokensDetails(PromptTokensDetails promptTokensDetails) {
+			this.promptTokensDetails = promptTokensDetails;
+			return this;
+		}
+
+		public Builder completionTokens(Integer completionTokens) {
+			this.completionTokens = completionTokens;
+			return this;
+		}
+
+		public Builder completionTokensDetails(CompletionTokensDetails completionTokensDetails) {
+			this.completionTokensDetails = completionTokensDetails;
+			return this;
+		}
+
+		public Usage build() {
+			return new Usage(this);
+		}
+
+	}
+
 }

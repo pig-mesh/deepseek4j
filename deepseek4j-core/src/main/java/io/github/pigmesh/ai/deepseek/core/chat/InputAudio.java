@@ -12,76 +12,75 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class InputAudio {
 
-    private final String data;
-    private final String format;
+	private final String data;
 
-    private InputAudio(Builder builder) {
-        data = builder.data;
-        format = builder.format;
-    }
+	private final String format;
 
-    public String getData() {
-        return data;
-    }
+	private InputAudio(Builder builder) {
+		data = builder.data;
+		format = builder.format;
+	}
 
-    public String getFormat() {
-        return format;
-    }
+	public String getData() {
+		return data;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof InputAudio
-                && equalTo((InputAudio) another);
-    }
+	public String getFormat() {
+		return format;
+	}
 
-    private boolean equalTo(InputAudio another) {
-        return Objects.equals(data, another.data)
-                && Objects.equals(format, another.format);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof InputAudio && equalTo((InputAudio) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(data);
-        h += (h << 5) + Objects.hashCode(format);
-        return h;
-    }
+	private boolean equalTo(InputAudio another) {
+		return Objects.equals(data, another.data) && Objects.equals(format, another.format);
+	}
 
-    @Override
-    public String toString() {
-        return "InputAudio{" +
-                "data=" + data +
-                ", format=" + format +
-                "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(data);
+		h += (h << 5) + Objects.hashCode(format);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "InputAudio{" + "data=" + data + ", format=" + format + "}";
+	}
 
-    public static final class Builder {
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private String data;
-        private String format;
+	public static final class Builder {
 
-        public Builder data(String data) {
-            this.data = data;
-            return this;
-        }
+		private String data;
 
-        public Builder format(String format) {
-            this.format = format;
-            return this;
-        }
+		private String format;
 
-        public static Builder builder() {
-            return new Builder();
-        }
+		public Builder data(String data) {
+			this.data = data;
+			return this;
+		}
 
-        public InputAudio build() {
-            return new InputAudio(this);
-        }
+		public Builder format(String format) {
+			this.format = format;
+			return this;
+		}
 
-    }
+		public static Builder builder() {
+			return new Builder();
+		}
+
+		public InputAudio build() {
+			return new InputAudio(this);
+		}
+
+	}
+
 }

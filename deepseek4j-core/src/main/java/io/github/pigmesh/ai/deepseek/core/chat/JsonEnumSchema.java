@@ -20,81 +20,79 @@ import static java.util.stream.Collectors.toList;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JsonEnumSchema extends JsonSchemaElement {
 
-    @JsonProperty
-    private final String description;
-    @JsonProperty("enum")
-    private final List<String> enumValues;
+	@JsonProperty
+	private final String description;
 
-    public JsonEnumSchema(Builder builder) {
-        super("string");
-        this.description = builder.description;
-        this.enumValues = new ArrayList<>(builder.enumValues);
-    }
+	@JsonProperty("enum")
+	private final List<String> enumValues;
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof JsonEnumSchema
-                && equalTo((JsonEnumSchema) another);
-    }
+	public JsonEnumSchema(Builder builder) {
+		super("string");
+		this.description = builder.description;
+		this.enumValues = new ArrayList<>(builder.enumValues);
+	}
 
-    private boolean equalTo(JsonEnumSchema another) {
-        return Objects.equals(description, another.description)
-                && Objects.equals(enumValues, another.enumValues);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof JsonEnumSchema && equalTo((JsonEnumSchema) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(description);
-        h += (h << 5) + Objects.hashCode(enumValues);
-        return h;
-    }
+	private boolean equalTo(JsonEnumSchema another) {
+		return Objects.equals(description, another.description) && Objects.equals(enumValues, another.enumValues);
+	}
 
-    @Override
-    public String toString() {
-        return "JsonEnumSchema{" +
-                "description=" + description +
-                ", enumValues=" + enumValues +
-                "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(description);
+		h += (h << 5) + Objects.hashCode(enumValues);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "JsonEnumSchema{" + "description=" + description + ", enumValues=" + enumValues + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class Builder {
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private String description;
-        private List<String> enumValues;
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static class Builder {
 
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
+		private String description;
 
-        public Builder enumValues(List<String> enumValues) {
-            this.enumValues = enumValues;
-            return this;
-        }
+		private List<String> enumValues;
 
-        public Builder enumValues(Class<?> enumClass) {
-            if (!enumClass.isEnum()) {
-                throw new RuntimeException("Class " + enumClass.getName() + " must be enum");
-            }
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
 
-            List<String> enumValues = stream(enumClass.getEnumConstants())
-                    .map(Object::toString)
-                    .collect(toList());
+		public Builder enumValues(List<String> enumValues) {
+			this.enumValues = enumValues;
+			return this;
+		}
 
-            return enumValues(enumValues);
-        }
+		public Builder enumValues(Class<?> enumClass) {
+			if (!enumClass.isEnum()) {
+				throw new RuntimeException("Class " + enumClass.getName() + " must be enum");
+			}
 
-        public JsonEnumSchema build() {
-            return new JsonEnumSchema(this);
-        }
-    }
+			List<String> enumValues = stream(enumClass.getEnumConstants()).map(Object::toString).collect(toList());
+
+			return enumValues(enumValues);
+		}
+
+		public JsonEnumSchema build() {
+			return new JsonEnumSchema(this);
+		}
+
+	}
+
 }

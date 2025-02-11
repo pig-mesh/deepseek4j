@@ -4,7 +4,8 @@ import java.util.Collections;
 
 class AuthorizationHeaderInjector extends GenericHeaderInjector {
 
-    AuthorizationHeaderInjector(String apiKey) {
-        super(Collections.singletonMap("Authorization", "Bearer " + apiKey));
-    }
+	AuthorizationHeaderInjector(String apiKey) {
+		super(Collections.singletonMap("Authorization", "Bearer " + apiKey));
+	}
+
 }

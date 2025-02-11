@@ -17,66 +17,63 @@ import static io.github.pigmesh.ai.deepseek.core.chat.ToolType.FUNCTION;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ToolChoice {
 
-    @JsonProperty
-    private final ToolType type = FUNCTION;
-    @JsonProperty
-    private final Function function;
+	@JsonProperty
+	private final ToolType type = FUNCTION;
 
-    private ToolChoice(Builder builder) {
-        function = builder.function;
-    }
+	@JsonProperty
+	private final Function function;
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof ToolChoice
-                && equalTo((ToolChoice) another);
-    }
+	private ToolChoice(Builder builder) {
+		function = builder.function;
+	}
 
-    private boolean equalTo(ToolChoice another) {
-        return Objects.equals(type, another.type)
-                && Objects.equals(function, another.function);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof ToolChoice && equalTo((ToolChoice) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(type);
-        h += (h << 5) + Objects.hashCode(function);
-        return h;
-    }
+	private boolean equalTo(ToolChoice another) {
+		return Objects.equals(type, another.type) && Objects.equals(function, another.function);
+	}
 
-    @Override
-    public String toString() {
-        return "ToolChoice{" +
-                "type=" + type +
-                ", function=" + function +
-                "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(type);
+		h += (h << 5) + Objects.hashCode(function);
+		return h;
+	}
 
-    public static ToolChoice from(String functionName) {
-        return new Builder()
-                .function(Function.builder()
-                        .name(functionName).build())
-                .build();
-    }
+	@Override
+	public String toString() {
+		return "ToolChoice{" + "type=" + type + ", function=" + function + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
-        private Function function;
+	public static ToolChoice from(String functionName) {
+		return new Builder().function(Function.builder().name(functionName).build()).build();
+	}
 
-        private Builder() {
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public ToolChoice.Builder function(Function function) {
-            this.function = function;
-            return this;
-        }
+		private Function function;
 
-        public ToolChoice build() {
-            return new ToolChoice(this);
-        }
-    }
+		private Builder() {
+		}
+
+		public ToolChoice.Builder function(Function function) {
+			this.function = function;
+			return this;
+		}
+
+		public ToolChoice build() {
+			return new ToolChoice(this);
+		}
+
+	}
+
 }

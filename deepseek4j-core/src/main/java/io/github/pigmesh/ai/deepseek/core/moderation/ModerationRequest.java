@@ -19,89 +19,89 @@ import static java.util.Collections.unmodifiableList;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ModerationRequest {
 
-    @JsonProperty
-    private final String model;
-    @JsonProperty
-    private final List<String> input;
+	@JsonProperty
+	private final String model;
 
-    private ModerationRequest(Builder builder) {
-        this.model = builder.model;
-        this.input = builder.input;
-    }
+	@JsonProperty
+	private final List<String> input;
 
-    public String model() {
-        return model;
-    }
+	private ModerationRequest(Builder builder) {
+		this.model = builder.model;
+		this.input = builder.input;
+	}
 
-    public List<String> input() {
-        return input;
-    }
+	public String model() {
+		return model;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof ModerationRequest
-                && equalTo((ModerationRequest) another);
-    }
+	public List<String> input() {
+		return input;
+	}
 
-    private boolean equalTo(ModerationRequest another) {
-        return Objects.equals(model, another.model)
-                && Objects.equals(input, another.input);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof ModerationRequest && equalTo((ModerationRequest) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(model);
-        h += (h << 5) + Objects.hashCode(input);
-        return h;
-    }
+	private boolean equalTo(ModerationRequest another) {
+		return Objects.equals(model, another.model) && Objects.equals(input, another.input);
+	}
 
-    @Override
-    public String toString() {
-        return "ModerationRequest{"
-                + "model=" + model
-                + ", input=" + input
-                + "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(model);
+		h += (h << 5) + Objects.hashCode(input);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "ModerationRequest{" + "model=" + model + ", input=" + input + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private String model;
-        private List<String> input;
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        private Builder() {
-        }
+		private String model;
 
-        public Builder model(ModerationModel model) {
-            return model(model.toString());
-        }
+		private List<String> input;
 
-        public Builder model(String model) {
-            this.model = model;
-            return this;
-        }
+		private Builder() {
+		}
 
-        public Builder input(List<String> input) {
-            if (input != null) {
-                this.input = unmodifiableList(input);
-            }
-            return this;
-        }
+		public Builder model(ModerationModel model) {
+			return model(model.toString());
+		}
 
-        public Builder input(String input) {
-            return input(singletonList(input));
-        }
+		public Builder model(String model) {
+			this.model = model;
+			return this;
+		}
 
-        public ModerationRequest build() {
-            return new ModerationRequest(this);
-        }
-    }
+		public Builder input(List<String> input) {
+			if (input != null) {
+				this.input = unmodifiableList(input);
+			}
+			return this;
+		}
+
+		public Builder input(String input) {
+			return input(singletonList(input));
+		}
+
+		public ModerationRequest build() {
+			return new ModerationRequest(this);
+		}
+
+	}
+
 }

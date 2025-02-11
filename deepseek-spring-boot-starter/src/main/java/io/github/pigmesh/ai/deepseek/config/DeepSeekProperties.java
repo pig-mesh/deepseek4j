@@ -8,7 +8,6 @@ import java.net.Proxy;
 
 import static io.github.pigmesh.ai.deepseek.core.LogLevel.DEBUG;
 
-
 /**
  * @author lengleng
  * @date 2025/2/6
@@ -17,63 +16,64 @@ import static io.github.pigmesh.ai.deepseek.core.LogLevel.DEBUG;
 @ConfigurationProperties(prefix = "deepseek")
 public class DeepSeekProperties {
 
-    /**
-     * 基本 URL
-     */
-    private String baseUrl = "https://api.deepseek.com/v1";
-    /**
-     * API 密钥
-     */
-    private String apiKey;
+	/**
+	 * 基本 URL
+	 */
+	private String baseUrl = "https://api.deepseek.com/v1";
 
-    /**
-     * 搜索 API 密钥
-     */
-    private String searchApiKey;
+	/**
+	 * API 密钥
+	 */
+	private String apiKey;
 
-    /**
-     * 模型名称
-     */
-    private String model;
+	/**
+	 * 搜索 API 密钥
+	 */
+	private String searchApiKey;
 
-    /**
-     * 默认系统提示词
-     */
-    private boolean defaultSystemPrompt = true;
+	/**
+	 * 模型名称
+	 */
+	private String model;
 
-    /**
-     * 日志请求
-     */
-    private boolean logRequests;
-    /**
-     * 日志响应
-     */
-    private boolean logResponses;
+	/**
+	 * 默认系统提示词
+	 */
+	private boolean defaultSystemPrompt = true;
 
-    /**
-     * 代理
-     */
-    private Proxy proxy;
+	/**
+	 * 日志请求
+	 */
+	private boolean logRequests;
 
-    /**
-     * 连接超时 S
-     */
-    private Integer connectTimeout;
+	/**
+	 * 日志响应
+	 */
+	private boolean logResponses;
 
-    /**
-     * 读取超时 S
-     */
-    private Integer readTimeout;
+	/**
+	 * 代理
+	 */
+	private Proxy proxy;
 
-    /**
-     * 呼叫超时 S
-     */
-    private Integer callTimeout;
+	/**
+	 * 连接超时 S
+	 */
+	private Integer connectTimeout;
 
+	/**
+	 * 读取超时 S
+	 */
+	private Integer readTimeout;
 
-    /**
-     * 日志级别
-     */
-    public LogLevel logLevel = DEBUG;
+	/**
+	 * 呼叫超时 S
+	 */
+	private Integer callTimeout;
+
+	/**
+	 * 日志级别
+	 */
+	public LogLevel logLevel = DEBUG;
 
 }

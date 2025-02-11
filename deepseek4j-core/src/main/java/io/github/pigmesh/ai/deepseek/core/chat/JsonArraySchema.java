@@ -15,69 +15,69 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JsonArraySchema extends JsonSchemaElement {
 
-    @JsonProperty
-    private final String description;
-    @JsonProperty
-    private final JsonSchemaElement items;
+	@JsonProperty
+	private final String description;
 
-    public JsonArraySchema(Builder builder) {
-        super("array");
-        this.description = builder.description;
-        this.items = builder.items;
-    }
+	@JsonProperty
+	private final JsonSchemaElement items;
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof JsonArraySchema
-                && equalTo((JsonArraySchema) another);
-    }
+	public JsonArraySchema(Builder builder) {
+		super("array");
+		this.description = builder.description;
+		this.items = builder.items;
+	}
 
-    private boolean equalTo(JsonArraySchema another) {
-        return Objects.equals(description, another.description)
-                && Objects.equals(items, another.items);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof JsonArraySchema && equalTo((JsonArraySchema) another);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(description);
-        h += (h << 5) + Objects.hashCode(items);
-        return h;
-    }
+	private boolean equalTo(JsonArraySchema another) {
+		return Objects.equals(description, another.description) && Objects.equals(items, another.items);
+	}
 
-    @Override
-    public String toString() {
-        return "JsonArraySchema{" +
-                "description=" + description +
-                ", items=" + items +
-                "}";
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(description);
+		h += (h << 5) + Objects.hashCode(items);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "JsonArraySchema{" + "description=" + description + ", items=" + items + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class Builder {
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private String description;
-        private JsonSchemaElement items;
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static class Builder {
 
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
+		private String description;
 
-        public Builder items(JsonSchemaElement items) {
-            this.items = items;
-            return this;
-        }
+		private JsonSchemaElement items;
 
-        public JsonArraySchema build() {
-            return new JsonArraySchema(this);
-        }
-    }
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Builder items(JsonSchemaElement items) {
+			this.items = items;
+			return this;
+		}
+
+		public JsonArraySchema build() {
+			return new JsonArraySchema(this);
+		}
+
+	}
+
 }

@@ -11,7 +11,8 @@ import retrofit2.http.POST;
  */
 public interface SearchApi {
 
-    @POST("web-search")
-    @Headers("Content-Type: application/json")
-    Call<SearchResponse> webSearch(@Body SearchRequest request);
+	@POST("web-search")
+	@Headers("Content-Type: application/json")
+	Call<SearchResponse> webSearch(@Body SearchRequest request);
+
 }

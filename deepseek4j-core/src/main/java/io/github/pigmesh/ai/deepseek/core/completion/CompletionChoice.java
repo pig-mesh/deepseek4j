@@ -15,115 +15,117 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class CompletionChoice {
 
-    @JsonProperty
-    private final String text;
-    @JsonProperty
-    private final Integer index;
-    @JsonProperty
-    private final Logprobs logprobs;
-    @JsonProperty
-    private final String finishReason;
+	@JsonProperty
+	private final String text;
 
-    private CompletionChoice(Builder builder) {
-        this.text = builder.text;
-        this.index = builder.index;
-        this.logprobs = builder.logprobs;
-        this.finishReason = builder.finishReason;
-    }
+	@JsonProperty
+	private final Integer index;
 
-    public String text() {
-        return text;
-    }
+	@JsonProperty
+	private final Logprobs logprobs;
 
-    public Integer index() {
-        return index;
-    }
+	@JsonProperty
+	private final String finishReason;
 
-    public Logprobs logprobs() {
-        return logprobs;
-    }
+	private CompletionChoice(Builder builder) {
+		this.text = builder.text;
+		this.index = builder.index;
+		this.logprobs = builder.logprobs;
+		this.finishReason = builder.finishReason;
+	}
 
-    public String finishReason() {
-        return finishReason;
-    }
+	public String text() {
+		return text;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof CompletionChoice
-                && equalTo((CompletionChoice) another);
-    }
+	public Integer index() {
+		return index;
+	}
 
-    private boolean equalTo(CompletionChoice another) {
-        return Objects.equals(text, another.text)
-                && Objects.equals(index, another.index)
-                && Objects.equals(logprobs, another.logprobs)
-                && Objects.equals(finishReason, another.finishReason);
-    }
+	public Logprobs logprobs() {
+		return logprobs;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(text);
-        h += (h << 5) + Objects.hashCode(index);
-        h += (h << 5) + Objects.hashCode(logprobs);
-        h += (h << 5) + Objects.hashCode(finishReason);
-        return h;
-    }
+	public String finishReason() {
+		return finishReason;
+	}
 
-    @Override
-    public String toString() {
-        return "CompletionChoice{"
-                + "text=" + text
-                + ", index=" + index
-                + ", logprobs=" + logprobs
-                + ", finishReason=" + finishReason
-                + "}";
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof CompletionChoice && equalTo((CompletionChoice) another);
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	private boolean equalTo(CompletionChoice another) {
+		return Objects.equals(text, another.text) && Objects.equals(index, another.index)
+				&& Objects.equals(logprobs, another.logprobs) && Objects.equals(finishReason, another.finishReason);
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(text);
+		h += (h << 5) + Objects.hashCode(index);
+		h += (h << 5) + Objects.hashCode(logprobs);
+		h += (h << 5) + Objects.hashCode(finishReason);
+		return h;
+	}
 
-        @JsonProperty
-        private String text;
-        @JsonProperty
-        private Integer index;
-        @JsonProperty
-        private Logprobs logprobs;
-        @JsonProperty
-        private String finishReason;
+	@Override
+	public String toString() {
+		return "CompletionChoice{" + "text=" + text + ", index=" + index + ", logprobs=" + logprobs + ", finishReason="
+				+ finishReason + "}";
+	}
 
-        private Builder() {
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder text(String text) {
-            this.text = text;
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder index(Integer index) {
-            this.index = index;
-            return this;
-        }
+		@JsonProperty
+		private String text;
 
-        public Builder logprobs(Logprobs logprobs) {
-            this.logprobs = logprobs;
-            return this;
-        }
+		@JsonProperty
+		private Integer index;
 
-        public Builder finishReason(String finishReason) {
-            this.finishReason = finishReason;
-            return this;
-        }
+		@JsonProperty
+		private Logprobs logprobs;
 
-        public CompletionChoice build() {
-            return new CompletionChoice(this);
-        }
-    }
+		@JsonProperty
+		private String finishReason;
+
+		private Builder() {
+		}
+
+		public Builder text(String text) {
+			this.text = text;
+			return this;
+		}
+
+		public Builder index(Integer index) {
+			this.index = index;
+			return this;
+		}
+
+		public Builder logprobs(Logprobs logprobs) {
+			this.logprobs = logprobs;
+			return this;
+		}
+
+		public Builder finishReason(String finishReason) {
+			this.finishReason = finishReason;
+			return this;
+		}
+
+		public CompletionChoice build() {
+			return new CompletionChoice(this);
+		}
+
+	}
+
 }

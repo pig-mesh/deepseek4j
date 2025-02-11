@@ -11,31 +11,32 @@ import java.nio.file.Path;
 
 class PersistorConverterFactory extends Converter.Factory {
 
-    private final Path persistTo;
+	private final Path persistTo;
 
-    PersistorConverterFactory(Path persistTo) {
-        this.persistTo = persistTo;
-    }
+	PersistorConverterFactory(Path persistTo) {
+		this.persistTo = persistTo;
+	}
 
-    @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        return new PersistorConverter<>(retrofit.nextResponseBodyConverter(this, type, annotations));
-    }
+	@Override
+	public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
+		return new PersistorConverter<>(retrofit.nextResponseBodyConverter(this, type, annotations));
+	}
 
-    private class PersistorConverter<T> implements Converter<ResponseBody, T> {
+	private class PersistorConverter<T> implements Converter<ResponseBody, T> {
 
-        private final Converter<ResponseBody, T> delegate;
+		private final Converter<ResponseBody, T> delegate;
 
-        PersistorConverter(Converter<ResponseBody, T> delegate) {
-            this.delegate = delegate;
-        }
+		PersistorConverter(Converter<ResponseBody, T> delegate) {
+			this.delegate = delegate;
+		}
 
-        @Override
-        public T convert(ResponseBody value) throws IOException {
-            T response = delegate.convert(value);
+		@Override
+		public T convert(ResponseBody value) throws IOException {
+			T response = delegate.convert(value);
 
+			return response;
+		}
 
-            return response;
-        }
-    }
+	}
+
 }

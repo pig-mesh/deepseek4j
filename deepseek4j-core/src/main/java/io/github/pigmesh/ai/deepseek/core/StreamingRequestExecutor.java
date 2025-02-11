@@ -18,215 +18,204 @@ import static io.github.pigmesh.ai.deepseek.core.Utils.toException;
 
 class StreamingRequestExecutor<Request, Response, ResponseContent> {
 
-    private static final Logger log = LoggerFactory.getLogger(StreamingRequestExecutor.class);
+	private static final Logger log = LoggerFactory.getLogger(StreamingRequestExecutor.class);
 
-    private final OkHttpClient okHttpClient;
-    private final String endpointUrl;
-    private final Supplier<Request> requestWithStreamSupplier;
-    private final Class<Response> responseClass;
-    private final Function<Response, ResponseContent> streamEventContentExtractor;
-    private final boolean logStreamingResponses;
-    private final ResponseLoggingInterceptor responseLogger = new ResponseLoggingInterceptor();
+	private final OkHttpClient okHttpClient;
 
-    StreamingRequestExecutor(
-            OkHttpClient okHttpClient,
-            String endpointUrl,
-            Supplier<Request> requestWithStreamSupplier,
-            Class<Response> responseClass,
-            Function<Response, ResponseContent> streamEventContentExtractor,
-            boolean logStreamingResponses
-    ) {
-        this.okHttpClient = okHttpClient;
-        this.endpointUrl = endpointUrl;
-        this.requestWithStreamSupplier = requestWithStreamSupplier;
-        this.responseClass = responseClass;
-        this.streamEventContentExtractor = streamEventContentExtractor;
-        this.logStreamingResponses = logStreamingResponses;
-    }
+	private final String endpointUrl;
 
-    StreamingResponseHandling onPartialResponse(Consumer<ResponseContent> partialResponseHandler) {
+	private final Supplier<Request> requestWithStreamSupplier;
 
-        return new StreamingResponseHandling() {
+	private final Class<Response> responseClass;
 
-            @Override
-            public StreamingCompletionHandling onComplete(Runnable streamingCompletionCallback) {
-                return new StreamingCompletionHandling() {
+	private final Function<Response, ResponseContent> streamEventContentExtractor;
 
-                    @Override
-                    public ErrorHandling onError(Consumer<Throwable> errorHandler) {
-                        return new ErrorHandling() {
+	private final boolean logStreamingResponses;
 
-                            @Override
-                            public ResponseHandle execute() {
-                                return stream(
-                                        partialResponseHandler,
-                                        streamingCompletionCallback,
-                                        errorHandler
-                                );
-                            }
-                        };
-                    }
+	private final ResponseLoggingInterceptor responseLogger = new ResponseLoggingInterceptor();
 
-                    @Override
-                    public ErrorHandling ignoreErrors() {
-                        return new ErrorHandling() {
+	StreamingRequestExecutor(OkHttpClient okHttpClient, String endpointUrl, Supplier<Request> requestWithStreamSupplier,
+			Class<Response> responseClass, Function<Response, ResponseContent> streamEventContentExtractor,
+			boolean logStreamingResponses) {
+		this.okHttpClient = okHttpClient;
+		this.endpointUrl = endpointUrl;
+		this.requestWithStreamSupplier = requestWithStreamSupplier;
+		this.responseClass = responseClass;
+		this.streamEventContentExtractor = streamEventContentExtractor;
+		this.logStreamingResponses = logStreamingResponses;
+	}
 
-                            @Override
-                            public ResponseHandle execute() {
-                                return stream(
-                                        partialResponseHandler,
-                                        streamingCompletionCallback,
-                                        (e) -> {
-                                            // intentionally ignoring because user called ignoreErrors()
-                                        }
-                                );
-                            }
-                        };
-                    }
-                };
-            }
+	StreamingResponseHandling onPartialResponse(Consumer<ResponseContent> partialResponseHandler) {
 
-            @Override
-            public ErrorHandling onError(Consumer<Throwable> errorHandler) {
-                return new ErrorHandling() {
+		return new StreamingResponseHandling() {
 
-                    @Override
-                    public ResponseHandle execute() {
-                        return stream(
-                                partialResponseHandler,
-                                () -> {
-                                    // intentionally ignoring because user did not provide callback
-                                },
-                                errorHandler
-                        );
-                    }
-                };
-            }
+			@Override
+			public StreamingCompletionHandling onComplete(Runnable streamingCompletionCallback) {
+				return new StreamingCompletionHandling() {
 
-            @Override
-            public ErrorHandling ignoreErrors() {
-                return new ErrorHandling() {
+					@Override
+					public ErrorHandling onError(Consumer<Throwable> errorHandler) {
+						return new ErrorHandling() {
 
-                    @Override
-                    public ResponseHandle execute() {
-                        return stream(
-                                partialResponseHandler,
-                                () -> {
-                                    // intentionally ignoring because user did not provide callback
-                                },
-                                (e) -> {
-                                    // intentionally ignoring because user called ignoreErrors()
-                                }
-                        );
-                    }
-                };
-            }
-        };
-    }
+							@Override
+							public ResponseHandle execute() {
+								return stream(partialResponseHandler, streamingCompletionCallback, errorHandler);
+							}
+						};
+					}
 
-    private ResponseHandle stream(
-            Consumer<ResponseContent> partialResponseHandler,
-            Runnable streamingCompletionCallback,
-            Consumer<Throwable> errorHandler
-    ) {
+					@Override
+					public ErrorHandling ignoreErrors() {
+						return new ErrorHandling() {
 
-        Request request = requestWithStreamSupplier.get();
+							@Override
+							public ResponseHandle execute() {
+								return stream(partialResponseHandler, streamingCompletionCallback, (e) -> {
+									// intentionally ignoring because user called
+									// ignoreErrors()
+								});
+							}
+						};
+					}
+				};
+			}
 
-        String requestJson = Json.toJson(request);
+			@Override
+			public ErrorHandling onError(Consumer<Throwable> errorHandler) {
+				return new ErrorHandling() {
 
-        okhttp3.Request okHttpRequest = new okhttp3.Request.Builder()
-                .url(endpointUrl)
-                .post(RequestBody.create(requestJson, MediaType.get("application/json; charset=utf-8")))
-                .build();
+					@Override
+					public ResponseHandle execute() {
+						return stream(partialResponseHandler, () -> {
+							// intentionally ignoring because user did not provide
+							// callback
+						}, errorHandler);
+					}
+				};
+			}
 
-        ResponseHandle responseHandle = new ResponseHandle();
+			@Override
+			public ErrorHandling ignoreErrors() {
+				return new ErrorHandling() {
 
-        EventSourceListener eventSourceListener = new EventSourceListener() {
+					@Override
+					public ResponseHandle execute() {
+						return stream(partialResponseHandler, () -> {
+							// intentionally ignoring because user did not provide
+							// callback
+						}, (e) -> {
+							// intentionally ignoring because user called ignoreErrors()
+						});
+					}
+				};
+			}
+		};
+	}
 
-            @Override
-            public void onOpen(EventSource eventSource, okhttp3.Response response) {
-                if (responseHandle.cancelled) {
-                    eventSource.cancel();
-                    return;
-                }
+	private ResponseHandle stream(Consumer<ResponseContent> partialResponseHandler,
+			Runnable streamingCompletionCallback, Consumer<Throwable> errorHandler) {
 
-                if (logStreamingResponses) {
-                    responseLogger.log(response);
-                }
-            }
+		Request request = requestWithStreamSupplier.get();
 
-            @Override
-            public void onEvent(EventSource eventSource, String id, String type, String data) {
-                if (responseHandle.cancelled) {
-                    eventSource.cancel();
-                    return;
-                }
+		String requestJson = Json.toJson(request);
 
-                if (logStreamingResponses) {
-                    log.debug("onEvent() {}", data);
-                }
+		okhttp3.Request okHttpRequest = new okhttp3.Request.Builder().url(endpointUrl)
+				.post(RequestBody.create(requestJson, MediaType.get("application/json; charset=utf-8"))).build();
 
-                if ("[DONE]".equals(data)) {
-                    return;
-                }
+		ResponseHandle responseHandle = new ResponseHandle();
 
-                try {
-                    Response response = Json.fromJson(data, responseClass);
-                    ResponseContent responseContent = streamEventContentExtractor.apply(response);
-                    if (responseContent != null) {
-                        partialResponseHandler.accept(responseContent); // do not handle exception, fail-fast
-                    }
-                } catch (Exception e) {
-                    errorHandler.accept(e);
-                }
-            }
+		EventSourceListener eventSourceListener = new EventSourceListener() {
 
-            @Override
-            public void onClosed(EventSource eventSource) {
-                if (responseHandle.cancelled) {
-                    eventSource.cancel();
-                    return;
-                }
+			@Override
+			public void onOpen(EventSource eventSource, okhttp3.Response response) {
+				if (responseHandle.cancelled) {
+					eventSource.cancel();
+					return;
+				}
 
-                if (logStreamingResponses) {
-                    log.debug("onClosed()");
-                }
+				if (logStreamingResponses) {
+					responseLogger.log(response);
+				}
+			}
 
-                streamingCompletionCallback.run();
-            }
+			@Override
+			public void onEvent(EventSource eventSource, String id, String type, String data) {
+				if (responseHandle.cancelled) {
+					eventSource.cancel();
+					return;
+				}
 
-            @Override
-            public void onFailure(EventSource eventSource, Throwable t, okhttp3.Response response) {
-                if (responseHandle.cancelled) {
-                    return;
-                }
+				if (logStreamingResponses) {
+					log.debug("onEvent() {}", data);
+				}
 
-                // TODO remove this when migrating from okhttp
-                if (t instanceof IllegalArgumentException && "byteCount < 0: -1".equals(t.getMessage())) {
-                    streamingCompletionCallback.run();
-                    return;
-                }
+				if ("[DONE]".equals(data)) {
+					return;
+				}
 
-                if (logStreamingResponses) {
-                    log.debug("onFailure()", t);
-                    responseLogger.log(response);
-                }
+				try {
+					Response response = Json.fromJson(data, responseClass);
+					ResponseContent responseContent = streamEventContentExtractor.apply(response);
+					if (responseContent != null) {
+						partialResponseHandler.accept(responseContent); // do not handle
+																		// exception,
+																		// fail-fast
+					}
+				}
+				catch (Exception e) {
+					errorHandler.accept(e);
+				}
+			}
 
-                if (t != null) {
-                    errorHandler.accept(t); // TODO also include information from response?
-                } else {
-                    try {
-                        errorHandler.accept(toException(response));
-                    } catch (IOException e) {
-                        errorHandler.accept(e); // TODO right thing to do?
-                    }
-                }
-            }
-        };
+			@Override
+			public void onClosed(EventSource eventSource) {
+				if (responseHandle.cancelled) {
+					eventSource.cancel();
+					return;
+				}
 
-        EventSources.createFactory(okHttpClient)
-                .newEventSource(okHttpRequest, eventSourceListener);
+				if (logStreamingResponses) {
+					log.debug("onClosed()");
+				}
 
-        return responseHandle;
-    }
+				streamingCompletionCallback.run();
+			}
+
+			@Override
+			public void onFailure(EventSource eventSource, Throwable t, okhttp3.Response response) {
+				if (responseHandle.cancelled) {
+					return;
+				}
+
+				// TODO remove this when migrating from okhttp
+				if (t instanceof IllegalArgumentException && "byteCount < 0: -1".equals(t.getMessage())) {
+					streamingCompletionCallback.run();
+					return;
+				}
+
+				if (logStreamingResponses) {
+					log.debug("onFailure()", t);
+					responseLogger.log(response);
+				}
+
+				if (t != null) {
+					errorHandler.accept(t); // TODO also include information from
+											// response?
+				}
+				else {
+					try {
+						errorHandler.accept(toException(response));
+					}
+					catch (IOException e) {
+						errorHandler.accept(e); // TODO right thing to do?
+					}
+				}
+			}
+		};
+
+		EventSources.createFactory(okHttpClient).newEventSource(okHttpRequest, eventSourceListener);
+
+		return responseHandle;
+	}
+
 }

@@ -15,111 +15,112 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ToolCall {
 
-    @JsonProperty
-    private final String id;
-    @JsonProperty
-    private final Integer index;
-    @JsonProperty
-    private final ToolType type;
-    @JsonProperty
-    private final FunctionCall function;
+	@JsonProperty
+	private final String id;
 
-    private ToolCall(Builder builder) {
-        this.id = builder.id;
-        this.index = builder.index;
-        this.type = builder.type;
-        this.function = builder.function;
-    }
+	@JsonProperty
+	private final Integer index;
 
-    public String id() {
-        return id;
-    }
+	@JsonProperty
+	private final ToolType type;
 
-    public Integer index() {
-        return index;
-    }
+	@JsonProperty
+	private final FunctionCall function;
 
-    public ToolType type() {
-        return type;
-    }
+	private ToolCall(Builder builder) {
+		this.id = builder.id;
+		this.index = builder.index;
+		this.type = builder.type;
+		this.function = builder.function;
+	}
 
-    public FunctionCall function() {
-        return function;
-    }
+	public String id() {
+		return id;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof ToolCall
-                && equalTo((ToolCall) another);
-    }
+	public Integer index() {
+		return index;
+	}
 
-    private boolean equalTo(ToolCall another) {
-        return Objects.equals(id, another.id)
-                && Objects.equals(index, another.index)
-                && Objects.equals(type, another.type)
-                && Objects.equals(function, another.function);
-    }
+	public ToolType type() {
+		return type;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(id);
-        h += (h << 5) + Objects.hashCode(index);
-        h += (h << 5) + Objects.hashCode(type);
-        h += (h << 5) + Objects.hashCode(function);
-        return h;
-    }
+	public FunctionCall function() {
+		return function;
+	}
 
-    @Override
-    public String toString() {
-        return "ToolCall{"
-                + "id=" + id
-                + ", index=" + index
-                + ", type=" + type
-                + ", function=" + function
-                + "}";
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof ToolCall && equalTo((ToolCall) another);
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	private boolean equalTo(ToolCall another) {
+		return Objects.equals(id, another.id) && Objects.equals(index, another.index)
+				&& Objects.equals(type, another.type) && Objects.equals(function, another.function);
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(id);
+		h += (h << 5) + Objects.hashCode(index);
+		h += (h << 5) + Objects.hashCode(type);
+		h += (h << 5) + Objects.hashCode(function);
+		return h;
+	}
 
-        private String id;
-        private Integer index;
-        private ToolType type;
-        private FunctionCall function;
+	@Override
+	public String toString() {
+		return "ToolCall{" + "id=" + id + ", index=" + index + ", type=" + type + ", function=" + function + "}";
+	}
 
-        private Builder() {
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder index(Integer index) {
-            this.index = index;
-            return this;
-        }
+		private String id;
 
-        public Builder type(ToolType type) {
-            this.type = type;
-            return this;
-        }
+		private Integer index;
 
-        public Builder function(FunctionCall function) {
-            this.function = function;
-            return this;
-        }
+		private ToolType type;
 
-        public ToolCall build() {
-            return new ToolCall(this);
-        }
-    }
+		private FunctionCall function;
+
+		private Builder() {
+		}
+
+		public Builder id(String id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder index(Integer index) {
+			this.index = index;
+			return this;
+		}
+
+		public Builder type(ToolType type) {
+			this.type = type;
+			return this;
+		}
+
+		public Builder function(FunctionCall function) {
+			this.function = function;
+			return this;
+		}
+
+		public ToolCall build() {
+			return new ToolCall(this);
+		}
+
+	}
+
 }

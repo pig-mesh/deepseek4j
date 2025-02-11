@@ -15,57 +15,57 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JsonStringSchema extends JsonSchemaElement {
 
-    @JsonProperty
-    private final String description;
+	@JsonProperty
+	private final String description;
 
-    public JsonStringSchema(Builder builder) {
-        super("string");
-        this.description = builder.description;
-    }
+	public JsonStringSchema(Builder builder) {
+		super("string");
+		this.description = builder.description;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof JsonStringSchema
-                && equalTo((JsonStringSchema) another);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof JsonStringSchema && equalTo((JsonStringSchema) another);
+	}
 
-    private boolean equalTo(JsonStringSchema another) {
-        return Objects.equals(description, another.description);
-    }
+	private boolean equalTo(JsonStringSchema another) {
+		return Objects.equals(description, another.description);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(description);
-        return h;
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(description);
+		return h;
+	}
 
-    @Override
-    public String toString() {
-        return "JsonStringSchema{" +
-                "description=" + description +
-                "}";
-    }
+	@Override
+	public String toString() {
+		return "JsonStringSchema{" + "description=" + description + "}";
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class Builder {
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static class Builder {
 
-        private String description;
+		private String description;
 
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
 
-        public JsonStringSchema build() {
-            return new JsonStringSchema(this);
-        }
-    }
+		public JsonStringSchema build() {
+			return new JsonStringSchema(this);
+		}
+
+	}
+
 }

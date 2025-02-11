@@ -17,94 +17,92 @@ import static io.github.pigmesh.ai.deepseek.core.chat.Role.SYSTEM;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class SystemMessage implements Message {
 
-    @JsonProperty
-    private final Role role = SYSTEM;
-    @JsonProperty
-    private final String content;
-    @JsonProperty
-    private final String name;
+	@JsonProperty
+	private final Role role = SYSTEM;
 
-    private SystemMessage(Builder builder) {
-        this.content = builder.content;
-        this.name = builder.name;
-    }
+	@JsonProperty
+	private final String content;
 
-    public Role role() {
-        return role;
-    }
+	@JsonProperty
+	private final String name;
 
-    public String content() {
-        return content;
-    }
+	private SystemMessage(Builder builder) {
+		this.content = builder.content;
+		this.name = builder.name;
+	}
 
-    public String name() {
-        return name;
-    }
+	public Role role() {
+		return role;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof SystemMessage
-                && equalTo((SystemMessage) another);
-    }
+	public String content() {
+		return content;
+	}
 
-    private boolean equalTo(SystemMessage another) {
-        return Objects.equals(role, another.role)
-                && Objects.equals(content, another.content)
-                && Objects.equals(name, another.name);
-    }
+	public String name() {
+		return name;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(role);
-        h += (h << 5) + Objects.hashCode(content);
-        h += (h << 5) + Objects.hashCode(name);
-        return h;
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof SystemMessage && equalTo((SystemMessage) another);
+	}
 
-    @Override
-    public String toString() {
-        return "SystemMessage{"
-                + "role=" + role
-                + ", content=" + content
-                + ", name=" + name
-                + "}";
-    }
+	private boolean equalTo(SystemMessage another) {
+		return Objects.equals(role, another.role) && Objects.equals(content, another.content)
+				&& Objects.equals(name, another.name);
+	}
 
-    public static SystemMessage from(String content) {
-        return SystemMessage.builder()
-                .content(content)
-                .build();
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(role);
+		h += (h << 5) + Objects.hashCode(content);
+		h += (h << 5) + Objects.hashCode(name);
+		return h;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public String toString() {
+		return "SystemMessage{" + "role=" + role + ", content=" + content + ", name=" + name + "}";
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	public static SystemMessage from(String content) {
+		return SystemMessage.builder().content(content).build();
+	}
 
-        private String content;
-        private String name;
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private Builder() {
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder content(String content) {
-            this.content = content;
-            return this;
-        }
+		private String content;
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
+		private String name;
 
-        public SystemMessage build() {
-            return new SystemMessage(this);
-        }
-    }
+		private Builder() {
+		}
+
+		public Builder content(String content) {
+			this.content = content;
+			return this;
+		}
+
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public SystemMessage build() {
+			return new SystemMessage(this);
+		}
+
+	}
+
 }

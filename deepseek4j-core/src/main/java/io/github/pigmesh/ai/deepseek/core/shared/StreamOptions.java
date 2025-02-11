@@ -15,60 +15,60 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class StreamOptions {
 
-    @JsonProperty
-    private final Boolean includeUsage;
+	@JsonProperty
+	private final Boolean includeUsage;
 
-    public StreamOptions(Builder builder) {
-        this.includeUsage = builder.includeUsage;
-    }
+	public StreamOptions(Builder builder) {
+		this.includeUsage = builder.includeUsage;
+	}
 
-    public Boolean includeUsage() {
-        return includeUsage;
-    }
+	public Boolean includeUsage() {
+		return includeUsage;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof StreamOptions
-                && equalTo((StreamOptions) another);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof StreamOptions && equalTo((StreamOptions) another);
+	}
 
-    private boolean equalTo(StreamOptions another) {
-        return Objects.equals(includeUsage, another.includeUsage);
-    }
+	private boolean equalTo(StreamOptions another) {
+		return Objects.equals(includeUsage, another.includeUsage);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(includeUsage);
-        return h;
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(includeUsage);
+		return h;
+	}
 
-    @Override
-    public String toString() {
-        return "StreamOptions{" +
-                "includeUsage=" + includeUsage +
-                "}";
-    }
+	@Override
+	public String toString() {
+		return "StreamOptions{" + "includeUsage=" + includeUsage + "}";
+	}
 
-    public static StreamOptions.Builder builder() {
-        return new StreamOptions.Builder();
-    }
+	public static StreamOptions.Builder builder() {
+		return new StreamOptions.Builder();
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class Builder {
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static class Builder {
 
-        private Boolean includeUsage;
+		private Boolean includeUsage;
 
-        public StreamOptions.Builder includeUsage(Boolean includeUsage) {
-            this.includeUsage = includeUsage;
-            return this;
-        }
+		public StreamOptions.Builder includeUsage(Boolean includeUsage) {
+			this.includeUsage = includeUsage;
+			return this;
+		}
 
-        public StreamOptions build() {
-            return new StreamOptions(this);
-        }
-    }
+		public StreamOptions build() {
+			return new StreamOptions(this);
+		}
+
+	}
+
 }

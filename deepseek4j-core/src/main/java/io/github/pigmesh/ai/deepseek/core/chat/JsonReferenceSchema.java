@@ -15,57 +15,57 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JsonReferenceSchema extends JsonSchemaElement {
 
-    @JsonProperty("$ref")
-    private final String reference;
+	@JsonProperty("$ref")
+	private final String reference;
 
-    public JsonReferenceSchema(Builder builder) {
-        super(null);
-        this.reference = builder.reference;
-    }
+	public JsonReferenceSchema(Builder builder) {
+		super(null);
+		this.reference = builder.reference;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof JsonReferenceSchema
-                && equalTo((JsonReferenceSchema) another);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof JsonReferenceSchema && equalTo((JsonReferenceSchema) another);
+	}
 
-    private boolean equalTo(JsonReferenceSchema another) {
-        return Objects.equals(reference, another.reference);
-    }
+	private boolean equalTo(JsonReferenceSchema another) {
+		return Objects.equals(reference, another.reference);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(reference);
-        return h;
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(reference);
+		return h;
+	}
 
-    @Override
-    public String toString() {
-        return "JsonReferenceSchema{" +
-                "reference=" + reference +
-                "}";
-    }
+	@Override
+	public String toString() {
+		return "JsonReferenceSchema{" + "reference=" + reference + "}";
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class Builder {
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static class Builder {
 
-        private String reference;
+		private String reference;
 
-        public Builder reference(String reference) {
-            this.reference = reference;
-            return this;
-        }
+		public Builder reference(String reference) {
+			this.reference = reference;
+			return this;
+		}
 
-        public JsonReferenceSchema build() {
-            return new JsonReferenceSchema(this);
-        }
-    }
+		public JsonReferenceSchema build() {
+			return new JsonReferenceSchema(this);
+		}
+
+	}
+
 }

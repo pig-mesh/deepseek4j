@@ -18,139 +18,122 @@ import static java.util.stream.StreamSupport.stream;
 
 class RequestLoggingInterceptor implements Interceptor {
 
-    private static final Logger log = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
+	private static final Logger log = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
 
-    private static final Set<String> COMMON_SECRET_HEADERS =
-            new HashSet<>(asList("authorization", "x-api-key", "x-auth-token"));
-    private static final String BEARER = "Bearer";
-    private LogLevel logLevel = LogLevel.DEBUG;
+	private static final Set<String> COMMON_SECRET_HEADERS = new HashSet<>(
+			asList("authorization", "x-api-key", "x-auth-token"));
 
-    public RequestLoggingInterceptor() {
-    }
+	private static final String BEARER = "Bearer";
 
-    public RequestLoggingInterceptor(LogLevel logLevel) {
-        this.logLevel = logLevel;
-    }
+	private LogLevel logLevel = LogLevel.DEBUG;
 
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        Request request = chain.request();
+	public RequestLoggingInterceptor() {
+	}
 
-        log(request);
+	public RequestLoggingInterceptor(LogLevel logLevel) {
+		this.logLevel = logLevel;
+	}
 
-        return chain.proceed(request);
-    }
+	@Override
+	public Response intercept(Chain chain) throws IOException {
+		Request request = chain.request();
 
-    private void log(Request request) {
-        String message = "Request:\n- method: {}\n- url: {}\n- headers: {}\n- body: {}";
+		log(request);
 
-        try {
-            switch (logLevel) {
-                case INFO:
-                    logInfo(request, message);
-                    break;
-                case WARN:
-                    logWarn(request, message);
-                    break;
-                case ERROR:
-                    logError(request, message);
-                    break;
-                default:
-                    logDebug(request, message);
-            }
-        } catch (Exception e) {
-            log.warn("Failed to log request", e);
-        }
-    }
+		return chain.proceed(request);
+	}
 
-    private void logInfo(Request request, String message) {
-        log.info(
-                message,
-                request.method(),
-                request.url(),
-                inOneLine(request.headers()),
-                getBody(request)
-        );
-    }
+	private void log(Request request) {
+		String message = "Request:\n- method: {}\n- url: {}\n- headers: {}\n- body: {}";
 
-    private void logWarn(Request request, String message) {
-        log.warn(
-                message,
-                request.method(),
-                request.url(),
-                inOneLine(request.headers()),
-                getBody(request)
-        );
-    }
+		try {
+			switch (logLevel) {
+			case INFO:
+				logInfo(request, message);
+				break;
+			case WARN:
+				logWarn(request, message);
+				break;
+			case ERROR:
+				logError(request, message);
+				break;
+			default:
+				logDebug(request, message);
+			}
+		}
+		catch (Exception e) {
+			log.warn("Failed to log request", e);
+		}
+	}
 
-    private void logError(Request request, String message) {
-        log.error(
-                message,
-                request.method(),
-                request.url(),
-                inOneLine(request.headers()),
-                getBody(request)
-        );
-    }
+	private void logInfo(Request request, String message) {
+		log.info(message, request.method(), request.url(), inOneLine(request.headers()), getBody(request));
+	}
 
-    private void logDebug(Request request, String message) {
-        log.debug(
-                message,
-                request.method(),
-                request.url(),
-                inOneLine(request.headers()),
-                getBody(request)
-        );
-    }
+	private void logWarn(Request request, String message) {
+		log.warn(message, request.method(), request.url(), inOneLine(request.headers()), getBody(request));
+	}
 
-    static String inOneLine(Headers headers) {
+	private void logError(Request request, String message) {
+		log.error(message, request.method(), request.url(), inOneLine(request.headers()), getBody(request));
+	}
 
-        return stream(headers.spliterator(), false)
-                .map(header -> format(header.component1(), header.component2()))
-                .collect(joining(", "));
-    }
+	private void logDebug(Request request, String message) {
+		log.debug(message, request.method(), request.url(), inOneLine(request.headers()), getBody(request));
+	}
 
-    static String format(String headerKey, String headerValue) {
-        if (COMMON_SECRET_HEADERS.contains(headerKey.toLowerCase())) {
-            headerValue = maskSecretKey(headerValue);
-        }
-        return String.format("[%s: %s]", headerKey, headerValue);
-    }
+	static String inOneLine(Headers headers) {
 
-    static String maskSecretKey(String key) {
-        if (key == null || key.trim().isEmpty()) {
-            return key;
-        }
+		return stream(headers.spliterator(), false).map(header -> format(header.component1(), header.component2()))
+				.collect(joining(", "));
+	}
 
-        try {
-            if (key.startsWith(BEARER)) {
-                return BEARER + " " + mask(key.substring(BEARER.length() + 1));
-            } else {
-                return mask(key);
-            }
-        } catch (Exception e) {
-            return "Failed to mask the API key.";
-        }
-    }
+	static String format(String headerKey, String headerValue) {
+		if (COMMON_SECRET_HEADERS.contains(headerKey.toLowerCase())) {
+			headerValue = maskSecretKey(headerValue);
+		}
+		return String.format("[%s: %s]", headerKey, headerValue);
+	}
 
-    private static String mask(String key) {
-        if (key.length() >= 7) {
-            return key.substring(0, 5) + "..." + key.substring(key.length() - 2);
-        } else {
-            return "...";
-        }
-    }
+	static String maskSecretKey(String key) {
+		if (key == null || key.trim().isEmpty()) {
+			return key;
+		}
 
-    private static String getBody(Request request) {
-        try {
-            Buffer buffer = new Buffer();
-            if (request.body() != null) {
-                request.body().writeTo(buffer);
-            }
-            return buffer.readUtf8();
-        } catch (Exception e) {
-            log.warn("Exception happened while reading request body", e);
-            return "[Exception happened while reading request body. Check logs for more details.]";
-        }
-    }
+		try {
+			if (key.startsWith(BEARER)) {
+				return BEARER + " " + mask(key.substring(BEARER.length() + 1));
+			}
+			else {
+				return mask(key);
+			}
+		}
+		catch (Exception e) {
+			return "Failed to mask the API key.";
+		}
+	}
+
+	private static String mask(String key) {
+		if (key.length() >= 7) {
+			return key.substring(0, 5) + "..." + key.substring(key.length() - 2);
+		}
+		else {
+			return "...";
+		}
+	}
+
+	private static String getBody(Request request) {
+		try {
+			Buffer buffer = new Buffer();
+			if (request.body() != null) {
+				request.body().writeTo(buffer);
+			}
+			return buffer.readUtf8();
+		}
+		catch (Exception e) {
+			log.warn("Exception happened while reading request body", e);
+			return "[Exception happened while reading request body. Check logs for more details.]";
+		}
+	}
+
 }

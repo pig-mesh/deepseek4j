@@ -18,131 +18,134 @@ import static java.util.Collections.unmodifiableList;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class Delta {
 
-    @JsonProperty
-    private final Role role;
-    @JsonProperty
-    private final String content;
-    @JsonProperty
-    private final String reasoningContent;
+	@JsonProperty
+	private final Role role;
 
-    @JsonProperty
-    private final List<ToolCall> toolCalls;
-    @JsonProperty
-    @Deprecated
-    private final FunctionCall functionCall;
+	@JsonProperty
+	private final String content;
 
-    private Delta(Builder builder) {
-        this.role = builder.role;
-        this.content = builder.content;
-        this.reasoningContent = builder.reasoningContent;
-        this.toolCalls = builder.toolCalls;
-        this.functionCall = builder.functionCall;
-    }
+	@JsonProperty
+	private final String reasoningContent;
 
-    public Role role() {
-        return role;
-    }
+	@JsonProperty
+	private final List<ToolCall> toolCalls;
 
-    public String content() {
-        return content;
-    }
+	@JsonProperty
+	@Deprecated
+	private final FunctionCall functionCall;
 
-    public String reasoningContent() {
-        return reasoningContent;
-    }
-    public List<ToolCall> toolCalls() {
-        return toolCalls;
-    }
+	private Delta(Builder builder) {
+		this.role = builder.role;
+		this.content = builder.content;
+		this.reasoningContent = builder.reasoningContent;
+		this.toolCalls = builder.toolCalls;
+		this.functionCall = builder.functionCall;
+	}
 
-    @Deprecated
-    public FunctionCall functionCall() {
-        return functionCall;
-    }
+	public Role role() {
+		return role;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof Delta
-                && equalTo((Delta) another);
-    }
+	public String content() {
+		return content;
+	}
 
-    private boolean equalTo(Delta another) {
-        return Objects.equals(role, another.role)
-                && Objects.equals(content, another.content)
-                && Objects.equals(toolCalls, another.toolCalls)
-                && Objects.equals(functionCall, another.functionCall);
-    }
+	public String reasoningContent() {
+		return reasoningContent;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(role);
-        h += (h << 5) + Objects.hashCode(content);
-        h += (h << 5) + Objects.hashCode(toolCalls);
-        h += (h << 5) + Objects.hashCode(functionCall);
-        return h;
-    }
+	public List<ToolCall> toolCalls() {
+		return toolCalls;
+	}
 
-    @Override
-    public String toString() {
-        return "Delta{"
-                + "role=" + role
-                + ", content=" + content
-                + ", toolCalls=" + toolCalls
-                + ", functionCall=" + functionCall
-                + "}";
-    }
+	@Deprecated
+	public FunctionCall functionCall() {
+		return functionCall;
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof Delta && equalTo((Delta) another);
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	private boolean equalTo(Delta another) {
+		return Objects.equals(role, another.role) && Objects.equals(content, another.content)
+				&& Objects.equals(toolCalls, another.toolCalls) && Objects.equals(functionCall, another.functionCall);
+	}
 
-        private Role role;
-        private String content;
-        private String reasoningContent;
-        private List<ToolCall> toolCalls;
-        @Deprecated
-        private FunctionCall functionCall;
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(role);
+		h += (h << 5) + Objects.hashCode(content);
+		h += (h << 5) + Objects.hashCode(toolCalls);
+		h += (h << 5) + Objects.hashCode(functionCall);
+		return h;
+	}
 
-        private Builder() {
-        }
+	@Override
+	public String toString() {
+		return "Delta{" + "role=" + role + ", content=" + content + ", toolCalls=" + toolCalls + ", functionCall="
+				+ functionCall + "}";
+	}
 
-        public Builder role(Role role) {
-            this.role = role;
-            return this;
-        }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        public Builder content(String content) {
-            this.content = content;
-            return this;
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder reasoningContent(String reasoningContent) {
-            this.reasoningContent = reasoningContent;
-            return this;
-        }
+		private Role role;
 
-        public Builder toolCalls(List<ToolCall> toolCalls) {
-            if (toolCalls != null) {
-                this.toolCalls = unmodifiableList(toolCalls);
-            }
-            return this;
-        }
+		private String content;
 
-        @Deprecated
-        public Builder functionCall(FunctionCall functionCall) {
-            this.functionCall = functionCall;
-            return this;
-        }
+		private String reasoningContent;
 
+		private List<ToolCall> toolCalls;
 
-        public Delta build() {
-            return new Delta(this);
-        }
-    }
+		@Deprecated
+		private FunctionCall functionCall;
+
+		private Builder() {
+		}
+
+		public Builder role(Role role) {
+			this.role = role;
+			return this;
+		}
+
+		public Builder content(String content) {
+			this.content = content;
+			return this;
+		}
+
+		public Builder reasoningContent(String reasoningContent) {
+			this.reasoningContent = reasoningContent;
+			return this;
+		}
+
+		public Builder toolCalls(List<ToolCall> toolCalls) {
+			if (toolCalls != null) {
+				this.toolCalls = unmodifiableList(toolCalls);
+			}
+			return this;
+		}
+
+		@Deprecated
+		public Builder functionCall(FunctionCall functionCall) {
+			this.functionCall = functionCall;
+			return this;
+		}
+
+		public Delta build() {
+			return new Delta(this);
+		}
+
+	}
+
 }

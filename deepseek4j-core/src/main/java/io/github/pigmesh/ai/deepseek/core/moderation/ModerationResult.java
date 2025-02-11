@@ -15,95 +15,97 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class ModerationResult {
 
-    @JsonProperty
-    private final Categories categories;
-    @JsonProperty
-    private final CategoryScores categoryScores;
-    @JsonProperty
-    private final Boolean flagged;
+	@JsonProperty
+	private final Categories categories;
 
-    private ModerationResult(Builder builder) {
-        this.categories = builder.categories;
-        this.categoryScores = builder.categoryScores;
-        this.flagged = builder.flagged;
-    }
+	@JsonProperty
+	private final CategoryScores categoryScores;
 
-    public Categories categories() {
-        return categories;
-    }
+	@JsonProperty
+	private final Boolean flagged;
 
-    public CategoryScores categoryScores() {
-        return categoryScores;
-    }
+	private ModerationResult(Builder builder) {
+		this.categories = builder.categories;
+		this.categoryScores = builder.categoryScores;
+		this.flagged = builder.flagged;
+	}
 
-    public Boolean isFlagged() {
-        return flagged;
-    }
+	public Categories categories() {
+		return categories;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof ModerationResult
-                && equalTo((ModerationResult) another);
-    }
+	public CategoryScores categoryScores() {
+		return categoryScores;
+	}
 
-    private boolean equalTo(ModerationResult another) {
-        return Objects.equals(categories, another.categories)
-                && Objects.equals(categoryScores, another.categoryScores)
-                && Objects.equals(flagged, another.flagged);
-    }
+	public Boolean isFlagged() {
+		return flagged;
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(categories);
-        h += (h << 5) + Objects.hashCode(categoryScores);
-        h += (h << 5) + Objects.hashCode(flagged);
-        return h;
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof ModerationResult && equalTo((ModerationResult) another);
+	}
 
-    @Override
-    public String toString() {
-        return "ModerationResult{"
-                + "categories=" + categories
-                + ", categoryScores=" + categoryScores
-                + ", flagged=" + flagged
-                + "}";
-    }
+	private boolean equalTo(ModerationResult another) {
+		return Objects.equals(categories, another.categories) && Objects.equals(categoryScores, another.categoryScores)
+				&& Objects.equals(flagged, another.flagged);
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(categories);
+		h += (h << 5) + Objects.hashCode(categoryScores);
+		h += (h << 5) + Objects.hashCode(flagged);
+		return h;
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@Override
+	public String toString() {
+		return "ModerationResult{" + "categories=" + categories + ", categoryScores=" + categoryScores + ", flagged="
+				+ flagged + "}";
+	}
 
-        private Categories categories;
-        private CategoryScores categoryScores;
-        private Boolean flagged;
+	public static Builder builder() {
+		return new Builder();
+	}
 
-        private Builder() {
-        }
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        public Builder categories(Categories categories) {
-            this.categories = categories;
-            return this;
-        }
+		private Categories categories;
 
-        public Builder categoryScores(CategoryScores categoryScores) {
-            this.categoryScores = categoryScores;
-            return this;
-        }
+		private CategoryScores categoryScores;
 
-        public Builder flagged(Boolean flagged) {
-            this.flagged = flagged;
-            return this;
-        }
+		private Boolean flagged;
 
-        public ModerationResult build() {
-            return new ModerationResult(this);
-        }
-    }
+		private Builder() {
+		}
+
+		public Builder categories(Categories categories) {
+			this.categories = categories;
+			return this;
+		}
+
+		public Builder categoryScores(CategoryScores categoryScores) {
+			this.categoryScores = categoryScores;
+			return this;
+		}
+
+		public Builder flagged(Boolean flagged) {
+			this.flagged = flagged;
+			return this;
+		}
+
+		public ModerationResult build() {
+			return new ModerationResult(this);
+		}
+
+	}
+
 }

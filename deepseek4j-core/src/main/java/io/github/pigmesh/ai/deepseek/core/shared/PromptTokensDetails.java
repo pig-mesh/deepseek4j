@@ -15,63 +15,63 @@ import java.util.Objects;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class PromptTokensDetails {
 
-    @JsonProperty
-    private final Integer cachedTokens;
+	@JsonProperty
+	private final Integer cachedTokens;
 
-    private PromptTokensDetails(Builder builder) {
-        this.cachedTokens = builder.cachedTokens;
-    }
+	private PromptTokensDetails(Builder builder) {
+		this.cachedTokens = builder.cachedTokens;
+	}
 
-    public Integer cachedTokens() {
-        return cachedTokens;
-    }
+	public Integer cachedTokens() {
+		return cachedTokens;
+	}
 
-    @Override
-    public boolean equals(Object another) {
-        if (this == another) return true;
-        return another instanceof PromptTokensDetails
-                && equalTo((PromptTokensDetails) another);
-    }
+	@Override
+	public boolean equals(Object another) {
+		if (this == another)
+			return true;
+		return another instanceof PromptTokensDetails && equalTo((PromptTokensDetails) another);
+	}
 
-    private boolean equalTo(PromptTokensDetails another) {
-        return Objects.equals(cachedTokens, another.cachedTokens);
-    }
+	private boolean equalTo(PromptTokensDetails another) {
+		return Objects.equals(cachedTokens, another.cachedTokens);
+	}
 
-    @Override
-    public int hashCode() {
-        int h = 5381;
-        h += (h << 5) + Objects.hashCode(cachedTokens);
-        return h;
-    }
+	@Override
+	public int hashCode() {
+		int h = 5381;
+		h += (h << 5) + Objects.hashCode(cachedTokens);
+		return h;
+	}
 
-    @Override
-    public String toString() {
-        return "PromptTokensDetails{"
-                + "cachedTokens=" + cachedTokens
-                + "}";
-    }
+	@Override
+	public String toString() {
+		return "PromptTokensDetails{" + "cachedTokens=" + cachedTokens + "}";
+	}
 
-    public static Builder builder() {
-        return new Builder();
-    }
+	public static Builder builder() {
+		return new Builder();
+	}
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static final class Builder {
+	@JsonPOJOBuilder(withPrefix = "")
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static final class Builder {
 
-        private Integer cachedTokens;
+		private Integer cachedTokens;
 
-        private Builder() {
-        }
+		private Builder() {
+		}
 
-        public Builder cachedTokens(Integer cachedTokens) {
-            this.cachedTokens = cachedTokens;
-            return this;
-        }
+		public Builder cachedTokens(Integer cachedTokens) {
+			this.cachedTokens = cachedTokens;
+			return this;
+		}
 
-        public PromptTokensDetails build() {
-            return new PromptTokensDetails(this);
-        }
-    }
+		public PromptTokensDetails build() {
+			return new PromptTokensDetails(this);
+		}
+
+	}
+
 }

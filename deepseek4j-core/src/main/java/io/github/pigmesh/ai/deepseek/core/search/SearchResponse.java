@@ -12,86 +12,92 @@ import lombok.Data;
 @Data
 public class SearchResponse {
 
-    private Integer code;
+	private Integer code;
 
-    @JsonProperty("log_id")
-    private String logId;
+	@JsonProperty("log_id")
+	private String logId;
 
-    private String msg;
+	private String msg;
 
-    private Data data;
+	private Data data;
 
-    @lombok.Data
-    public static class Data {
+	@lombok.Data
+	public static class Data {
 
-        private String _type;
+		private String _type;
 
-        private QueryContext queryContext;
+		private QueryContext queryContext;
 
-        private WebPages webPages;
+		private WebPages webPages;
 
-        private Images images;
-    }
+		private Images images;
 
-    @lombok.Data
-    public static class QueryContext {
+	}
 
-        private String originalQuery;
-    }
+	@lombok.Data
+	public static class QueryContext {
 
-    @lombok.Data
-    public static class WebPages {
+		private String originalQuery;
 
-        private String webSearchUrl;
+	}
 
-        private Integer totalEstimatedMatches;
+	@lombok.Data
+	public static class WebPages {
 
-        private Value[] value;
+		private String webSearchUrl;
 
-        private Boolean someResultsRemoved;
-    }
+		private Integer totalEstimatedMatches;
 
-    @lombok.Data
-    public static class Value {
+		private Value[] value;
 
-        private String id;
+		private Boolean someResultsRemoved;
 
-        private String name;
+	}
 
-        private String url;
+	@lombok.Data
+	public static class Value {
 
-        private String displayUrl;
+		private String id;
 
-        private String snippet;
+		private String name;
 
-        private String summary;
+		private String url;
 
-        private String siteName;
+		private String displayUrl;
 
-        private String siteIcon;
+		private String snippet;
 
-        private String dateLastCrawled;
+		private String summary;
 
-        private String cachedPageUrl;
+		private String siteName;
 
-        private String language;
+		private String siteIcon;
 
-        private Boolean isFamilyFriendly;
+		private String dateLastCrawled;
 
-        private Boolean isNavigational;
-    }
+		private String cachedPageUrl;
 
-    @lombok.Data
-    public static class Images {
+		private String language;
 
-        private String id;
+		private Boolean isFamilyFriendly;
 
-        private String readLink;
+		private Boolean isNavigational;
 
-        private String webSearchUrl;
+	}
 
-        private Value[] value;
+	@lombok.Data
+	public static class Images {
 
-        private Boolean isFamilyFriendly;
-    }
+		private String id;
+
+		private String readLink;
+
+		private String webSearchUrl;
+
+		private Value[] value;
+
+		private Boolean isFamilyFriendly;
+
+	}
+
 }
