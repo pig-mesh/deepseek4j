@@ -38,6 +38,17 @@ public class OllamaLocalController {
 		return deepSeekClient.chatFluxCompletion(prompt);
 	}
 
+	// 同步
+	@GetMapping(value = "/sync/chat")
+	public ChatCompletionResponse syncChat(String prompt) {
+		ChatCompletionRequest request = ChatCompletionRequest.builder()
+				// 根据渠道模型名称动态修改这个参数
+				.model(deepSeekProperties.getModel())
+				.addUserMessage(prompt).build();
+
+		return deepSeekClient.chatCompletion(request).execute();
+	}
+
 	@GetMapping(value = "/models", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelsResponse models() {
 		return deepSeekClient.models();
