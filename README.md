@@ -61,7 +61,7 @@ public Flux<ChatCompletionResponse> chat(String prompt) {
 
 本项目基于 [Apache License 2.0](LICENSE) 许可证开源。
 
-项目设计灵感来源于 [OpenAI4J](https://github.com/ai-for-java/openai4j) 项目，在其优秀架构设计的基础上：
+项目设计灵感来源于 [OpenAI4J](https://github.com/ai-for-java/openai4j) 项目，由于其不再维护，在其优秀架构设计的基础上：
 - 扩展了 DeepSeek 特有功能
 - 增强了 Reactor 响应式支持
 - 提供了更完整的 Spring Boot 集成
