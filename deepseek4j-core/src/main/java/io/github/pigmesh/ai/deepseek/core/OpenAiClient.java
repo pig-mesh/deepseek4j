@@ -4,6 +4,8 @@ import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionResponse;
+import io.github.pigmesh.ai.deepseek.core.embedding.EmbeddingRequest;
+import io.github.pigmesh.ai.deepseek.core.embedding.EmbeddingResponse;
 import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
@@ -66,6 +68,14 @@ public abstract class OpenAiClient {
 		throw new UnsupportedOperationException();
 	}
 
+	public SyncOrAsync<EmbeddingResponse> embedding(EmbeddingRequest request) {
+		return embedding(new OpenAiClientContext(), request);
+	}
+
+	public SyncOrAsync<EmbeddingResponse> embedding(OpenAiClientContext clientContext, EmbeddingRequest request) {
+		throw new UnsupportedOperationException();
+	}
+
 	public SyncOrAsync<List<Float>> embedding(String input) {
 		return embedding(new OpenAiClientContext(), input);
 	}
@@ -95,12 +105,6 @@ public abstract class OpenAiClient {
 	}
 
 	public abstract void shutdown();
-
-	@SuppressWarnings("rawtypes")
-	public static DeepSeekClient.Builder builder() {
-		// fallback to the default
-		return DeepSeekClient.builder();
-	}
 
 	public static class OpenAiClientContext {
 

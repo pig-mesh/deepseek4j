@@ -6,3 +6,7 @@ deepseek:
   model: deepseek-r1:14b
   api-key: ollama-local
   log-level: info
+embedding:
+  api-key: ollama-local
+  base-url: http://127.0.0.1:11434/v1
+  model: bge-m3:latest

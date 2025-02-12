@@ -1,11 +1,13 @@
 package io.github.pigmesh.ai.deepseek.config;
 
 import io.github.pigmesh.ai.deepseek.core.DeepSeekClient;
+import io.github.pigmesh.ai.deepseek.core.EmbeddingClient;
 import io.github.pigmesh.ai.deepseek.core.OpenAiClient;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +26,7 @@ import java.util.Objects;
  */
 @AutoConfiguration
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(DeepSeekProperties.class)
+@EnableConfigurationProperties({ DeepSeekProperties.class, EmbeddingProperties.class })
 public class DeepSeekAutoConfiguration {
 
 	@Value("classpath:/prompts/system.pt")
@@ -38,6 +40,7 @@ public class DeepSeekAutoConfiguration {
 	@SneakyThrows
 	@Bean
 	@ConditionalOnMissingBean
+	@ConditionalOnProperty(prefix = "deepseek", name = "api-key")
 	public DeepSeekClient deepSeekClient(DeepSeekProperties deepSeekProperties) {
 
 		DeepSeekClient.Builder builder = DeepSeekClient.builder().baseUrl(deepSeekProperties.getBaseUrl())
@@ -69,6 +72,41 @@ public class DeepSeekAutoConfiguration {
 		}
 
 		builder.searchApiKey(deepSeekProperties.getSearchApiKey());
+		return builder.build();
+	}
+
+	/**
+	 * Embedding 客户端
+	 * @param embeddingProperties Embedding 属性
+	 * @return {@link OpenAiClient }
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnProperty(prefix = "embedding", name = "api-key")
+	public EmbeddingClient embeddingClient(EmbeddingProperties embeddingProperties) {
+
+		EmbeddingClient.Builder builder = EmbeddingClient.builder().baseUrl(embeddingProperties.getBaseUrl())
+				.model(embeddingProperties.getModel()).openAiApiKey(embeddingProperties.getApiKey())
+				.logRequests(embeddingProperties.isLogRequests()).logResponses(embeddingProperties.isLogResponses());
+
+		if (Objects.nonNull(embeddingProperties.getProxy())) {
+			builder.proxy(embeddingProperties.getProxy());
+		}
+
+		if (Objects.nonNull(embeddingProperties.getConnectTimeout())) {
+			builder.connectTimeout(Duration.ofSeconds(embeddingProperties.getConnectTimeout()));
+		}
+
+		if (Objects.nonNull(embeddingProperties.getReadTimeout())) {
+			builder.readTimeout(Duration.ofSeconds(embeddingProperties.getReadTimeout()));
+		}
+
+		if (Objects.nonNull(embeddingProperties.getCallTimeout())) {
+			builder.callTimeout(Duration.ofSeconds(embeddingProperties.getCallTimeout()));
+		}
+
+		builder.logLevel(embeddingProperties.getLogLevel());
+
 		return builder.build();
 	}
 

@@ -7,6 +7,7 @@ import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionChoice;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +21,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/ollama")
-@Slf4j
+@RequiredArgsConstructor
 public class OllamaLocalController {
 
 	@Resource
