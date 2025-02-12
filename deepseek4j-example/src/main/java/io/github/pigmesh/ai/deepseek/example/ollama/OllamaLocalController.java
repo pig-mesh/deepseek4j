@@ -43,8 +43,7 @@ public class OllamaLocalController {
 	public ChatCompletionResponse syncChat(String prompt) {
 		ChatCompletionRequest request = ChatCompletionRequest.builder()
 				// 根据渠道模型名称动态修改这个参数
-				.model(deepSeekProperties.getModel())
-				.addUserMessage(prompt).build();
+				.model(deepSeekProperties.getModel()).addUserMessage(prompt).build();
 
 		return deepSeekClient.chatCompletion(request).execute();
 	}
