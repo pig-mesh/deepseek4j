@@ -1,0 +1,38 @@
+name: 问题咨询
+description: 询问关于 DeepSeek4j 的问题
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢您对 DeepSeek4j 的关注！请填写以下表单来提出您的问题。
+  - type: textarea
+    id: question
+    attributes:
+      label: 您的问题
+      description: 请尽可能详细地描述您的问题
+      placeholder: 我想知道如何...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 版本信息
+      description: 您正在使用的 DeepSeek4j 版本是什么？
+      placeholder: 例如：1.0.0
+  - type: textarea
+    id: context
+    attributes:
+      label: 补充信息
+      description: 添加任何与您的问题相关的补充信息或代码示例
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提问前确认
+      options:
+        - label: 我已经搜索过现有的 issues，但没有找到答案
+          required: true
+        - label: 我已经阅读过文档
+          required: true 

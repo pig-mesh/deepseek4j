@@ -1,0 +1,48 @@
+name: 错误报告
+description: 创建一个错误报告以帮助我们改进
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢您花时间填写这份错误报告！
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么？
+      description: 请描述您遇到的问题，以及您期望的正确行为是什么
+      placeholder: 请详细描述您遇到的问题！
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      description: 如何触发这个错误？请一步一步告诉我们
+      placeholder: |
+        1. 进入 '...'
+        2. 点击 '....'
+        3. 滚动到 '....'
+        4. 发现错误
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 版本信息
+      description: 您正在使用的 DeepSeek4j 版本是什么？
+      placeholder: 例如：1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 相关日志输出
+      description: 请复制并粘贴任何相关的日志输出。这些内容会自动格式化为代码格式。
+      render: shell
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 补充信息
+      description: 添加任何其他与问题相关的上下文信息 
