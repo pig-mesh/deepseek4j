@@ -4,7 +4,6 @@ import io.github.pigmesh.ai.deepseek.core.DeepSeekClient;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +12,7 @@ import reactor.core.publisher.Flux;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("/deepseek")
+@RequestMapping
 public class DeepSeekLocalController {
 
 	@Resource
