@@ -19,10 +19,10 @@ public class SearchResponse {
 
 	private String msg;
 
-	private Data data;
+	private ResponsData data;
 
-	@lombok.Data
-	public static class Data {
+	@Data
+	public static class ResponsData {
 
 		private String _type;
 
@@ -34,14 +34,14 @@ public class SearchResponse {
 
 	}
 
-	@lombok.Data
+	@Data
 	public static class QueryContext {
 
 		private String originalQuery;
 
 	}
 
-	@lombok.Data
+	@Data
 	public static class WebPages {
 
 		private String webSearchUrl;
@@ -54,7 +54,7 @@ public class SearchResponse {
 
 	}
 
-	@lombok.Data
+	@Data
 	public static class Value {
 
 		private String id;
@@ -85,7 +85,7 @@ public class SearchResponse {
 
 	}
 
-	@lombok.Data
+	@Data
 	public static class Images {
 
 		private String id;
