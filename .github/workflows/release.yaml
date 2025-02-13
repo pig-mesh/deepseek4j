@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*' # 当推送以v开头的标签时触发，如 v1.0.0
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. v1.0.0)'
+        required: true
+        type: string
 
 jobs:
   build:
@@ -28,7 +34,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          name: Release ${{ github.ref_name }}
+          name: Release ${{ github.event.inputs.version || github.ref_name }}
+          tag_name: ${{ github.event.inputs.version || github.ref_name }}
           draft: false
           prerelease: false
           generate_release_notes: true
