@@ -5,7 +5,6 @@ import io.github.pigmesh.ai.deepseek.core.EmbeddingClient;
 import io.github.pigmesh.ai.deepseek.core.OpenAiClient;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,7 +23,6 @@ import java.util.Objects;
  * @author lengleng
  * @date 2025/02/06
  */
-@AutoConfiguration
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ DeepSeekProperties.class, EmbeddingProperties.class })
 public class DeepSeekAutoConfiguration {
