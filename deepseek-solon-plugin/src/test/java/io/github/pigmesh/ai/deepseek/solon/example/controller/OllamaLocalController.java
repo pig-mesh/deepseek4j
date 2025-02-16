@@ -35,14 +35,14 @@ public class OllamaLocalController {
 	private DeepSeekProperties deepSeekProperties;
 
 	@Get
-	@Mapping(value = "/chat", produces = "text/event-stream; charset=UTF-8")
+	@Mapping(value = "/ollama/chat", produces = "text/event-stream; charset=UTF-8")
 	public Flux<ChatCompletionResponse> chat(@Param("prompt") String prompt) {
 		return deepSeekClient.chatFluxCompletion(prompt);
 	}
 
 	// 同步
 	@Get
-	@Mapping(value = "/sync/chat")
+	@Mapping(value = "/ollama/sync/chat")
 	public ChatCompletionResponse syncChat(@Param("prompt") String prompt) {
 		ChatCompletionRequest request = ChatCompletionRequest.builder()
 			// 根据渠道模型名称动态修改这个参数
@@ -54,7 +54,7 @@ public class OllamaLocalController {
 	}
 
 	@Get
-	@Mapping(value = "/models", produces = "application/json")
+	@Mapping(value = "/ollama/models", produces = "application/json")
 	public ModelsResponse models() {
 		return deepSeekClient.models();
 	}
@@ -62,7 +62,7 @@ public class OllamaLocalController {
 	public final static HashMap<String, String> cache = new HashMap<>();
 
 	@Get
-	@Mapping(value = "/chat/advanced", produces = "text/event-stream")
+	@Mapping(value = "/ollama/chat/advanced", produces = "text/event-stream")
 	public Flux<ChatCompletionResponse> chatAdvanced(@Param("prompt") String prompt,
 			@Param("cacheCode") String cacheCode) {
 		log.info("cacheCode {}", cacheCode);
