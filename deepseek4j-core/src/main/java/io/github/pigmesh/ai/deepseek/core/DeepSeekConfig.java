@@ -15,64 +15,64 @@ import static io.github.pigmesh.ai.deepseek.core.LogLevel.DEBUG;
 @Data
 public class DeepSeekConfig {
 
-    /**
-     * 基本 URL
-     */
-    protected String baseUrl = "https://api.deepseek.com/v1";
+	/**
+	 * 基本 URL
+	 */
+	protected String baseUrl = "https://api.deepseek.com/v1";
 
-    /**
-     * API 密钥
-     */
-    protected String apiKey;
+	/**
+	 * API 密钥
+	 */
+	protected String apiKey;
 
-    /**
-     * 搜索 API 密钥
-     */
-    protected String searchApiKey;
+	/**
+	 * 搜索 API 密钥
+	 */
+	protected String searchApiKey;
 
-    /**
-     * 模型名称
-     */
-    protected String model;
+	/**
+	 * 模型名称
+	 */
+	protected String model;
 
-    /**
-     * 默认系统提示词
-     */
-    protected boolean defaultSystemPrompt = true;
+	/**
+	 * 默认系统提示词
+	 */
+	protected boolean defaultSystemPrompt = true;
 
-    /**
-     * 日志请求
-     */
-    protected boolean logRequests;
+	/**
+	 * 日志请求
+	 */
+	protected boolean logRequests;
 
-    /**
-     * 日志响应
-     */
-    protected boolean logResponses;
+	/**
+	 * 日志响应
+	 */
+	protected boolean logResponses;
 
-    /**
-     * 代理
-     */
-    protected Proxy proxy;
+	/**
+	 * 代理
+	 */
+	protected Proxy proxy;
 
-    /**
-     * 连接超时 S
-     */
-    protected Integer connectTimeout;
+	/**
+	 * 连接超时 S
+	 */
+	protected Integer connectTimeout;
 
-    /**
-     * 读取超时 S
-     */
-    protected Integer readTimeout;
+	/**
+	 * 读取超时 S
+	 */
+	protected Integer readTimeout;
 
-    /**
-     * 呼叫超时 S
-     */
-    protected Integer callTimeout;
+	/**
+	 * 呼叫超时 S
+	 */
+	protected Integer callTimeout;
 
-    /**
-     * 日志级别
-     */
-    protected LogLevel logLevel = DEBUG;
+	/**
+	 * 日志级别
+	 */
+	protected LogLevel logLevel = DEBUG;
 
 }
