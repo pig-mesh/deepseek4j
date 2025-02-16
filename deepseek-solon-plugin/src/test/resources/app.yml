@@ -1,0 +1,4 @@
+solon.env: ollama
+solon:
+  app:
+    name: deepseek-solon-example
