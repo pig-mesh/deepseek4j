@@ -1,17 +1,18 @@
-package io.github.pigmesh.ai.deepseek.config;
+package io.github.pigmesh.ai.deepseek.solon;
 
 import io.github.pigmesh.ai.deepseek.core.DeepSeekConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.noear.solon.annotation.BindProps;
+import org.noear.solon.annotation.Configuration;
 
 /**
- * @author lengleng
- * @date 2025/2/6
+ * @author songyinyin
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ConfigurationProperties(prefix = "deepseek")
+@BindProps(prefix = "deepseek")
+@Configuration
 public class DeepSeekProperties extends DeepSeekConfig {
 
 }

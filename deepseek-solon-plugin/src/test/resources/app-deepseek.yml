@@ -1,0 +1,3 @@
+deepseek:
+  base-url: https://api.deepseek.com/v1
+  api-key: sk-
