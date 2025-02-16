@@ -12,9 +12,9 @@ import org.noear.solon.web.cors.CrossFilter;
 public class DeepseekSolonApplication {
 
 	public static void main(String[] args) {
-		Solon.start(DeepseekSolonApplication.class, args, app ->{
+		Solon.start(DeepseekSolonApplication.class, args, app -> {
 			// 例：或者：增加全局处理（用过滤器模式）
-			app.filter(-1, new CrossFilter().allowedOrigins("*")); //加-1 优先级更高
+			app.filter(-1, new CrossFilter().allowedOrigins("*")); // 加-1 优先级更高
 		});
 	}
 

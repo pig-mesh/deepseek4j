@@ -40,18 +40,8 @@ public class OllamaLocalController {
 		return deepSeekClient.chatFluxCompletion(prompt);
 	}
 
-	// 同步
-	@Get
-	@Mapping(value = "/ollama/sync/chat")
-	public ChatCompletionResponse syncChat(@Param("prompt") String prompt) {
-		ChatCompletionRequest request = ChatCompletionRequest.builder()
-			// 根据渠道模型名称动态修改这个参数
-			.model(deepSeekProperties.getModel())
-			.addUserMessage(prompt)
-			.build();
-
-		return deepSeekClient.chatCompletion(request).execute();
-	}
+	Function<List<ChatCompletionChoice>, String> choicesProcess = list -> list.stream().map(e -> e.delta().content())
+			.collect(Collectors.joining());
 
 	@Get
 	@Mapping(value = "/ollama/models", produces = "application/json")
@@ -61,19 +51,26 @@ public class OllamaLocalController {
 
 	public final static HashMap<String, String> cache = new HashMap<>();
 
+	// 同步
+	@Get
+	@Mapping(value = "/ollama/sync/chat")
+	public ChatCompletionResponse syncChat(@Param("prompt") String prompt) {
+		ChatCompletionRequest request = ChatCompletionRequest.builder()
+				// 根据渠道模型名称动态修改这个参数
+				.model(deepSeekProperties.getModel()).addUserMessage(prompt).build();
+
+		return deepSeekClient.chatCompletion(request).execute();
+	}
+
 	@Get
 	@Mapping(value = "/ollama/chat/advanced", produces = "text/event-stream")
 	public Flux<ChatCompletionResponse> chatAdvanced(@Param("prompt") String prompt,
 			@Param("cacheCode") String cacheCode) {
 		log.info("cacheCode {}", cacheCode);
 
-		ChatCompletionRequest request = ChatCompletionRequest.builder()
-			.model(deepSeekProperties.getModel())
-			.addUserMessage(prompt)
-			.addAssistantMessage(elt.apply(cache.getOrDefault(cacheCode, "")))
-			.addSystemMessage("你是一个专业的助手")
-			.maxCompletionTokens(5000)
-			.build();
+		ChatCompletionRequest request = ChatCompletionRequest.builder().model(deepSeekProperties.getModel())
+				.addUserMessage(prompt).addAssistantMessage(elt.apply(cache.getOrDefault(cacheCode, "")))
+				.addSystemMessage("你是一个专业的助手").maxCompletionTokens(5000).build();
 		log.info("request {}", Json.toJson(request));
 		// 只保留上一次回答内容
 		cache.remove(cacheCode);
@@ -83,10 +80,6 @@ public class OllamaLocalController {
 			cache.merge(cacheCode, content, String::concat);
 		}).doOnError(e -> log.error("/chat/advanced error:{}", e.getMessage()));
 	}
-
-	Function<List<ChatCompletionChoice>, String> choicesProcess = list -> list.stream()
-		.map(e -> e.delta().content())
-		.collect(Collectors.joining());
 
 	Function<String, String> elt = s -> s.replaceAll("<think>[\\s\\S]*?</think>", "").replaceAll("\n", "");
 
