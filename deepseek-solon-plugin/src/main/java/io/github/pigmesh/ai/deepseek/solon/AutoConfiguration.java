@@ -59,7 +59,7 @@ public class AutoConfiguration {
 
 	@Bean
 	@SneakyThrows
-	@Condition(onMissingBean = EmbeddingClient.class, onProperty = "deepseek.api-key")
+	@Condition(onMissingBean = EmbeddingClient.class, onProperty = "embedding.api-key")
 	public EmbeddingClient embeddingClient(EmbeddingProperties embeddingProperties) {
 
 		EmbeddingClient.Builder builder = EmbeddingClient.builder().baseUrl(embeddingProperties.getBaseUrl())
