@@ -12,6 +12,8 @@ import java.time.Duration;
 import java.util.Objects;
 
 /**
+ * 装配 DeepSeekClient 和 EmbeddingClient
+ *
  * @author songyinyin
  * @since 2025/2/16 16:11
  */
