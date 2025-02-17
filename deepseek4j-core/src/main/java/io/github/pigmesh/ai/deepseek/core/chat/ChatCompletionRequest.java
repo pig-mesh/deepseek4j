@@ -9,13 +9,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.github.pigmesh.ai.deepseek.core.shared.StreamOptions;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionModel.DEEPSEEK_REASONER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -25,8 +26,10 @@ import static java.util.Collections.unmodifiableMap;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ChatCompletionRequest {
 
+	@Getter
+	@Setter
 	@JsonProperty
-	private final String model;
+	private String model;
 
 	@JsonProperty
 	private final List<Message> messages;
@@ -310,7 +313,7 @@ public class ChatCompletionRequest {
 	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 	public static final class Builder {
 
-		private String model = DEEPSEEK_REASONER.toString();
+		private String model;
 
 		private List<Message> messages;
 

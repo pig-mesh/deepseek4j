@@ -208,6 +208,11 @@ public class DeepSeekClient extends OpenAiClient {
 	@Override
 	public SyncOrAsyncOrStreaming<ChatCompletionResponse> chatCompletion(OpenAiClientContext context,
 			ChatCompletionRequest request) {
+
+		if (Objects.isNull(request.getModel())) {
+			request.setModel(this.model);
+		}
+
 		ChatCompletionRequest syncRequest = ChatCompletionRequest.builder().from(request).stream(false).build();
 
 		return new RequestExecutor<>(openAiApi.chatCompletions(context.headers(), syncRequest, apiVersion), r -> r,
@@ -230,13 +235,12 @@ public class DeepSeekClient extends OpenAiClient {
 
 	@Override
 	public Flux<ChatCompletionResponse> chatFluxCompletion(ChatCompletionRequest request) {
-		if (Objects.nonNull(this.model)) {
-			request = ChatCompletionRequest.builder().from(request).model(this.model).build();
+		if (Objects.isNull(request.getModel())) {
+			request.setModel(this.model);
 		}
 
-		ChatCompletionRequest finalRequest = request;
 		return Flux.create(emitter -> {
-			this.chatCompletion(new OpenAiClientContext(), finalRequest).onPartialResponse(emitter::next)
+			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
 					.onComplete(emitter::complete).onError(emitter::error).execute();
 		});
 	}
