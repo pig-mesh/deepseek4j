@@ -1,5 +1,6 @@
 package io.github.pigmesh.ai.deepseek.core;
 
+import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionModel;
 import lombok.Data;
 
 import java.net.Proxy;
@@ -33,7 +34,7 @@ public class DeepSeekConfig {
 	/**
 	 * 模型名称
 	 */
-	protected String model;
+	protected String model = ChatCompletionModel.DEEPSEEK_REASONER.getValue();
 
 	/**
 	 * 默认系统提示词
