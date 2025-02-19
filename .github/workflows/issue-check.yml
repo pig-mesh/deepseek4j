@@ -1,0 +1,55 @@
+name: Issue Check
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  check-stargazer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if issue creator is a stargazer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const creator = context.payload.issue.user.login;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            async function checkAllStargazers(owner, repo, creator) {
+              let page = 1;
+              while (true) {
+                const { data: stargazers } = await github.rest.activity.listStargazersForRepo({
+                  owner,
+                  repo,
+                  per_page: 100,
+                  page: page
+                });
+                
+                if (stargazers.length === 0) {
+                  break;
+                }
+                
+                if (stargazers.some(user => user.login === creator)) {
+                  return true;
+                }
+                
+                page++;
+              }
+              return false;
+            }
+            
+            try {
+              const hasStarred = await checkAllStargazers(owner, repo, creator);
+              
+              if (!hasStarred) {
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: context.issue.number,
+                  labels: ['invalid']
+                });
+              }
+            } catch (error) {
+              console.error('Error checking stargazer status:', error);
+            } 
