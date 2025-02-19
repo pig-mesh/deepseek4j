@@ -5,7 +5,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.pig-mesh.ai/deepseek4j.svg?style=flat-square)](https://maven.badges.herokuapp.com/maven-central/io.github.pig-mesh.ai/deepseek4j)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-DeepSeek4j Spring Boot Starter 是一个用于快速集成 DeepSeek AI 能力的 Spring Boot 启动器。它提供了简单的配置方式和易用的 API，让你能够在 Spring Boot 项目中轻松使用 DeepSeek 的 AI 功能。
+DeepSeek4j 是面向 DeepSeek 推出的 Java 开发 SDK，支持 DeepSeek R1 和 V3 全系列模型。提供对话推理、函数调用、JSON结构化输出、以及基于 OpenAI 兼容 API 协议的嵌入向量生成能力。通过 Spring Boot Starter 模块，开发者可以快速为 Spring Boot 2.x/3.x 以及 Solon 等主流 Java Web 框架集成 AI 能力，提供开箱即用的配置体系、自动装配的客户端实例，以及便捷的流式响应支持。
 
 ## 特性
 
