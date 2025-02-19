@@ -2,7 +2,7 @@ name: Issue Check
 
 on:
   issues:
-    types: [opened]
+    types: [opened, reopened]
 
 jobs:
   check-stargazer:
@@ -48,6 +48,20 @@ jobs:
                   repo,
                   issue_number: context.issue.number,
                   labels: ['invalid']
+                });
+
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: context.issue.number,
+                  body: 'https://github.com/pig-mesh/deepseek4j/issues/9'
+                });
+                
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: context.issue.number,
+                  state: 'closed'
                 });
               }
             } catch (error) {
