@@ -49,20 +49,6 @@ jobs:
                   issue_number: context.issue.number,
                   labels: ['invalid']
                 });
-
-                await github.rest.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number: context.issue.number,
-                  body: 'https://github.com/pig-mesh/deepseek4j/issues/9'
-                });
-                
-                await github.rest.issues.update({
-                  owner,
-                  repo,
-                  issue_number: context.issue.number,
-                  state: 'closed'
-                });
               }
             } catch (error) {
               console.error('Error checking stargazer status:', error);
