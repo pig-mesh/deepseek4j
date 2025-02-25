@@ -4,7 +4,7 @@
 
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek4j</artifactId>
-    <version>1.4.4</version>
+    <version>1.4.5</version>
     <packaging>pom</packaging>
 
     <name>deepseek4j</name>
