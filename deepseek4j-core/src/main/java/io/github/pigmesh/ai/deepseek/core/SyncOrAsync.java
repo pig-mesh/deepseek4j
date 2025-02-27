@@ -6,6 +6,6 @@ public interface SyncOrAsync<ResponseContent> {
 
 	ResponseContent execute();
 
-	AsyncResponseHandling onResponse(Consumer<ResponseContent> responseHandler);
+	void onResponse(Consumer<ResponseContent> responseHandler,Consumer<Throwable> errorHandler);
 
 }
