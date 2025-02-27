@@ -19,56 +19,25 @@ class AsyncRequestExecutor<Response, ResponseContent> {
 		this.responseContentExtractor = responseContentExtractor;
 	}
 
-	AsyncResponseHandling onResponse(Consumer<ResponseContent> responseHandler) {
-		return new AsyncResponseHandling() {
-
+	void onResponse(Consumer<ResponseContent> responseHandler, Consumer<Throwable> errorHandler) {
+		call.enqueue(new retrofit2.Callback<Response>() {
 			@Override
-			public ErrorHandling onError(Consumer<Throwable> errorHandler) {
-				return new ErrorHandling() {
-
-					@Override
-					public ResponseHandle execute() {
-						try {
-							retrofit2.Response<Response> retrofitResponse = call.execute();
-							if (retrofitResponse.isSuccessful()) {
-								Response response = retrofitResponse.body();
-								ResponseContent responseContent = responseContentExtractor.apply(response);
-								responseHandler.accept(responseContent);
-							}
-							else {
-								errorHandler.accept(toException(retrofitResponse));
-							}
-						}
-						catch (IOException e) {
-							errorHandler.accept(e);
-						}
-						return new ResponseHandle();
-					}
-				};
+			public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+				if (response.isSuccessful()) {
+					responseHandler.accept(responseContentExtractor.apply(response.body()));
+				} else {
+                    try {
+                        errorHandler.accept(toException(response));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 			}
 
 			@Override
-			public ErrorHandling ignoreErrors() {
-				return new ErrorHandling() {
-
-					@Override
-					public ResponseHandle execute() {
-						try {
-							retrofit2.Response<Response> retrofitResponse = call.execute();
-							if (retrofitResponse.isSuccessful()) {
-								Response response = retrofitResponse.body();
-								ResponseContent responseContent = responseContentExtractor.apply(response);
-								responseHandler.accept(responseContent);
-							}
-						}
-						catch (IOException e) {
-							// intentionally ignoring, because user called ignoreErrors()
-						}
-						return new ResponseHandle();
-					}
-				};
+			public void onFailure(Call<Response> call, Throwable t) {
+				errorHandler.accept(t);
 			}
-		};
+		});
 	}
-
 }

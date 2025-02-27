@@ -60,9 +60,9 @@ public class RequestExecutor<Request, Response, ResponseContent> implements Sync
 	}
 
 	@Override
-	public AsyncResponseHandling onResponse(Consumer<ResponseContent> responseHandler) {
+	public void onResponse(Consumer<ResponseContent> responseHandler,Consumer<Throwable> errorHandler) {
 
-		return new AsyncRequestExecutor<>(call, responseContentExtractor).onResponse(responseHandler);
+		 new AsyncRequestExecutor<>(call, responseContentExtractor).onResponse(responseHandler,errorHandler);
 	}
 
 	@Override
