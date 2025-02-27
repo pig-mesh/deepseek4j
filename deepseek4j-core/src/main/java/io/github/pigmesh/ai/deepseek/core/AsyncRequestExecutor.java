@@ -25,13 +25,15 @@ class AsyncRequestExecutor<Response, ResponseContent> {
 			public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
 				if (response.isSuccessful()) {
 					responseHandler.accept(responseContentExtractor.apply(response.body()));
-				} else {
-                    try {
-                        errorHandler.accept(toException(response));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+				}
+				else {
+					try {
+						errorHandler.accept(toException(response));
+					}
+					catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
 			}
 
 			@Override
@@ -40,4 +42,5 @@ class AsyncRequestExecutor<Response, ResponseContent> {
 			}
 		});
 	}
+
 }
