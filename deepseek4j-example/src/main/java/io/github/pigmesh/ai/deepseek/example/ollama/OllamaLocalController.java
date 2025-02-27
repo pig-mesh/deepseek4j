@@ -3,6 +3,7 @@ package io.github.pigmesh.ai.deepseek.example.ollama;
 import io.github.pigmesh.ai.deepseek.config.DeepSeekProperties;
 import io.github.pigmesh.ai.deepseek.core.DeepSeekClient;
 import io.github.pigmesh.ai.deepseek.core.Json;
+import io.github.pigmesh.ai.deepseek.core.SyncOrAsyncOrStreaming;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionChoice;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
@@ -46,6 +47,19 @@ public class OllamaLocalController {
 				.model(deepSeekProperties.getModel()).addUserMessage(prompt).build();
 
 		return deepSeekClient.chatCompletion(request).execute();
+	}
+
+	// 异步
+	@GetMapping(value = "/async/chat")
+	public void asyncChat(String prompt) {
+		ChatCompletionRequest request = ChatCompletionRequest.builder().model(deepSeekProperties.getModel())
+				.addUserMessage(prompt).build();
+		SyncOrAsyncOrStreaming<ChatCompletionResponse> asyncOrStreaming = deepSeekClient.chatCompletion(request);
+		asyncOrStreaming.onResponse((responseContent) -> {
+			log.info("处理返回数据：{}", Json.toJson(responseContent));
+		}, exception -> {
+			log.info("处理异常数据：{}", exception.getMessage());
+		});
 	}
 
 	@GetMapping(value = "/models", produces = MediaType.APPLICATION_JSON_VALUE)
