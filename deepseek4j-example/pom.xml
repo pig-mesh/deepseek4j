@@ -43,7 +43,7 @@
         <dependency>
             <groupId>io.github.pig-mesh.ai</groupId>
             <artifactId>deepseek-spring-boot-starter</artifactId>
-            <version>1.4.5</version>
+            <version>1.4.6</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
