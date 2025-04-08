@@ -24,7 +24,7 @@ deepseek4j 是面向 DeepSeek 推出的 Java 开发 SDK，支持 DeepSeek R1 和
 <dependency>
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek-spring-boot-starter</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.6</version>
 </dependency>
 ```
 
