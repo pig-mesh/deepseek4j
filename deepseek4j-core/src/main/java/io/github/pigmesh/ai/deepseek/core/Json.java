@@ -12,13 +12,14 @@ import java.util.Map;
 
 public class Json {
 
-    public static final ObjectMapper OBJECT_MAPPER;
+	public static final ObjectMapper OBJECT_MAPPER;
 
-    static {
-        OBJECT_MAPPER = (new ObjectMapper()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).enable(SerializationFeature.INDENT_OUTPUT);
-        OBJECT_MAPPER.coercionConfigFor(LogicalType.Enum)
-                .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
-    }
+	static {
+		OBJECT_MAPPER = (new ObjectMapper()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+				.enable(SerializationFeature.INDENT_OUTPUT);
+		OBJECT_MAPPER.coercionConfigFor(LogicalType.Enum).setCoercion(CoercionInputShape.EmptyString,
+				CoercionAction.AsNull);
+	}
 
 	public static String toJson(Object o) {
 		try {
@@ -31,11 +32,6 @@ public class Json {
 
 	public static <T> T fromJson(String json, Class<T> type) {
 		try {
-			// 针对 openrouter 的特殊处理
-			if (json.contains("reasoning")) {
-				json = json.replace("reasoning", "reasoning_content");
-			}
-
 			return OBJECT_MAPPER.readValue(json, type);
 		}
 		catch (JsonProcessingException jpe) {
