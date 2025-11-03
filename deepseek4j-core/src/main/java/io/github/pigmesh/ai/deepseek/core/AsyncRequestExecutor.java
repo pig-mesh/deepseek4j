@@ -31,7 +31,7 @@ class AsyncRequestExecutor<Response, ResponseContent> {
 						errorHandler.accept(toException(response));
 					}
 					catch (IOException e) {
-						throw new RuntimeException(e);
+						errorHandler.accept(e);
 					}
 				}
 			}
