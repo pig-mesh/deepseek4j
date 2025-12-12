@@ -149,11 +149,20 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 					log.debug("onEvent() {}", data);
 				}
 
-				if ("[DONE]".equals(data)) {
-					return;
-				}
-
 				try {
+					// 如果是 [DONE] 标记，构造一个特殊的响应对象
+					if ("[DONE]".equals(data)) {
+						// 构造一个包含 [DONE] 标记的 JSON，让其能被正确解析
+						String doneJson = "{\"choices\": [{\"delta\": {\"content\": \"[DONE]\"}}]}";
+						Response response = Json.fromJson(doneJson, responseClass);
+						ResponseContent responseContent = streamEventContentExtractor.apply(response);
+						if (responseContent != null) {
+							partialResponseHandler.accept(responseContent);
+						}
+						// 保持原有逻辑：处理完 [DONE] 后结束流
+						return;
+					}
+
 					Response response = Json.fromJson(data, responseClass);
 					ResponseContent responseContent = streamEventContentExtractor.apply(response);
 					if (responseContent != null) {

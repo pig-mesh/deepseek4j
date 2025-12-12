@@ -8,15 +8,16 @@ import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionChoice;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -28,11 +29,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OllamaLocalController {
 
-	@Resource
-	private DeepSeekClient deepSeekClient;
+	private final DeepSeekClient deepSeekClient;
 
-	@Resource
-	private DeepSeekProperties deepSeekProperties;
+	private final DeepSeekProperties deepSeekProperties;
 
 	@GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<ChatCompletionResponse> chat(String prompt) {
