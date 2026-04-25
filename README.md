@@ -1,5 +1,10 @@
 # deepseek4j （DeepSeek Java SDK）
 
+
+<p align="center">
+ <img src="https://gitcode.com/pig-mesh/deepseek4j/star/badge.svg"/>
+</p>
+
 详细的使用文档请访问：[https://javaai.pig4cloud.com/deepseek](https://javaai.pig4cloud.com/deepseek)
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.pig-mesh.ai/deepseek4j.svg?style=flat-square)](https://maven.badges.herokuapp.com/maven-central/io.github.pig-mesh.ai/deepseek4j)
