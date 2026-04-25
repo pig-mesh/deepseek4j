@@ -4,7 +4,7 @@
 
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek4j</artifactId>
-    <version>1.4.7</version>
+    <version>1.5.0</version>
     <packaging>pom</packaging>
 
     <name>deepseek4j</name>
@@ -41,7 +41,6 @@
 
     <modules>
         <module>deepseek4j-core</module>
-        <module>deepseek-solon-plugin</module>
         <module>deepseek-spring-boot-starter</module>
         <module>deepseek4j-example</module>
     </modules>

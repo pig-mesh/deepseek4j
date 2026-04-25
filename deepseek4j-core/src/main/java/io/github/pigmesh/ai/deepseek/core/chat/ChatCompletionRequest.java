@@ -92,6 +92,9 @@ public class ChatCompletionRequest {
 	private final Map<String, String> metadata;
 
 	@JsonProperty
+	private final Thinking thinking;
+
+	@JsonProperty
 	private final String reasoningEffort;
 
 	@JsonProperty
@@ -130,6 +133,7 @@ public class ChatCompletionRequest {
 		this.parallelToolCalls = builder.parallelToolCalls;
 		this.store = builder.store;
 		this.metadata = builder.metadata;
+		this.thinking = builder.thinking;
 		this.reasoningEffort = builder.reasoningEffort;
 		this.serviceTier = builder.serviceTier;
 		this.functions = builder.functions;
@@ -221,6 +225,10 @@ public class ChatCompletionRequest {
 		return metadata;
 	}
 
+	public Thinking thinking() {
+		return thinking;
+	}
+
 	public String reasoningEffort() {
 		return reasoningEffort;
 	}
@@ -263,10 +271,10 @@ public class ChatCompletionRequest {
 				&& Objects.equals(responseFormat, another.responseFormat) && Objects.equals(seed, another.seed)
 				&& Objects.equals(tools, another.tools) && Objects.equals(toolChoice, another.toolChoice)
 				&& Objects.equals(parallelToolCalls, another.parallelToolCalls) && Objects.equals(store, another.store)
-				&& Objects.equals(metadata, another.metadata)
+				&& Objects.equals(metadata, another.metadata) && Objects.equals(thinking, another.thinking)
 				&& Objects.equals(reasoningEffort, another.reasoningEffort)
 				&& Objects.equals(serviceTier, another.serviceTier) && Objects.equals(functions, another.functions)
-				&& Objects.equals(functionCall, another.functionCall);
+				&& Objects.equals(functionCall, another.functionCall) && includeReasoning == another.includeReasoning;
 	}
 
 	@Override
@@ -293,10 +301,12 @@ public class ChatCompletionRequest {
 		h += (h << 5) + Objects.hashCode(parallelToolCalls);
 		h += (h << 5) + Objects.hashCode(store);
 		h += (h << 5) + Objects.hashCode(metadata);
+		h += (h << 5) + Objects.hashCode(thinking);
 		h += (h << 5) + Objects.hashCode(reasoningEffort);
 		h += (h << 5) + Objects.hashCode(serviceTier);
 		h += (h << 5) + Objects.hashCode(functions);
 		h += (h << 5) + Objects.hashCode(functionCall);
+		h += (h << 5) + Boolean.hashCode(includeReasoning);
 		return h;
 	}
 
@@ -308,8 +318,9 @@ public class ChatCompletionRequest {
 				+ ", presencePenalty=" + presencePenalty + ", frequencyPenalty=" + frequencyPenalty + ", logitBias="
 				+ logitBias + ", user=" + user + ", responseFormat=" + responseFormat + ", seed=" + seed + ", tools="
 				+ tools + ", toolChoice=" + toolChoice + ", parallelToolCalls=" + parallelToolCalls + ", store=" + store
-				+ ", metadata=" + metadata + ", reasoningEffort=" + reasoningEffort + ", serviceTier=" + serviceTier
-				+ ", functions=" + functions + ", functionCall=" + functionCall + "}";
+				+ ", metadata=" + metadata + ", thinking=" + thinking + ", reasoningEffort=" + reasoningEffort
+				+ ", serviceTier=" + serviceTier + ", functions=" + functions + ", functionCall=" + functionCall
+				+ ", includeReasoning=" + includeReasoning + "}";
 	}
 
 	public static Builder builder() {
@@ -363,6 +374,8 @@ public class ChatCompletionRequest {
 
 		private Map<String, String> metadata;
 
+		private Thinking thinking;
+
 		private String reasoningEffort;
 
 		private String serviceTier;
@@ -400,6 +413,7 @@ public class ChatCompletionRequest {
 			parallelToolCalls(instance.parallelToolCalls);
 			store(instance.store);
 			metadata(instance.metadata);
+			thinking(instance.thinking);
 			reasoningEffort(instance.reasoningEffort);
 			serviceTier(instance.serviceTier);
 			functions(instance.functions);
@@ -600,8 +614,44 @@ public class ChatCompletionRequest {
 			return this;
 		}
 
+		@JsonSetter
+		public Builder thinking(Thinking thinking) {
+			this.thinking = thinking;
+			return this;
+		}
+
+		public Builder thinking(ThinkingType thinkingType) {
+			if (thinkingType != null) {
+				this.thinking = Thinking.builder().type(thinkingType).build();
+			}
+			return this;
+		}
+
+		public Builder thinking(String thinkingType) {
+			if (thinkingType != null) {
+				this.thinking = Thinking.builder().type(thinkingType).build();
+			}
+			return this;
+		}
+
+		public Builder thinkingEnabled() {
+			return thinking(ThinkingType.ENABLED);
+		}
+
+		public Builder thinkingDisabled() {
+			return thinking(ThinkingType.DISABLED);
+		}
+
+		public Builder thinkingEnabled(boolean enabled) {
+			return thinking(enabled ? ThinkingType.ENABLED : ThinkingType.DISABLED);
+		}
+
+		public Builder reasoningEffort(ReasoningEffort reasoningEffort) {
+			return reasoningEffort(reasoningEffort == null ? null : reasoningEffort.getValue());
+		}
+
 		public Builder reasoningEffort(String reasoningEffort) {
-			this.reasoningEffort = reasoningEffort;
+			this.reasoningEffort = ReasoningEffort.normalize(reasoningEffort);
 			return this;
 		}
 

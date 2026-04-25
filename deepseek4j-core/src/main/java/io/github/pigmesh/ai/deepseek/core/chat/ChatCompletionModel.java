@@ -4,8 +4,14 @@ import lombok.Getter;
 
 public enum ChatCompletionModel {
 
+	DEEPSEEK_V4_FLASH("deepseek-v4-flash"), //
+
+	DEEPSEEK_V4_PRO("deepseek-v4-pro"), //
+
+	@Deprecated
 	DEEPSEEK_CHAT("deepseek-chat"), //
-	// alias
+
+	@Deprecated
 	DEEPSEEK_REASONER("deepseek-reasoner");
 
 	@Getter

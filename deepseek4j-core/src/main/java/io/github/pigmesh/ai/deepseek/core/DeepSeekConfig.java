@@ -1,6 +1,7 @@
 package io.github.pigmesh.ai.deepseek.core;
 
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionModel;
+import io.github.pigmesh.ai.deepseek.core.chat.ReasoningEffort;
 import lombok.Data;
 
 import java.net.Proxy;
@@ -34,7 +35,17 @@ public class DeepSeekConfig {
 	/**
 	 * 模型名称
 	 */
-	protected String model = ChatCompletionModel.DEEPSEEK_REASONER.getValue();
+	protected String model = ChatCompletionModel.DEEPSEEK_V4_PRO.getValue();
+
+	/**
+	 * 是否开启思考模式
+	 */
+	protected boolean thinkingEnabled = true;
+
+	/**
+	 * 思考强度
+	 */
+	protected String reasoningEffort = ReasoningEffort.HIGH.getValue();
 
 	/**
 	 * 默认系统提示词

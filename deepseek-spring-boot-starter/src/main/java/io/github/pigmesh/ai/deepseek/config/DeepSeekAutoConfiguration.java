@@ -43,6 +43,8 @@ public class DeepSeekAutoConfiguration {
 
 		DeepSeekClient.Builder builder = DeepSeekClient.builder().baseUrl(deepSeekProperties.getBaseUrl())
 				.model(deepSeekProperties.getModel()).openAiApiKey(deepSeekProperties.getApiKey())
+				.thinkingEnabled(deepSeekProperties.isThinkingEnabled())
+				.reasoningEffort(deepSeekProperties.getReasoningEffort())
 				.logRequests(deepSeekProperties.isLogRequests()).logResponses(deepSeekProperties.isLogResponses());
 
 		if (Objects.nonNull(deepSeekProperties.getProxy())) {

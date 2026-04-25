@@ -2,6 +2,9 @@ package io.github.pigmesh.ai.deepseek.core;
 
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionResponse;
+import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionModel;
+import io.github.pigmesh.ai.deepseek.core.chat.ReasoningEffort;
+import io.github.pigmesh.ai.deepseek.core.chat.Thinking;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.completion.CompletionResponse;
 import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
@@ -50,6 +53,10 @@ public class DeepSeekClient extends OpenAiClient {
 
 	private final String systemMessage;
 
+	private final Boolean thinkingEnabled;
+
+	private final String reasoningEffort;
+
 	public DeepSeekClient(String apiKey) {
 		this(new Builder().openAiApiKey(apiKey));
 	}
@@ -59,6 +66,8 @@ public class DeepSeekClient extends OpenAiClient {
 		this.apiVersion = serviceBuilder.apiVersion;
 		this.model = serviceBuilder.model;
 		this.systemMessage = serviceBuilder.systemMessage;
+		this.thinkingEnabled = serviceBuilder.thinkingEnabled;
+		this.reasoningEffort = serviceBuilder.reasoningEffort;
 
 		OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder().callTimeout(serviceBuilder.callTimeout)
 				.connectTimeout(serviceBuilder.connectTimeout).readTimeout(serviceBuilder.readTimeout)
@@ -161,6 +170,14 @@ public class DeepSeekClient extends OpenAiClient {
 
 		private SearchApi searchApi;
 
+		private Boolean thinkingEnabled = true;
+
+		private String reasoningEffort = ReasoningEffort.HIGH.getValue();
+
+		public Builder() {
+			this.model = ChatCompletionModel.DEEPSEEK_V4_PRO.getValue();
+		}
+
 		public Builder searchApi(SearchApi searchApi) {
 			this.searchApi = searchApi;
 			return this;
@@ -173,6 +190,20 @@ public class DeepSeekClient extends OpenAiClient {
 
 		public Builder searchEndpoint(String searchEndpoint) {
 			this.searchEndpoint = searchEndpoint;
+			return this;
+		}
+
+		public Builder thinkingEnabled(Boolean thinkingEnabled) {
+			this.thinkingEnabled = thinkingEnabled;
+			return this;
+		}
+
+		public Builder reasoningEffort(ReasoningEffort reasoningEffort) {
+			return reasoningEffort(reasoningEffort == null ? null : reasoningEffort.getValue());
+		}
+
+		public Builder reasoningEffort(String reasoningEffort) {
+			this.reasoningEffort = ReasoningEffort.normalize(reasoningEffort);
 			return this;
 		}
 
@@ -209,21 +240,21 @@ public class DeepSeekClient extends OpenAiClient {
 	public SyncOrAsyncOrStreaming<ChatCompletionResponse> chatCompletion(OpenAiClientContext context,
 			ChatCompletionRequest request) {
 
-		if (Objects.isNull(request.getModel())) {
-			request.setModel(this.model);
-		}
+		ChatCompletionRequest effectiveRequest = applyChatDefaults(request);
 
-		ChatCompletionRequest syncRequest = ChatCompletionRequest.builder().from(request).stream(false).build();
+		ChatCompletionRequest syncRequest = ChatCompletionRequest.builder().from(effectiveRequest).stream(false)
+				.build();
 
 		return new RequestExecutor<>(openAiApi.chatCompletions(context.headers(), syncRequest, apiVersion), r -> r,
 				okHttpClient, formatUrl("chat/completions"),
-				() -> ChatCompletionRequest.builder().from(request).stream(true).build(), ChatCompletionResponse.class,
-				r -> r, logStreamingResponses);
+				() -> ChatCompletionRequest.builder().from(effectiveRequest).stream(true).build(),
+				ChatCompletionResponse.class, r -> r, logStreamingResponses);
 	}
 
 	@Override
 	public SyncOrAsyncOrStreaming<String> chatCompletion(OpenAiClientContext context, String userMessage) {
-		ChatCompletionRequest request = ChatCompletionRequest.builder().addUserMessage(userMessage).build();
+		ChatCompletionRequest request = applyChatDefaults(
+				ChatCompletionRequest.builder().addUserMessage(userMessage).build());
 
 		ChatCompletionRequest syncRequest = ChatCompletionRequest.builder().from(request).stream(false).build();
 
@@ -235,10 +266,6 @@ public class DeepSeekClient extends OpenAiClient {
 
 	@Override
 	public Flux<ChatCompletionResponse> chatFluxCompletion(ChatCompletionRequest request) {
-		if (Objects.isNull(request.getModel())) {
-			request.setModel(this.model);
-		}
-
 		return Flux.create(emitter -> {
 			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
 					.onComplete(emitter::complete).onError(emitter::error).execute();
@@ -323,8 +350,9 @@ public class DeepSeekClient extends OpenAiClient {
 		}
 
 		builder.addUserMessage(userMessage);
+		ChatCompletionRequest request = applyChatDefaults(builder.build());
 		return Flux.create(emitter -> {
-			this.chatCompletion(new OpenAiClientContext(), builder.build()).onPartialResponse(emitter::next)
+			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
 					.onComplete(emitter::complete).onError(emitter::error).execute();
 		});
 	}
@@ -357,6 +385,27 @@ public class DeepSeekClient extends OpenAiClient {
 			return "";
 		}
 		return "?api-version=" + apiVersion;
+	}
+
+	private ChatCompletionRequest applyChatDefaults(ChatCompletionRequest request) {
+		ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder().from(request);
+		if (Objects.isNull(request.model()) && Objects.nonNull(this.model)) {
+			builder.model(this.model);
+		}
+		Thinking effectiveThinking = request.thinking();
+		if (Objects.isNull(effectiveThinking) && Objects.nonNull(this.thinkingEnabled)) {
+			effectiveThinking = Thinking.of(this.thinkingEnabled);
+			builder.thinking(effectiveThinking);
+		}
+		if (Objects.isNull(request.reasoningEffort()) && isThinkingEnabled(effectiveThinking)
+				&& Objects.nonNull(this.reasoningEffort)) {
+			builder.reasoningEffort(this.reasoningEffort);
+		}
+		return builder.build();
+	}
+
+	private boolean isThinkingEnabled(Thinking thinking) {
+		return thinking != null && "enabled".equals(thinking.type());
 	}
 
 }
