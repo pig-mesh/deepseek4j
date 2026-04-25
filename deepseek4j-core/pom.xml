@@ -7,6 +7,8 @@
         <artifactId>deepseek4j</artifactId>
         <version>1.5.0</version>
     </parent>
+
+    <name>deepseek4j-core</name>
     <artifactId>deepseek4j-core</artifactId>
 
     <properties>
