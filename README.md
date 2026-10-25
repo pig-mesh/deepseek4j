@@ -8,9 +8,18 @@
 详细的使用文档请访问：[https://javaai.pig4cloud.com/deepseek](https://javaai.pig4cloud.com/deepseek)
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.pig-mesh.ai/deepseek4j.svg?style=flat-square)](https://maven.badges.herokuapp.com/maven-central/io.github.pig-mesh.ai/deepseek4j)
+[![GitHub Release](https://img.shields.io/github/v/release/pig-mesh/deepseek4j?style=flat-square)](https://github.com/pig-mesh/deepseek4j/releases/latest)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 deepseek4j 是面向 DeepSeek 推出的 Java 开发 SDK，默认使用 DeepSeek Flash，也支持 DeepSeek V4 Pro。提供对话推理、函数调用、JSON结构化输出、以及基于 OpenAI 兼容 API 协议的嵌入向量生成能力。通过 Spring Boot Starter 模块，开发者可以快速为 Spring Boot 2.x/3.x 以及 Solon 等主流 Java Web 框架集成 AI 能力，提供开箱即用的配置体系、自动装配的客户端实例，以及便捷的流式响应支持。
+
+## 1.6.0 更新
+
+`1.6.0` 已发布到 Maven Central，完整发布说明见 [GitHub Release v1.6.0](https://github.com/pig-mesh/deepseek4j/releases/tag/v1.6.0)。
+
+- 新增 DeepSeek 官方 Search API，支持查询参数、结构化搜索结果、同步调用和异步回调。
+- 默认模型使用 `deepseek-flash`。
+- 移除 Bocha 搜索实现及其独立配置。使用旧搜索接口的项目需要按下文升级说明迁移。
 
 ## 特性
 
@@ -21,14 +30,26 @@ deepseek4j 是面向 DeepSeek 推出的 Java 开发 SDK，默认使用 DeepSeek 
   
 ## 快速开始
 
+运行环境要求 JDK 8 或更高版本。
+
 ### Maven 依赖
 
-在你的 `pom.xml` 中添加以下依赖：
+Spring Boot 项目在 `pom.xml` 中添加以下依赖：
 
 ```xml
 <dependency>
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek-spring-boot-starter</artifactId>
+    <version>1.6.0</version>
+</dependency>
+```
+
+不使用 Spring Boot 时，可直接依赖核心 SDK，并通过 `DeepSeekClient.builder()` 创建客户端：
+
+```xml
+<dependency>
+    <groupId>io.github.pig-mesh.ai</groupId>
+    <artifactId>deepseek4j-core</artifactId>
     <version>1.6.0</version>
 </dependency>
 ```
@@ -112,6 +133,15 @@ Spring Boot 中可直接使用已注入的 `DeepSeekClient`，无需新增配置
 可选字段为 `null` 时不发送，显式设置的 `false` 会发送。查询原样透传，参数范围由服务端校验；错误沿用 `OpenAiHttpException`。无匹配结果时 `results()` 为空列表，结果中的 `siteName()`、`siteIcon()` 和 `date()` 可能为 `null`，其中日期保留为 UTC RFC 3339 字符串。
 
 异步调用使用 `client.search(request).onResponse(responseHandler, errorHandler)`，客户端应在回调完成后关闭。搜索入口统一为 `client.search(request)`，直接使用现有 DeepSeek API Key 和基础地址，返回结构化搜索结果。
+
+## 从 1.5.0 升级
+
+`1.6.0` 包含搜索相关的破坏性 API 变更：
+
+1. 将 starter 或 core 依赖版本统一更新为 `1.6.0`。
+2. 删除 Bocha 专用的 `deepseek.search-api-key` 配置，以及客户端 builder 的 `searchApi(...)`、`searchApiKey(...)`、`searchEndpoint(...)` 调用。官方 Search 复用 DeepSeek API Key 和基础地址。
+3. 将 `chatSearchCompletion(...)`、`chatSearchStreamingCompletion(...)` 迁移到 `client.search(DeepSeekSearchRequest)`。官方 Search 返回结构化搜索结果；如需根据搜索结果生成回答，由调用方继续调用聊天接口。
+4. 将旧的 `SearchRequest`、`SearchResponse` 替换为 `DeepSeekSearchRequest`、`DeepSeekSearchResponse`，并按上文官方 Search 的参数和结果结构调整代码。Bocha 专用的 `SearchApi` 和 `FreshnessEnums` 已移除。
 
 
 ## 许可证与致谢
