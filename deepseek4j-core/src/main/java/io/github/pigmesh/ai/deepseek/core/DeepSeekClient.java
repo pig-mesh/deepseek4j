@@ -177,7 +177,7 @@ public class DeepSeekClient extends OpenAiClient {
 		private String reasoningEffort = ReasoningEffort.HIGH.getValue();
 
 		public Builder() {
-			this.model = ChatCompletionModel.DEEPSEEK_V4_PRO.getValue();
+			this.model = ChatCompletionModel.DEEPSEEK_FLASH.getValue();
 		}
 
 		public Builder searchApi(SearchApi searchApi) {

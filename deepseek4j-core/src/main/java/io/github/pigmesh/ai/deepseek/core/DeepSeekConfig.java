@@ -33,9 +33,9 @@ public class DeepSeekConfig {
 	protected String searchApiKey;
 
 	/**
-	 * 模型名称
+	 * 模型名称，默认使用 DeepSeek Flash
 	 */
-	protected String model = ChatCompletionModel.DEEPSEEK_V4_PRO.getValue();
+	protected String model = ChatCompletionModel.DEEPSEEK_FLASH.getValue();
 
 	/**
 	 * 是否开启思考模式

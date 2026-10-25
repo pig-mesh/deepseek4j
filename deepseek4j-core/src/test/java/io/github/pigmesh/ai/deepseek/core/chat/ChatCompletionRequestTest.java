@@ -21,12 +21,12 @@ class ChatCompletionRequestTest {
 
 	@Test
 	void serializesThinkingDisabled() throws Exception {
-		ChatCompletionRequest request = ChatCompletionRequest.builder().model(ChatCompletionModel.DEEPSEEK_V4_FLASH)
+		ChatCompletionRequest request = ChatCompletionRequest.builder().model(ChatCompletionModel.DEEPSEEK_FLASH)
 				.thinkingDisabled().addUserMessage("hello").build();
 
 		JsonNode json = Json.OBJECT_MAPPER.readTree(Json.toJson(request));
 
-		assertThat(json.path("model").asText()).isEqualTo("deepseek-v4-flash");
+		assertThat(json.path("model").asText()).isEqualTo("deepseek-flash");
 		assertThat(json.path("thinking").path("type").asText()).isEqualTo("disabled");
 	}
 

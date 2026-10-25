@@ -3,7 +3,7 @@ spring:
     name: deepseek-example
 deepseek:
   base-url: https://api.deepseek.com/v1
-  api-key: sk-90e8bf9997464c1c9191a419799fb7b2
-  model: deepseek-v4-pro
+  api-key: your-api-key-here
+  model: deepseek-flash
   thinking-enabled: true
   reasoning-effort: max
