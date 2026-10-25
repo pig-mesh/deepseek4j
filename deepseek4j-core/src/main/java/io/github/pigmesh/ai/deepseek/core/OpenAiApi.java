@@ -9,12 +9,18 @@ import io.github.pigmesh.ai.deepseek.core.embedding.EmbeddingResponse;
 import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
+import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchRequest;
+import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchResponse;
 import retrofit2.Call;
 import retrofit2.http.*;
 
 import java.util.Map;
 
 interface OpenAiApi {
+
+	@POST("tools/search")
+	@Headers("Content-Type: application/json")
+	Call<DeepSeekSearchResponse> search(@HeaderMap Map<String, String> headers, @Body DeepSeekSearchRequest request);
 
 	@POST("completions")
 	@Headers("Content-Type: application/json")

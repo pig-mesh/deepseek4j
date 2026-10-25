@@ -11,6 +11,8 @@ import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResult;
+import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchRequest;
+import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchResponse;
 import io.github.pigmesh.ai.deepseek.core.search.SearchApi;
 import io.github.pigmesh.ai.deepseek.core.search.SearchRequest;
 import io.github.pigmesh.ai.deepseek.core.search.SearchResponse;
@@ -355,6 +357,25 @@ public class DeepSeekClient extends OpenAiClient {
 			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
 					.onComplete(emitter::complete).onError(emitter::error).execute();
 		});
+	}
+
+	/**
+	 * 调用 DeepSeek 官方 Search API，使用客户端的 DeepSeek API Key 和 baseUrl。
+	 * @param request 搜索参数
+	 * @return 支持同步执行或异步回调的搜索请求
+	 */
+	public SyncOrAsync<DeepSeekSearchResponse> search(DeepSeekSearchRequest request) {
+		return search(new OpenAiClientContext(), request);
+	}
+
+	/**
+	 * 调用 DeepSeek 官方 Search API，并附加本次请求的 headers。
+	 * @param context 请求上下文
+	 * @param request 搜索参数
+	 * @return 支持同步执行或异步回调的搜索请求
+	 */
+	public SyncOrAsync<DeepSeekSearchResponse> search(OpenAiClientContext context, DeepSeekSearchRequest request) {
+		return new RequestExecutor<>(openAiApi.search(context.headers(), request), r -> r);
 	}
 
 	@Override
