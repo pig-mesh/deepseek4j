@@ -13,9 +13,6 @@ import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResult;
 import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchRequest;
 import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchResponse;
-import io.github.pigmesh.ai.deepseek.core.search.SearchApi;
-import io.github.pigmesh.ai.deepseek.core.search.SearchRequest;
-import io.github.pigmesh.ai.deepseek.core.search.SearchResponse;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -50,8 +47,6 @@ public class DeepSeekClient extends OpenAiClient {
 	private final OpenAiApi openAiApi;
 
 	private final String officialSearchPath;
-
-	private final SearchApi searchApi;
 
 	private final boolean logStreamingResponses;
 
@@ -135,17 +130,6 @@ public class DeepSeekClient extends OpenAiClient {
 		this.openAiApi = retrofit.create(OpenAiApi.class);
 		this.officialSearchPath = "/".equals(retrofit.baseUrl().encodedPath()) ? "v1/tools/search" : "tools/search";
 
-		// Search API
-		OkHttpClient searchOkHttpClient = new OkHttpClient.Builder().callTimeout(serviceBuilder.callTimeout)
-				.connectTimeout(serviceBuilder.connectTimeout).readTimeout(serviceBuilder.readTimeout)
-				.writeTimeout(serviceBuilder.writeTimeout)
-				.addInterceptor(new RequestLoggingInterceptor(serviceBuilder.logLevel))
-				.addInterceptor(new ResponseLoggingInterceptor(serviceBuilder.logLevel))
-				.addInterceptor(new AuthorizationHeaderInjector(serviceBuilder.searchApiKey)).build();
-		Retrofit.Builder searchRetrofitBuilder = new Retrofit.Builder().baseUrl(serviceBuilder.searchEndpoint)
-				.client(searchOkHttpClient);
-		searchRetrofitBuilder.addConverterFactory(JacksonConverterFactory.create(Json.OBJECT_MAPPER));
-		this.searchApi = searchRetrofitBuilder.build().create(SearchApi.class);
 	}
 
 	public void shutdown() {
@@ -170,33 +154,12 @@ public class DeepSeekClient extends OpenAiClient {
 
 	public static class Builder extends OpenAiClient.Builder<DeepSeekClient, Builder> {
 
-		private String searchEndpoint = "https://api.bochaai.com/v1/";
-
-		private String searchApiKey;
-
-		private SearchApi searchApi;
-
 		private Boolean thinkingEnabled = true;
 
 		private String reasoningEffort = ReasoningEffort.HIGH.getValue();
 
 		public Builder() {
 			this.model = ChatCompletionModel.DEEPSEEK_FLASH.getValue();
-		}
-
-		public Builder searchApi(SearchApi searchApi) {
-			this.searchApi = searchApi;
-			return this;
-		}
-
-		public Builder searchApiKey(String searchApiKey) {
-			this.searchApiKey = searchApiKey;
-			return this;
-		}
-
-		public Builder searchEndpoint(String searchEndpoint) {
-			this.searchEndpoint = searchEndpoint;
-			return this;
 		}
 
 		public Builder thinkingEnabled(Boolean thinkingEnabled) {
@@ -276,71 +239,6 @@ public class DeepSeekClient extends OpenAiClient {
 			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
 					.onComplete(emitter::complete).onError(emitter::error).execute();
 		});
-	}
-
-	/**
-	 * 聊天搜索
-	 * @param userMessage 用户消息
-	 * @return {@link Flux }<{@link ChatCompletionResponse }>
-	 */
-	public Flux<ChatCompletionResponse> chatSearchCompletion(String userMessage) {
-		SearchResponse searchResponse = new SyncRequestExecutor<>(
-				searchApi.webSearch(SearchRequest.builder().enable(true).query(userMessage).build()),
-				searchResponse1 -> searchResponse1).execute();
-		if (200 == searchResponse.getCode()) {
-			String formatted = Utils.format(userMessage, searchResponse.getData().getWebPages().getValue());
-			if (Objects.nonNull(formatted)) {
-				return this.chatFluxCompletion(formatted);
-			}
-			return this.chatFluxCompletion(userMessage);
-		}
-
-		return this.chatFluxCompletion(userMessage);
-	}
-
-	/**
-	 * 聊天搜索
-	 * @param userMessage 用户消息
-	 * @return {@link Flux }<{@link ChatCompletionResponse }>
-	 */
-	public SyncOrAsyncOrStreaming<ChatCompletionResponse> chatSearchStreamingCompletion(String userMessage) {
-		SearchResponse searchResponse = new SyncRequestExecutor<>(
-				searchApi.webSearch(SearchRequest.builder().enable(true).query(userMessage).build()),
-				searchResponse1 -> searchResponse1).execute();
-		if (200 == searchResponse.getCode()) {
-			String formatted = Utils.format(userMessage, searchResponse.getData().getWebPages().getValue());
-			if (Objects.nonNull(formatted)) {
-				return this.chatCompletion(new OpenAiClientContext(), ChatCompletionRequest.builder().stream(true)
-						.model(this.model).addUserMessage(formatted).build());
-			}
-		}
-		return this.chatCompletion(new OpenAiClientContext(),
-				ChatCompletionRequest.builder().stream(true).model(this.model).addUserMessage(userMessage).build());
-	}
-
-	/**
-	 * 聊天搜索完成
-	 * @param userMessage 用户消息
-	 * @param searchRequest 搜索请求
-	 * @return {@link Flux }<{@link ChatCompletionResponse }>
-	 */
-	public Flux<ChatCompletionResponse> chatSearchCompletion(String userMessage, SearchRequest searchRequest) {
-
-		if (Objects.isNull(searchRequest.getQuery())) {
-			searchRequest.setQuery(userMessage);
-		}
-
-		SearchResponse searchResponse = new SyncRequestExecutor<>(searchApi.webSearch(searchRequest),
-				searchResponse1 -> searchResponse1).execute();
-		if (200 == searchResponse.getCode()) {
-			String formatted = Utils.format(userMessage, searchResponse.getData().getWebPages().getValue());
-			if (Objects.nonNull(formatted)) {
-				return this.chatFluxCompletion(formatted);
-			}
-			return this.chatFluxCompletion(userMessage);
-		}
-
-		return this.chatFluxCompletion(userMessage);
 	}
 
 	@Override

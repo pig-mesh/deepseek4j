@@ -71,7 +71,6 @@ public class DeepSeekAutoConfiguration {
 			builder.systemMessage(systemMessage);
 		}
 
-		builder.searchApiKey(deepSeekProperties.getSearchApiKey());
 		return builder.build();
 	}
 

@@ -30,8 +30,7 @@ class DeepSeekSearchClientTest {
 	@BeforeEach
 	void setUp() {
 		server = new MockWebServer();
-		client = DeepSeekClient.builder().baseUrl(server.url("/v1/").toString()).openAiApiKey("deepseek-key")
-				.searchEndpoint(server.url("/bocha/").toString()).searchApiKey("bocha-key").build();
+		client = DeepSeekClient.builder().baseUrl(server.url("/v1/").toString()).openAiApiKey("deepseek-key").build();
 	}
 
 	@AfterEach
