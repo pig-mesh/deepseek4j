@@ -29,7 +29,7 @@ deepseek4j 是面向 DeepSeek 推出的 Java 开发 SDK，默认使用 DeepSeek 
 <dependency>
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek-spring-boot-starter</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 
