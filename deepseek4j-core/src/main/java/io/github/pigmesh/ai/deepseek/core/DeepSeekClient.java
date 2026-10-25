@@ -11,6 +11,8 @@ import io.github.pigmesh.ai.deepseek.core.models.ModelsResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationRequest;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResponse;
 import io.github.pigmesh.ai.deepseek.core.moderation.ModerationResult;
+import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchRequest;
+import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchResponse;
 import io.github.pigmesh.ai.deepseek.core.search.SearchApi;
 import io.github.pigmesh.ai.deepseek.core.search.SearchRequest;
 import io.github.pigmesh.ai.deepseek.core.search.SearchResponse;
@@ -46,6 +48,8 @@ public class DeepSeekClient extends OpenAiClient {
 	private final OkHttpClient okHttpClient;
 
 	private final OpenAiApi openAiApi;
+
+	private final String officialSearchPath;
 
 	private final SearchApi searchApi;
 
@@ -127,7 +131,9 @@ public class DeepSeekClient extends OpenAiClient {
 
 		retrofitBuilder.addConverterFactory(JacksonConverterFactory.create(Json.OBJECT_MAPPER));
 
-		this.openAiApi = retrofitBuilder.build().create(OpenAiApi.class);
+		Retrofit retrofit = retrofitBuilder.build();
+		this.openAiApi = retrofit.create(OpenAiApi.class);
+		this.officialSearchPath = "/".equals(retrofit.baseUrl().encodedPath()) ? "v1/tools/search" : "tools/search";
 
 		// Search API
 		OkHttpClient searchOkHttpClient = new OkHttpClient.Builder().callTimeout(serviceBuilder.callTimeout)
@@ -175,7 +181,7 @@ public class DeepSeekClient extends OpenAiClient {
 		private String reasoningEffort = ReasoningEffort.HIGH.getValue();
 
 		public Builder() {
-			this.model = ChatCompletionModel.DEEPSEEK_V4_PRO.getValue();
+			this.model = ChatCompletionModel.DEEPSEEK_FLASH.getValue();
 		}
 
 		public Builder searchApi(SearchApi searchApi) {
@@ -355,6 +361,25 @@ public class DeepSeekClient extends OpenAiClient {
 			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
 					.onComplete(emitter::complete).onError(emitter::error).execute();
 		});
+	}
+
+	/**
+	 * 调用 DeepSeek 官方 Search API，使用客户端的 DeepSeek API Key 和 baseUrl。
+	 * @param request 搜索参数
+	 * @return 支持同步执行或异步回调的搜索请求
+	 */
+	public SyncOrAsync<DeepSeekSearchResponse> search(DeepSeekSearchRequest request) {
+		return search(new OpenAiClientContext(), request);
+	}
+
+	/**
+	 * 调用 DeepSeek 官方 Search API，并附加本次请求的 headers。
+	 * @param context 请求上下文
+	 * @param request 搜索参数
+	 * @return 支持同步执行或异步回调的搜索请求
+	 */
+	public SyncOrAsync<DeepSeekSearchResponse> search(OpenAiClientContext context, DeepSeekSearchRequest request) {
+		return new RequestExecutor<>(openAiApi.search(officialSearchPath, context.headers(), request), r -> r);
 	}
 
 	@Override
