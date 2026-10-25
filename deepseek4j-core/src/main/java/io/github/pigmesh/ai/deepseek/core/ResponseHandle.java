@@ -7,12 +7,30 @@ public class ResponseHandle {
 
 	volatile boolean cancelled = false;
 
+	private Runnable cancellation;
+
+	synchronized void onCancel(Runnable cancellation) {
+		if (cancelled) {
+			cancellation.run();
+		}
+		else {
+			this.cancellation = cancellation;
+		}
+	}
+
 	/**
 	 * Cancels the response. Currently, this only works for streaming. It has no effect on
 	 * regular asynchronous responses.
 	 */
-	public void cancel() {
+	public synchronized void cancel() {
+		if (cancelled) {
+			return;
+		}
 		cancelled = true;
+		if (cancellation != null) {
+			cancellation.run();
+			cancellation = null;
+		}
 	}
 
 }

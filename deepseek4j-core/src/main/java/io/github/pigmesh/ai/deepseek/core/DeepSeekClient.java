@@ -18,6 +18,8 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -236,8 +238,9 @@ public class DeepSeekClient extends OpenAiClient {
 	@Override
 	public Flux<ChatCompletionResponse> chatFluxCompletion(ChatCompletionRequest request) {
 		return Flux.create(emitter -> {
-			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
-					.onComplete(emitter::complete).onError(emitter::error).execute();
+			ResponseHandle handle = this.chatCompletion(new OpenAiClientContext(), request)
+					.onPartialResponse(emitter::next).onComplete(emitter::complete).onError(emitter::error).execute();
+			emitter.onDispose(handle::cancel);
 		});
 	}
 
@@ -255,9 +258,61 @@ public class DeepSeekClient extends OpenAiClient {
 
 		builder.addUserMessage(userMessage);
 		ChatCompletionRequest request = applyChatDefaults(builder.build());
-		return Flux.create(emitter -> {
-			this.chatCompletion(new OpenAiClientContext(), request).onPartialResponse(emitter::next)
-					.onComplete(emitter::complete).onError(emitter::error).execute();
+		return chatFluxCompletion(request);
+	}
+
+	/**
+	 * 先使用官方 Search 搜索，再流式生成回答。默认搜索 5 条摘要，复用客户端配置。
+	 * @param userMessage 问题，同时用作搜索 query，须为 1～128 个非全空白 Unicode 字符；长问题请使用显式搜索参数重载
+	 * @return 订阅时发起搜索的冷流，取消订阅会取消当前 HTTP 请求
+	 */
+	public Flux<ChatCompletionResponse> chatSearchCompletion(String userMessage) {
+		return chatSearchCompletion(userMessage,
+				DeepSeekSearchRequest.builder().query(userMessage).count(5).needContent(false).build());
+	}
+
+	/**
+	 * 使用独立的搜索 query 为问题生成流式回答，问题原文不会被截断。
+	 * @param userMessage 完整问题
+	 * @param searchRequest 官方搜索参数
+	 * @return 搜索结果为空时正常聊天；搜索失败时通过 onError 返回错误
+	 */
+	public Flux<ChatCompletionResponse> chatSearchCompletion(String userMessage, DeepSeekSearchRequest searchRequest) {
+		return chatSearchCompletion(ChatCompletionRequest.builder().addUserMessage(userMessage).build(), searchRequest);
+	}
+
+	/**
+	 * 搜索并生成流式回答，保留历史消息和单次请求参数，未设置的模型及思考参数沿用客户端默认值。 没有 system 消息时补充客户端
+	 * systemMessage；搜索资料作为 user 消息插入最后一条 user 消息之前。
+	 * @param request 对话请求，至少包含一条 user 消息
+	 * @param searchRequest 官方搜索参数，query 须为 1～128 个非全空白 Unicode 字符
+	 * @return 每次订阅独立执行搜索和对话，取消订阅会取消当前 HTTP 请求
+	 */
+	public Flux<ChatCompletionResponse> chatSearchCompletion(ChatCompletionRequest request,
+			DeepSeekSearchRequest searchRequest) {
+		return Flux.defer(() -> {
+			SearchChatContext.validate(request, searchRequest);
+			return searchForChat(searchRequest).flatMapMany(response -> chatFluxCompletion(
+					SearchChatContext.apply(request, searchRequest, response, systemMessage)));
+		});
+	}
+
+	private Mono<DeepSeekSearchResponse> searchForChat(DeepSeekSearchRequest request) {
+		return Mono.create(sink -> {
+			Call<DeepSeekSearchResponse> call = createSearchCall(new OpenAiClientContext(), request);
+			sink.onCancel(call::cancel);
+			new AsyncRequestExecutor<>(call, response -> response).onResponse(response -> {
+				if (response == null) {
+					sink.error(new IllegalStateException("DeepSeek Search returned an empty response body"));
+				}
+				else {
+					sink.success(response);
+				}
+			}, error -> {
+				if (!call.isCanceled()) {
+					sink.error(error);
+				}
+			});
 		});
 	}
 
@@ -277,7 +332,11 @@ public class DeepSeekClient extends OpenAiClient {
 	 * @return 支持同步执行或异步回调的搜索请求
 	 */
 	public SyncOrAsync<DeepSeekSearchResponse> search(OpenAiClientContext context, DeepSeekSearchRequest request) {
-		return new RequestExecutor<>(openAiApi.search(officialSearchPath, context.headers(), request), r -> r);
+		return new RequestExecutor<>(createSearchCall(context, request), r -> r);
+	}
+
+	private Call<DeepSeekSearchResponse> createSearchCall(OpenAiClientContext context, DeepSeekSearchRequest request) {
+		return openAiApi.search(officialSearchPath, context.headers(), request);
 	}
 
 	@Override
