@@ -28,11 +28,6 @@ public class DeepSeekConfig {
 	protected String apiKey;
 
 	/**
-	 * 搜索 API 密钥
-	 */
-	protected String searchApiKey;
-
-	/**
 	 * 模型名称，默认使用 DeepSeek Flash
 	 */
 	protected String model = ChatCompletionModel.DEEPSEEK_FLASH.getValue();

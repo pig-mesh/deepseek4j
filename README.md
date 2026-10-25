@@ -15,7 +15,7 @@ deepseek4j 是面向 DeepSeek 推出的 Java 开发 SDK，默认使用 DeepSeek 
 ## 特性
 
 - 完整的 DeepSeek API 支持，支持返回思维链和会话账单
-- 支持 DeepSeek 官方 Search 独立搜索，以及基于 Bocha 的联网搜索问答
+- 支持 DeepSeek 官方 Search 独立搜索
 - 支持自定义连接参数、代理配置、超时设置、请求响应日志
 - Reactor 响应式支持，简化流式返回开发
   
@@ -29,7 +29,7 @@ deepseek4j 是面向 DeepSeek 推出的 Java 开发 SDK，默认使用 DeepSeek 
 <dependency>
     <groupId>io.github.pig-mesh.ai</groupId>
     <artifactId>deepseek-spring-boot-starter</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 
@@ -111,7 +111,7 @@ Spring Boot 中可直接使用已注入的 `DeepSeekClient`，无需新增配置
 
 可选字段为 `null` 时不发送，显式设置的 `false` 会发送。查询原样透传，参数范围由服务端校验；错误沿用 `OpenAiHttpException`。无匹配结果时 `results()` 为空列表，结果中的 `siteName()`、`siteIcon()` 和 `date()` 可能为 `null`，其中日期保留为 UTC RFC 3339 字符串。
 
-异步调用使用 `client.search(request).onResponse(responseHandler, errorHandler)`，客户端应在回调完成后关闭。官方 Search 只返回搜索结果；现有 `chatSearchCompletion(...)`、`chatSearchStreamingCompletion(...)` 仍使用 Bocha，其 `searchApiKey` 和 `searchEndpoint` 配置不影响官方 Search。
+异步调用使用 `client.search(request).onResponse(responseHandler, errorHandler)`，客户端应在回调完成后关闭。搜索入口统一为 `client.search(request)`，直接使用现有 DeepSeek API Key 和基础地址，返回结构化搜索结果。
 
 
 ## 许可证与致谢
