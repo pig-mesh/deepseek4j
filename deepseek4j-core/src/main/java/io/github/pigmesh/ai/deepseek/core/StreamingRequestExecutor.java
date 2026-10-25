@@ -222,7 +222,9 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 			}
 		};
 
-		EventSources.createFactory(okHttpClient).newEventSource(okHttpRequest, eventSourceListener);
+		EventSource eventSource = EventSources.createFactory(okHttpClient).newEventSource(okHttpRequest,
+				eventSourceListener);
+		responseHandle.onCancel(eventSource::cancel);
 
 		return responseHandle;
 	}
