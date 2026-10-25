@@ -211,6 +211,20 @@ class DeepSeekSearchChatTest {
 	}
 
 	@Test
+	void configuredCallTimeoutReachesTheSubscriber() {
+		client.shutdown();
+		client = DeepSeekClient.builder().baseUrl(server.url("/v1/").toString()).openAiApiKey("test-key")
+				.callTimeout(Duration.ofMillis(200)).readTimeout(Duration.ofSeconds(5)).build();
+		server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+		CompletableFuture<List<ChatCompletionResponse>> response = client.chatSearchCompletion("问题").collectList()
+				.toFuture();
+		assertThatThrownBy(() -> response.get(2, TimeUnit.SECONDS))
+				.isInstanceOf(java.util.concurrent.ExecutionException.class).cause()
+				.isInstanceOf(java.io.InterruptedIOException.class).hasMessageContaining("timeout");
+		assertThat(server.getRequestCount()).isEqualTo(1);
+	}
+
+	@Test
 	void searchTransportErrorsStopBeforeCallingTheModel() {
 		server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
 		assertThatThrownBy(() -> client.chatSearchCompletion("问题").blockLast(TIMEOUT))

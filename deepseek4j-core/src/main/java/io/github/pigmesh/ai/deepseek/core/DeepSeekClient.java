@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Deep Seek 客户端
@@ -300,8 +301,15 @@ public class DeepSeekClient extends OpenAiClient {
 	private Mono<DeepSeekSearchResponse> searchForChat(DeepSeekSearchRequest request) {
 		return Mono.create(sink -> {
 			Call<DeepSeekSearchResponse> call = createSearchCall(new OpenAiClientContext(), request);
-			sink.onCancel(call::cancel);
+			AtomicBoolean cancelled = new AtomicBoolean();
+			sink.onCancel(() -> {
+				cancelled.set(true);
+				call.cancel();
+			});
 			new AsyncRequestExecutor<>(call, response -> response).onResponse(response -> {
+				if (cancelled.get()) {
+					return;
+				}
 				if (response == null) {
 					sink.error(new IllegalStateException("DeepSeek Search returned an empty response body"));
 				}
@@ -309,7 +317,7 @@ public class DeepSeekClient extends OpenAiClient {
 					sink.success(response);
 				}
 			}, error -> {
-				if (!call.isCanceled()) {
+				if (!cancelled.get()) {
 					sink.error(error);
 				}
 			});
