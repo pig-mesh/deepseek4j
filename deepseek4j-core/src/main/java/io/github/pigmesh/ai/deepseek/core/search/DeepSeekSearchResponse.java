@@ -61,7 +61,7 @@ public final class DeepSeekSearchResponse {
 	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 	public static final class Builder {
 
-		private List<DeepSeekSearchResult> results;
+		private List<DeepSeekSearchResult> results = Collections.emptyList();
 
 		private Builder() {
 		}

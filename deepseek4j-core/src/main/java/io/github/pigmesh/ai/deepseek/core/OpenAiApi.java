@@ -18,9 +18,10 @@ import java.util.Map;
 
 interface OpenAiApi {
 
-	@POST("tools/search")
+	@POST
 	@Headers("Content-Type: application/json")
-	Call<DeepSeekSearchResponse> search(@HeaderMap Map<String, String> headers, @Body DeepSeekSearchRequest request);
+	Call<DeepSeekSearchResponse> search(@Url String path, @HeaderMap Map<String, String> headers,
+			@Body DeepSeekSearchRequest request);
 
 	@POST("completions")
 	@Headers("Content-Type: application/json")

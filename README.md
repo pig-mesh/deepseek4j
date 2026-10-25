@@ -69,6 +69,8 @@ public Flux<ChatCompletionResponse> chat(String prompt) {
 
 通过 `DeepSeekClient.search(...)` 调用 [DeepSeek 官方 Search API](https://api-docs.deepseek.com/zh-cn/api/search/)，获取结构化网页搜索结果。该接口使用现有 DeepSeek API Key，默认请求 `https://api.deepseek.com/v1/tools/search`，支持同步执行和异步回调。
 
+`baseUrl` 只包含域名时（如 `https://api.deepseek.com`），Search 自动使用 `/v1/tools/search`。已配置路径时，在该路径下追加 `tools/search`，保留 `/v1/` 和自定义网关前缀；此处理不改变聊天接口的请求路径。
+
 ```java
 import io.github.pigmesh.ai.deepseek.core.DeepSeekClient;
 import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchRequest;

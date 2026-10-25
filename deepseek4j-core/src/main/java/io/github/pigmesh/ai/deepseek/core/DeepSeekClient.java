@@ -49,6 +49,8 @@ public class DeepSeekClient extends OpenAiClient {
 
 	private final OpenAiApi openAiApi;
 
+	private final String officialSearchPath;
+
 	private final SearchApi searchApi;
 
 	private final boolean logStreamingResponses;
@@ -129,7 +131,9 @@ public class DeepSeekClient extends OpenAiClient {
 
 		retrofitBuilder.addConverterFactory(JacksonConverterFactory.create(Json.OBJECT_MAPPER));
 
-		this.openAiApi = retrofitBuilder.build().create(OpenAiApi.class);
+		Retrofit retrofit = retrofitBuilder.build();
+		this.openAiApi = retrofit.create(OpenAiApi.class);
+		this.officialSearchPath = "/".equals(retrofit.baseUrl().encodedPath()) ? "v1/tools/search" : "tools/search";
 
 		// Search API
 		OkHttpClient searchOkHttpClient = new OkHttpClient.Builder().callTimeout(serviceBuilder.callTimeout)
@@ -375,7 +379,7 @@ public class DeepSeekClient extends OpenAiClient {
 	 * @return 支持同步执行或异步回调的搜索请求
 	 */
 	public SyncOrAsync<DeepSeekSearchResponse> search(OpenAiClientContext context, DeepSeekSearchRequest request) {
-		return new RequestExecutor<>(openAiApi.search(context.headers(), request), r -> r);
+		return new RequestExecutor<>(openAiApi.search(officialSearchPath, context.headers(), request), r -> r);
 	}
 
 	@Override

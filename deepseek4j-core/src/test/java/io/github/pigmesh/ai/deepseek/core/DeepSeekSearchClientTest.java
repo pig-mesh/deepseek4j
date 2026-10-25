@@ -1,6 +1,7 @@
 package io.github.pigmesh.ai.deepseek.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.pigmesh.ai.deepseek.core.chat.ChatCompletionRequest;
 import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchRequest;
 import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchResponse;
 import io.github.pigmesh.ai.deepseek.core.search.DeepSeekSearchResult;
@@ -10,6 +11,8 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -88,6 +91,29 @@ class DeepSeekSearchClientTest {
 		assertThat(second.authority()).isEqualTo(-1);
 	}
 
+	@ParameterizedTest
+	@CsvSource({ "/, /v1/tools/search, /chat/completions", "/v1/, /v1/tools/search, /v1/chat/completions",
+			"/gateway/deepseek/, /gateway/deepseek/tools/search, /gateway/deepseek/chat/completions",
+			"/gateway/deepseek/v1/, /gateway/deepseek/v1/tools/search, /gateway/deepseek/v1/chat/completions" })
+	void resolvesSearchPathWithoutChangingChatPath(String basePath, String searchPath, String chatPath)
+			throws Exception {
+		client.shutdown();
+		client = DeepSeekClient.builder().baseUrl(server.url(basePath).toString()).openAiApiKey("deepseek-key").build();
+		server.enqueue(jsonResponse("{\"results\":[]}"));
+		server.enqueue(
+				jsonResponse("{\"id\":\"chatcmpl-test\",\"created\":1,\"model\":\"deepseek-flash\",\"choices\":[]}"));
+
+		client.search(DeepSeekSearchRequest.builder().query("DeepSeek").build()).execute();
+		client.chatCompletion(ChatCompletionRequest.builder().addUserMessage("hello").build()).execute();
+
+		RecordedRequest search = server.takeRequest(5, TimeUnit.SECONDS);
+		RecordedRequest chat = server.takeRequest(5, TimeUnit.SECONDS);
+		assertThat(search).isNotNull();
+		assertThat(chat).isNotNull();
+		assertThat(search.getPath()).isEqualTo(searchPath);
+		assertThat(chat.getPath()).isEqualTo(chatPath);
+	}
+
 	@Test
 	void omitsOptionalParametersAndPreservesQuerySyntax() throws Exception {
 		server.enqueue(jsonResponse("{\"results\":[]}"));
@@ -102,6 +128,7 @@ class DeepSeekSearchClientTest {
 		assertThat(body.size()).isEqualTo(1);
 		assertThat(body.path("query").asText()).isEqualTo(query);
 		assertThat(response.results()).isEmpty();
+		assertThat(DeepSeekSearchResponse.builder().build()).isEqualTo(response);
 	}
 
 	@Test
