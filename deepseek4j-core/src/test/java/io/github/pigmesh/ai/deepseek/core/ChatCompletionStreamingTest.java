@@ -8,9 +8,11 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -108,6 +110,7 @@ class ChatCompletionStreamingTest {
 					.openAiApiKey("test-key").build();
 			try {
 				AtomicInteger completions = new AtomicInteger();
+				AtomicReference<Throwable> reported = new AtomicReference<>();
 				CountDownLatch finished = new CountDownLatch(1);
 
 				client.chatCompletion(new OpenAiClient.OpenAiClientContext(),
@@ -115,12 +118,51 @@ class ChatCompletionStreamingTest {
 						}).onComplete(() -> {
 							completions.incrementAndGet();
 							finished.countDown();
-						}).onError(error -> finished.countDown()).execute();
+						}).onError(error -> {
+							reported.set(error);
+							finished.countDown();
+						}).execute();
 
 				assertThat(finished.await(10, TimeUnit.SECONDS)).isTrue();
 				// give a stray second completion the chance to surface
 				Thread.sleep(200);
 				assertThat(completions).hasValue(1);
+				// the cancellation that follows [DONE] must not surface as an error
+				assertThat(reported).hasValue(null);
+			}
+			finally {
+				client.shutdown();
+			}
+		}
+	}
+
+	/**
+	 * Direct callbacks must not receive content after completion. The Flux path drops
+	 * late content inside its sink, so only a direct-callback test can prove that the
+	 * executor itself stops delivering.
+	 */
+	@Test
+	void directCallbackReceivesNoContentAfterCompletion() throws Exception {
+		try (MockWebServer server = new MockWebServer()) {
+			server.enqueue(new MockResponse().setHeader("Content-Type", "text/event-stream")
+					.setBody("data: {\"choices\":[{\"delta\":{\"content\":\"回答\"}}]}\n\n" + "data: [DONE]\n\n"
+							+ "data: {\"choices\":[{\"delta\":{\"content\":\"多余\"}}]}\n\n"));
+
+			DeepSeekClient client = DeepSeekClient.builder().baseUrl(server.url("/v1/").toString())
+					.openAiApiKey("test-key").build();
+			try {
+				List<String> received = new CopyOnWriteArrayList<>();
+				CountDownLatch finished = new CountDownLatch(1);
+
+				client.chatCompletion(new OpenAiClient.OpenAiClientContext(),
+						ChatCompletionRequest.builder().addUserMessage("hello").build())
+						.onPartialResponse(chunk -> received.add(chunk.choices().get(0).delta().content()))
+						.onComplete(finished::countDown).onError(error -> finished.countDown()).execute();
+
+				assertThat(finished.await(10, TimeUnit.SECONDS)).isTrue();
+				// allow a late buffered event to reach the callback
+				Thread.sleep(200);
+				assertThat(received).containsExactly("回答");
 			}
 			finally {
 				client.shutdown();

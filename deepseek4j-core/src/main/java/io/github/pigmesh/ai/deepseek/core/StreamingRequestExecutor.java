@@ -157,7 +157,9 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 
 				// OkHttp may still dispatch an event it had already buffered when
 				// [DONE] completed the stream; never hand content to the caller once
-				// completion has been signalled.
+				// completion has been signalled. Covered by
+				// ChatCompletionStreamingTest#directCallbackReceivesNoContentAfterCompletion,
+				// which fails if this guard is removed.
 				if (completed.get()) {
 					return;
 				}
