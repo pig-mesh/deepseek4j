@@ -63,4 +63,31 @@ class ChatCompletionStreamingTest {
 		}
 	}
 
+	/**
+	 * Content that arrives after the sentinel must be dropped: once completion has been
+	 * signalled, nothing more may reach the caller. This covers the case where OkHttp
+	 * dispatches an event already buffered when the stream was cancelled.
+	 */
+	@Test
+	void contentAfterTheSentinelIsDropped() throws Exception {
+		try (MockWebServer server = new MockWebServer()) {
+			server.enqueue(new MockResponse().setHeader("Content-Type", "text/event-stream")
+					.setBody("data: {\"choices\":[{\"delta\":{\"content\":\"回答\"}}]}\n\n" + "data: [DONE]\n\n"
+							+ "data: {\"choices\":[{\"delta\":{\"content\":\"多余\"}}]}\n\n"));
+
+			DeepSeekClient client = DeepSeekClient.builder().baseUrl(server.url("/v1/").toString())
+					.openAiApiKey("test-key").build();
+			try {
+				List<ChatCompletionResponse> chunks = client.chatFluxCompletion("hello").collectList()
+						.block(Duration.ofSeconds(10));
+
+				assertThat(chunks).isNotNull().hasSize(1);
+				assertThat(chunks.get(0).choices().get(0).delta().content()).isEqualTo("回答");
+			}
+			finally {
+				client.shutdown();
+			}
+		}
+	}
+
 }

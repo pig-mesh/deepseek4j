@@ -155,6 +155,13 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 					return;
 				}
 
+				// OkHttp may still dispatch an event it had already buffered when
+				// [DONE] completed the stream; never hand content to the caller once
+				// completion has been signalled.
+				if (completed.get()) {
+					return;
+				}
+
 				if (logStreamingResponses) {
 					log.debug("onEvent() {}", data);
 				}
