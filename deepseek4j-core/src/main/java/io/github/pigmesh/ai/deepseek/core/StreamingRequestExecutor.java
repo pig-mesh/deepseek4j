@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -124,6 +125,15 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 
 		ResponseHandle responseHandle = new ResponseHandle();
 
+		// Completion must be signalled exactly once, whether the stream ends with
+		// the [DONE] sentinel, a normal server close, or an I/O error.
+		AtomicBoolean completed = new AtomicBoolean(false);
+		Runnable completeOnce = () -> {
+			if (completed.compareAndSet(false, true)) {
+				streamingCompletionCallback.run();
+			}
+		};
+
 		EventSourceListener eventSourceListener = new EventSourceListener() {
 
 			@Override
@@ -150,16 +160,13 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 				}
 
 				try {
-					// 如果是 [DONE] 标记，构造一个特殊的响应对象
+					// The OpenAI-compatible protocol ends the stream with a literal
+					// "[DONE]" sentinel. It is a transport marker, not model output:
+					// yielding it as content surfaces "[DONE]" to the caller and
+					// corrupts multi-turn conversations that echo streamed text back.
 					if ("[DONE]".equals(data)) {
-						// 构造一个包含 [DONE] 标记的 JSON，让其能被正确解析
-						String doneJson = "{\"choices\": [{\"delta\": {\"content\": \"[DONE]\"}}]}";
-						Response response = Json.fromJson(doneJson, responseClass);
-						ResponseContent responseContent = streamEventContentExtractor.apply(response);
-						if (responseContent != null) {
-							partialResponseHandler.accept(responseContent);
-						}
-						// 保持原有逻辑：处理完 [DONE] 后结束流
+						completeOnce.run();
+						eventSource.cancel();
 						return;
 					}
 
@@ -187,7 +194,7 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 					log.debug("onClosed()");
 				}
 
-				streamingCompletionCallback.run();
+				completeOnce.run();
 			}
 
 			@Override
@@ -196,9 +203,15 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 					return;
 				}
 
+				// The stream already completed through the [DONE] sentinel; the
+				// cancellation that followed it must not surface as an error.
+				if (completed.get()) {
+					return;
+				}
+
 				// TODO remove this when migrating from okhttp
 				if (t instanceof IllegalArgumentException && "byteCount < 0: -1".equals(t.getMessage())) {
-					streamingCompletionCallback.run();
+					completeOnce.run();
 					return;
 				}
 

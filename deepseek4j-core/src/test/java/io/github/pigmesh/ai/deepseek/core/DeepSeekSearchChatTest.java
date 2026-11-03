@@ -65,7 +65,9 @@ class DeepSeekSearchChatTest {
 
 		List<ChatCompletionResponse> responses = client.chatSearchCompletion("问题").collectList().block(TIMEOUT);
 
-		assertThat(responses).hasSize(2);
+		// The "[DONE]" sentinel is a transport marker: it terminates the stream but
+		// is not model output, so only the real content chunk is yielded.
+		assertThat(responses).hasSize(1);
 		assertThat(responses.get(0).choices().get(0).delta().content()).isEqualTo("回答");
 		RecordedRequest search = takeRequest("/v1/tools/search");
 		assertThat(body(search))
