@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.pigmesh.ai.deepseek.core.Json;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChatCompletionRequestTest {
@@ -48,6 +51,43 @@ class ChatCompletionRequestTest {
 
 		assertThat(Json.OBJECT_MAPPER.readTree(Json.toJson(low)).path("reasoning_effort").asText()).isEqualTo("high");
 		assertThat(Json.OBJECT_MAPPER.readTree(Json.toJson(xhigh)).path("reasoning_effort").asText()).isEqualTo("max");
+	}
+
+	@Test
+	void serializesExtraEntriesAtTheTopLevel() throws Exception {
+		ChatCompletionRequest request = ChatCompletionRequest.builder().model(ChatCompletionModel.DEEPSEEK_V4_PRO)
+				.addUserMessage("hello").extra("enable_thinking", false).extra("top_k", 20).build();
+
+		JsonNode json = Json.OBJECT_MAPPER.readTree(Json.toJson(request));
+
+		assertThat(json.path("model").asText()).isEqualTo("deepseek-v4-pro");
+		assertThat(json.has("extra_body")).isFalse();
+		assertThat(json.path("enable_thinking").isBoolean()).isTrue();
+		assertThat(json.path("enable_thinking").asBoolean()).isFalse();
+		assertThat(json.path("top_k").asInt()).isEqualTo(20);
+	}
+
+	@Test
+	void copiesExtraBodyFromTheGivenMap() throws Exception {
+		Map<String, Object> extra = new HashMap<>();
+		extra.put("enable_thinking", false);
+
+		ChatCompletionRequest request = ChatCompletionRequest.builder().addUserMessage("hello").extraBody(extra)
+				.build();
+		extra.put("top_k", 20);
+
+		JsonNode json = Json.OBJECT_MAPPER.readTree(Json.toJson(request));
+
+		assertThat(json.path("enable_thinking").asBoolean()).isFalse();
+		assertThat(json.has("top_k")).isFalse();
+	}
+
+	@Test
+	void collectsUnknownPropertiesIntoExtraBodyWhenDeserializing() throws Exception {
+		ChatCompletionRequest request = Json.OBJECT_MAPPER.readValue(
+				"{\"model\":\"deepseek-chat\",\"messages\":[],\"enable_thinking\":false}", ChatCompletionRequest.class);
+
+		assertThat(request.extraBody()).containsEntry("enable_thinking", false);
 	}
 
 	private String reasoningEffortJson(ReasoningEffort reasoningEffort) throws Exception {
