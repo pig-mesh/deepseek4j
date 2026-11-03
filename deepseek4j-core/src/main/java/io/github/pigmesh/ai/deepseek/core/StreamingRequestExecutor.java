@@ -174,9 +174,15 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 					if ("[DONE]".equals(data)) {
 						// Signal completion before cancelling, so that any onFailure
 						// triggered by the cancel sees completed == true and is
-						// silently dropped instead of surfacing as an error.
-						completeOnce.run();
-						eventSource.cancel();
+						// silently dropped instead of surfacing as an error. The
+						// cancel sits in a finally so that a throwing completion
+						// callback cannot leave the SSE reader running.
+						try {
+							completeOnce.run();
+						}
+						finally {
+							eventSource.cancel();
+						}
 						return;
 					}
 
