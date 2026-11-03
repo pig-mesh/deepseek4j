@@ -152,16 +152,27 @@ class ChatCompletionStreamingTest {
 					.openAiApiKey("test-key").build();
 			try {
 				List<String> received = new CopyOnWriteArrayList<>();
+				AtomicInteger completions = new AtomicInteger();
+				AtomicReference<Throwable> reported = new AtomicReference<>();
 				CountDownLatch finished = new CountDownLatch(1);
 
 				client.chatCompletion(new OpenAiClient.OpenAiClientContext(),
 						ChatCompletionRequest.builder().addUserMessage("hello").build())
 						.onPartialResponse(chunk -> received.add(chunk.choices().get(0).delta().content()))
-						.onComplete(finished::countDown).onError(error -> finished.countDown()).execute();
+						.onComplete(() -> {
+							completions.incrementAndGet();
+							finished.countDown();
+						}).onError(error -> {
+							reported.set(error);
+							finished.countDown();
+						}).execute();
 
 				assertThat(finished.await(10, TimeUnit.SECONDS)).isTrue();
 				// allow a late buffered event to reach the callback
 				Thread.sleep(200);
+				// the stream must end by completing, not by reporting an error
+				assertThat(reported).hasValue(null);
+				assertThat(completions).hasValue(1);
 				assertThat(received).containsExactly("回答");
 			}
 			finally {
