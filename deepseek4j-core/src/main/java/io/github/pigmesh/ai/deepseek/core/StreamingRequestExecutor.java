@@ -165,6 +165,9 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 					// yielding it as content surfaces "[DONE]" to the caller and
 					// corrupts multi-turn conversations that echo streamed text back.
 					if ("[DONE]".equals(data)) {
+						// Signal completion before cancelling, so that any onFailure
+						// triggered by the cancel sees completed == true and is
+						// silently dropped instead of surfacing as an error.
 						completeOnce.run();
 						eventSource.cancel();
 						return;
@@ -205,6 +208,10 @@ class StreamingRequestExecutor<Request, Response, ResponseContent> {
 
 				// The stream already completed through the [DONE] sentinel; the
 				// cancellation that followed it must not surface as an error.
+				// Note: a genuine I/O error racing with [DONE] would also be
+				// swallowed here. Receiving [DONE] means the stream was healthy, so
+				// that is accepted for now - revisit if an error-reporting layer is
+				// added above this class.
 				if (completed.get()) {
 					return;
 				}

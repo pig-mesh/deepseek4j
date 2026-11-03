@@ -39,4 +39,28 @@ class ChatCompletionStreamingTest {
 		}
 	}
 
+	/**
+	 * A stream that carries nothing but the sentinel must complete normally and yield no
+	 * chunks, rather than throwing or hanging.
+	 */
+	@Test
+	void emptyStreamYieldsNoChunksAndCompletesNormally() throws Exception {
+		try (MockWebServer server = new MockWebServer()) {
+			server.enqueue(
+					new MockResponse().setHeader("Content-Type", "text/event-stream").setBody("data: [DONE]\n\n"));
+
+			DeepSeekClient client = DeepSeekClient.builder().baseUrl(server.url("/v1/").toString())
+					.openAiApiKey("test-key").build();
+			try {
+				List<ChatCompletionResponse> chunks = client.chatFluxCompletion("hello").collectList()
+						.block(Duration.ofSeconds(10));
+
+				assertThat(chunks).isNotNull().isEmpty();
+			}
+			finally {
+				client.shutdown();
+			}
+		}
+	}
+
 }
