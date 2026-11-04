@@ -177,6 +177,27 @@ Flux<ChatCompletionResponse> answer = deepSeekClient.chatSearchCompletion(chat, 
 - 返回的是冷 `Flux`：订阅后才发起搜索，每次订阅独立执行。搜索成功后开始模型流式请求；取消订阅会取消当前搜索或聊天请求。
 - 搜索无结果时使用原问题继续聊天。搜索 HTTP、网络或解析错误通过 `onError` 返回，不会静默调用模型；模型错误同样向调用方传递。
 
+### 5. 在 Spring Security 下使用流式接口
+
+流式响应开始输出后即处于已提交（committed）状态，此时 Spring Security 若再抛出认证/授权异常，Servlet 容器已无法 forward 到 `/error` 页面，会抛出如下异常：
+
+```
+jakarta.servlet.ServletException: Unable to handle the Spring Security Exception because the response is already committed.
+```
+
+`deepseek4j-example` 提供了 `SecurityConfig` 示例，两个关键点：
+
+1. **配置 `HttpStatusEntryPoint`**：认证失败直接返回 401 状态码，不再 forward 页面：
+
+```java
+http.authorizeRequests().antMatchers("/secure/**").authenticated().anyRequest().permitAll().and().httpBasic().and()
+		.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+```
+
+2. **鉴权前置**：在流开始输出之前完成认证与授权，保证安全异常永远发生在响应提交之前。
+
+示例中的 `/secure/chat` 演示了受保护的流式接口（其余接口保持开放），演示账号见 `application.yaml`（`user/user`），可用 `curl -u user:user "http://localhost:8080/secure/chat?prompt=你好"` 验证。
+
 ## 从 1.5.0 升级
 
 `1.6.0` 包含搜索相关的破坏性 API 变更：

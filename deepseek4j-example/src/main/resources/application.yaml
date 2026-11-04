@@ -3,3 +3,7 @@ spring:
     active: deepseek
   application:
     name: deepseek-example
+  security:
+    user:
+      name: user
+      password: user
