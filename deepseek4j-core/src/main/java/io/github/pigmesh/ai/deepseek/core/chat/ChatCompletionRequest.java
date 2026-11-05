@@ -438,7 +438,9 @@ public class ChatCompletionRequest {
 			functions(instance.functions);
 			functionCall(instance.functionCall);
 			includeReasoning(instance.includeReasoning);
-			extraBody(instance.extraBody);
+			includeReasoning(instance.includeReasoning);
+			// from() 显式整体替换（含清空），保证拷贝无附加参数的请求时不会残留 builder 上的旧值
+			this.extraBody = instance.extraBody == null ? null : new LinkedHashMap<>(instance.extraBody);
 			return this;
 		}
 
@@ -729,8 +731,11 @@ public class ChatCompletionRequest {
 		}
 
 		public Builder extraBody(Map<String, Object> extraBody) {
-			// 整体替换语义：传 null 时清空已有附加参数，保证 from() 拷贝无附加参数的请求时不会残留旧值
-			this.extraBody = extraBody == null ? null : new LinkedHashMap<>(extraBody);
+			// null 视为未提供、不做清空：Jackson 会把 JSON 中的 "extra_body": null 绑定到这里，
+			// 若在此清空会误伤 anySetter 已收集的参数；显式清空只在 from() 里做。
+			if (extraBody != null) {
+				this.extraBody = new LinkedHashMap<>(extraBody);
+			}
 			return this;
 		}
 

@@ -102,6 +102,14 @@ class ChatCompletionRequestTest {
 	}
 
 	@Test
+	void deserializingExplicitExtraBodyNullKeepsOtherExtras() throws Exception {
+		ChatCompletionRequest request = Json.OBJECT_MAPPER.readValue(
+				"{\"messages\":[],\"top_k\":20,\"extra_body\":null}", ChatCompletionRequest.class);
+
+		assertThat(request.extraBody()).containsEntry("top_k", 20);
+	}
+
+	@Test
 	void copyingRequestWithoutExtrasClearsBuilderExtras() {
 		ChatCompletionRequest source = ChatCompletionRequest.builder().addUserMessage("hello").build();
 		ChatCompletionRequest request = ChatCompletionRequest.builder().extra("top_k", 20).from(source).build();
