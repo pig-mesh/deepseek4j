@@ -185,18 +185,22 @@ Flux<ChatCompletionResponse> answer = deepSeekClient.chatSearchCompletion(chat, 
 jakarta.servlet.ServletException: Unable to handle the Spring Security Exception because the response is already committed.
 ```
 
-`deepseek4j-example` 提供了 `SecurityConfig` 示例，两个关键点：
+`deepseek4j-example` 提供了完整示例（`SecurityConfig` + 受保护的 `/secure/chat`），两个关键点：
 
-1. **配置 `HttpStatusEntryPoint`**：认证失败直接返回 401 状态码，不再 forward 页面：
+1. **鉴权前置（治本）**：受保护的流式端点放在 `/secure/**` 下，认证与授权在过滤器链中完成、发生在流输出之前——安全异常永远出现在响应提交之前：
 
 ```java
 http.authorizeRequests().antMatchers("/secure/**").authenticated().anyRequest().permitAll().and().httpBasic().and()
 		.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 ```
 
-2. **鉴权前置**：在流开始输出之前完成认证与授权，保证安全异常永远发生在响应提交之前。
+2. **`HttpStatusEntryPoint`（改善客户端体验）**：认证失败时直接返回 401 状态码而不是转发页面，客户端拿到的是明确可解析的状态码。注意它并不能让"响应提交之后"的安全异常变得可渲染——治本仍然靠鉴权前置。
 
-示例中的 `/secure/chat` 演示了受保护的流式接口（其余接口保持开放），演示账号见 `application.yaml`（`user/user`），可用 `curl -u user:user "http://localhost:8080/secure/chat?prompt=你好"` 验证。
+演示账号未写入固定密码（避免示例凭据被直接部署）：启动日志中的 `Using generated security password: xxx` 即为本次运行密码，也可用环境变量 `SPRING_SECURITY_USER_NAME` / `SPRING_SECURITY_USER_PASSWORD` 覆盖。验证：
+
+```bash
+curl -u user:<启动日志里的密码> "http://localhost:8080/secure/chat?prompt=你好"
+```
 
 ## 从 1.5.0 升级
 
