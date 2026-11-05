@@ -199,7 +199,7 @@ http.authorizeRequests().antMatchers("/secure/**").authenticated().anyRequest().
 演示账号未写入固定密码（避免示例凭据被直接部署）：启动日志中的 `Using generated security password: xxx` 即为本次运行密码，也可用环境变量 `SPRING_SECURITY_USER_NAME` / `SPRING_SECURITY_USER_PASSWORD` 覆盖。验证：
 
 ```bash
-curl -u user:<启动日志里的密码> "http://localhost:8080/secure/chat?prompt=你好"
+curl -u "${SPRING_SECURITY_USER_NAME:-user}" "http://localhost:8080/secure/chat?prompt=你好"
 ```
 
 ## 从 1.5.0 升级
