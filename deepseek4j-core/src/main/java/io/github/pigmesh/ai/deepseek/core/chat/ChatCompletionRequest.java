@@ -147,7 +147,8 @@ public class ChatCompletionRequest {
 		this.functions = builder.functions;
 		this.functionCall = builder.functionCall;
 		this.includeReasoning = builder.includeReasoning;
-		this.extraBody = builder.extraBody == null ? null : unmodifiableMap(builder.extraBody);
+		// 拷贝一份而不是直接包视图：构建后若继续调用 builder 的 extra()，不应影响已构建的请求
+		this.extraBody = builder.extraBody == null ? null : unmodifiableMap(new LinkedHashMap<>(builder.extraBody));
 	}
 
 	public String model() {
@@ -728,9 +729,8 @@ public class ChatCompletionRequest {
 		}
 
 		public Builder extraBody(Map<String, Object> extraBody) {
-			if (extraBody != null) {
-				this.extraBody = new LinkedHashMap<>(extraBody);
-			}
+			// 整体替换语义：传 null 时清空已有附加参数，保证 from() 拷贝无附加参数的请求时不会残留旧值
+			this.extraBody = extraBody == null ? null : new LinkedHashMap<>(extraBody);
 			return this;
 		}
 

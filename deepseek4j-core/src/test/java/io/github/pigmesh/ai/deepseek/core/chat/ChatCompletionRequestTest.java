@@ -90,6 +90,25 @@ class ChatCompletionRequestTest {
 		assertThat(request.extraBody()).containsEntry("enable_thinking", false);
 	}
 
+	@Test
+	void builderMutationAfterBuildDoesNotAffectBuiltRequest() {
+		ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder().addUserMessage("hello").extra("top_k", 20);
+		ChatCompletionRequest first = builder.build();
+		builder.extra("enable_thinking", false);
+		ChatCompletionRequest second = builder.build();
+
+		assertThat(first.extraBody()).containsOnlyKeys("top_k");
+		assertThat(second.extraBody()).containsOnlyKeys("top_k", "enable_thinking");
+	}
+
+	@Test
+	void copyingRequestWithoutExtrasClearsBuilderExtras() {
+		ChatCompletionRequest source = ChatCompletionRequest.builder().addUserMessage("hello").build();
+		ChatCompletionRequest request = ChatCompletionRequest.builder().extra("top_k", 20).from(source).build();
+
+		assertThat(request.extraBody()).isNull();
+	}
+
 	private String reasoningEffortJson(ReasoningEffort reasoningEffort) throws Exception {
 		ChatCompletionRequest request = ChatCompletionRequest.builder().reasoningEffort(reasoningEffort)
 				.addUserMessage("hello").build();
