@@ -1,5 +1,8 @@
 package io.github.pigmesh.ai.deepseek.core.chat;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -111,6 +115,11 @@ public class ChatCompletionRequest {
 	@JsonProperty
 	private final boolean includeReasoning;
 
+	/**
+	 * 附加请求参数，序列化时直接合并到请求 JSON 的顶层，用于透传 OpenAI 兼容平台的私有参数
+	 */
+	private final Map<String, Object> extraBody;
+
 	public ChatCompletionRequest(Builder builder) {
 		this.model = builder.model;
 		this.messages = builder.messages;
@@ -139,6 +148,8 @@ public class ChatCompletionRequest {
 		this.functions = builder.functions;
 		this.functionCall = builder.functionCall;
 		this.includeReasoning = builder.includeReasoning;
+		// 拷贝一份而不是直接包视图：构建后若继续调用 builder 的 extra()，不应影响已构建的请求
+		this.extraBody = builder.extraBody == null ? null : unmodifiableMap(new LinkedHashMap<>(builder.extraBody));
 	}
 
 	public String model() {
@@ -241,6 +252,11 @@ public class ChatCompletionRequest {
 		return includeReasoning;
 	}
 
+	@JsonAnyGetter
+	public Map<String, Object> extraBody() {
+		return extraBody;
+	}
+
 	@Deprecated
 	public List<Function> functions() {
 		return functions;
@@ -274,7 +290,8 @@ public class ChatCompletionRequest {
 				&& Objects.equals(metadata, another.metadata) && Objects.equals(thinking, another.thinking)
 				&& Objects.equals(reasoningEffort, another.reasoningEffort)
 				&& Objects.equals(serviceTier, another.serviceTier) && Objects.equals(functions, another.functions)
-				&& Objects.equals(functionCall, another.functionCall) && includeReasoning == another.includeReasoning;
+				&& Objects.equals(functionCall, another.functionCall) && includeReasoning == another.includeReasoning
+				&& Objects.equals(extraBody, another.extraBody);
 	}
 
 	@Override
@@ -307,6 +324,7 @@ public class ChatCompletionRequest {
 		h += (h << 5) + Objects.hashCode(functions);
 		h += (h << 5) + Objects.hashCode(functionCall);
 		h += (h << 5) + Boolean.hashCode(includeReasoning);
+		h += (h << 5) + Objects.hashCode(extraBody);
 		return h;
 	}
 
@@ -320,7 +338,7 @@ public class ChatCompletionRequest {
 				+ tools + ", toolChoice=" + toolChoice + ", parallelToolCalls=" + parallelToolCalls + ", store=" + store
 				+ ", metadata=" + metadata + ", thinking=" + thinking + ", reasoningEffort=" + reasoningEffort
 				+ ", serviceTier=" + serviceTier + ", functions=" + functions + ", functionCall=" + functionCall
-				+ ", includeReasoning=" + includeReasoning + "}";
+				+ ", includeReasoning=" + includeReasoning + ", extraBody=" + extraBody + "}";
 	}
 
 	public static Builder builder() {
@@ -382,6 +400,8 @@ public class ChatCompletionRequest {
 
 		private boolean includeReasoning = true;
 
+		private Map<String, Object> extraBody;
+
 		@Deprecated
 		private List<Function> functions;
 
@@ -419,6 +439,9 @@ public class ChatCompletionRequest {
 			functions(instance.functions);
 			functionCall(instance.functionCall);
 			includeReasoning(instance.includeReasoning);
+			includeReasoning(instance.includeReasoning);
+			// from() 显式整体替换（含清空），保证拷贝无附加参数的请求时不会残留 builder 上的旧值
+			this.extraBody = instance.extraBody == null ? null : new LinkedHashMap<>(instance.extraBody);
 			return this;
 		}
 
@@ -685,6 +708,61 @@ public class ChatCompletionRequest {
 		@Deprecated
 		public Builder functionCall(FunctionCall functionCall) {
 			this.functionCall = functionCall;
+			return this;
+		}
+
+		/**
+		 * 添加一个附加请求参数，序列化时会直接合并到请求 JSON 的顶层。
+		 * <p>
+		 * 用于对接 OpenAI 兼容的第三方平台（例如通义千问的 {@code enable_thinking}、 {@code top_k}
+		 * 等私有参数），无需为本仓库未收录的每个字段单独建模。 注意参数名不要与已有字段（如 {@code model}、{@code stream}）重名。
+		 * @param key 参数名
+		 * @param value 参数值
+		 * @return builder
+		 */
+		@JsonAnySetter
+		public Builder extra(String key, Object value) {
+			if (key != null) {
+				if (this.extraBody == null) {
+					this.extraBody = new LinkedHashMap<>();
+				}
+				this.extraBody.put(key, value);
+			}
+			return this;
+		}
+
+		/**
+		 * 设置一组附加请求参数，序列化时每个条目会直接合并到请求 JSON 的顶层。这是程序化构建的入口， 传入 Map
+		 * 的<b>条目</b>会被提升到顶层，而不是作为名为 {@code extra_body} 的整体对象发送。
+		 * <p>
+		 * 传 {@code null} 视为未提供、不做清空，以免误伤 {@link #extra(String, Object)} 已收集的参数； 显式清空只在
+		 * {@link #from(ChatCompletionRequest)} 里做。JSON 反序列化不走这里， 见
+		 * {@link #rawExtraBody(Map)}。
+		 * @param extraBody 附加参数
+		 * @return builder
+		 */
+		@JsonIgnore
+		public Builder extraBody(Map<String, Object> extraBody) {
+			if (extraBody != null) {
+				this.extraBody = new LinkedHashMap<>(extraBody);
+			}
+			return this;
+		}
+
+		/**
+		 * Jackson 绑定专用：把 JSON 中的字面 {@code extra_body} 原样保留为一个附加属性。
+		 * <p>
+		 * 若走 {@link #extraBody(Map)}，其条目会被错误地拆到顶层，序列化/反序列化往返一次后 {@code extra_body}
+		 * 的包裹结构就丢了，还可能覆盖 {@code @JsonAnySetter} 先收集到的参数； 这里改为原样保存，保证往返一致。值为 {@code null}
+		 * 视为未提供、不做处理。
+		 * @param extraBody JSON 中的 extra_body 值
+		 * @return builder
+		 */
+		@JsonProperty("extra_body")
+		public Builder rawExtraBody(Map<String, Object> extraBody) {
+			if (extraBody != null) {
+				return extra("extra_body", extraBody);
+			}
 			return this;
 		}
 
