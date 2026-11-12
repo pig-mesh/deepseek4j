@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.pigmesh.ai.deepseek.core.Json;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,7 +93,8 @@ class ChatCompletionRequestTest {
 
 	@Test
 	void builderMutationAfterBuildDoesNotAffectBuiltRequest() {
-		ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder().addUserMessage("hello").extra("top_k", 20);
+		ChatCompletionRequest.Builder builder = ChatCompletionRequest.builder().addUserMessage("hello").extra("top_k",
+				20);
 		ChatCompletionRequest first = builder.build();
 		builder.extra("enable_thinking", false);
 		ChatCompletionRequest second = builder.build();
@@ -103,10 +105,32 @@ class ChatCompletionRequestTest {
 
 	@Test
 	void deserializingExplicitExtraBodyNullKeepsOtherExtras() throws Exception {
-		ChatCompletionRequest request = Json.OBJECT_MAPPER.readValue(
-				"{\"messages\":[],\"top_k\":20,\"extra_body\":null}", ChatCompletionRequest.class);
+		ChatCompletionRequest request = Json.OBJECT_MAPPER
+				.readValue("{\"messages\":[],\"top_k\":20,\"extra_body\":null}", ChatCompletionRequest.class);
 
 		assertThat(request.extraBody()).containsEntry("top_k", 20);
+	}
+
+	@Test
+	void deserializingLiteralExtraBodyKeepsItAsExtraProperty() throws Exception {
+		ChatCompletionRequest request = Json.OBJECT_MAPPER.readValue("{\"messages\":[],\"extra_body\":{\"top_k\":20}}",
+				ChatCompletionRequest.class);
+
+		assertThat(request.extraBody()).containsEntry("extra_body", Collections.singletonMap("top_k", 20));
+
+		JsonNode json = Json.OBJECT_MAPPER.readTree(Json.toJson(request));
+
+		assertThat(json.path("extra_body").path("top_k").asInt()).isEqualTo(20);
+	}
+
+	@Test
+	void deserializingExtraBodyDoesNotDropOtherExtras() throws Exception {
+		ChatCompletionRequest request = Json.OBJECT_MAPPER.readValue(
+				"{\"messages\":[],\"top_k\":20,\"extra_body\":{\"enable_thinking\":false}}",
+				ChatCompletionRequest.class);
+
+		assertThat(request.extraBody()).containsEntry("top_k", 20).containsEntry("extra_body",
+				Collections.singletonMap("enable_thinking", false));
 	}
 
 	@Test

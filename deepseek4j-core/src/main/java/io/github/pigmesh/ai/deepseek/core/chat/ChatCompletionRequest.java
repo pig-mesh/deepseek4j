@@ -2,6 +2,7 @@ package io.github.pigmesh.ai.deepseek.core.chat;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -730,11 +731,37 @@ public class ChatCompletionRequest {
 			return this;
 		}
 
+		/**
+		 * 设置一组附加请求参数，序列化时每个条目会直接合并到请求 JSON 的顶层。这是程序化构建的入口， 传入 Map
+		 * 的<b>条目</b>会被提升到顶层，而不是作为名为 {@code extra_body} 的整体对象发送。
+		 * <p>
+		 * 传 {@code null} 视为未提供、不做清空，以免误伤 {@link #extra(String, Object)} 已收集的参数； 显式清空只在
+		 * {@link #from(ChatCompletionRequest)} 里做。JSON 反序列化不走这里， 见
+		 * {@link #rawExtraBody(Map)}。
+		 * @param extraBody 附加参数
+		 * @return builder
+		 */
+		@JsonIgnore
 		public Builder extraBody(Map<String, Object> extraBody) {
-			// null 视为未提供、不做清空：Jackson 会把 JSON 中的 "extra_body": null 绑定到这里，
-			// 若在此清空会误伤 anySetter 已收集的参数；显式清空只在 from() 里做。
 			if (extraBody != null) {
 				this.extraBody = new LinkedHashMap<>(extraBody);
+			}
+			return this;
+		}
+
+		/**
+		 * Jackson 绑定专用：把 JSON 中的字面 {@code extra_body} 原样保留为一个附加属性。
+		 * <p>
+		 * 若走 {@link #extraBody(Map)}，其条目会被错误地拆到顶层，序列化/反序列化往返一次后 {@code extra_body}
+		 * 的包裹结构就丢了，还可能覆盖 {@code @JsonAnySetter} 先收集到的参数； 这里改为原样保存，保证往返一致。值为 {@code null}
+		 * 视为未提供、不做处理。
+		 * @param extraBody JSON 中的 extra_body 值
+		 * @return builder
+		 */
+		@JsonProperty("extra_body")
+		public Builder rawExtraBody(Map<String, Object> extraBody) {
+			if (extraBody != null) {
+				return extra("extra_body", extraBody);
 			}
 			return this;
 		}
